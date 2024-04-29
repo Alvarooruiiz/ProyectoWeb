@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+
+        <h:form id="mainForm">
+            <p:growl id="growl" showDetail="true" />
+            <p:growl id="growl-sticky" for="sticky-key" showDetail="true" sticky="true" />
+            <div class="card">
+                <p:commandButton value="New" icon="pi pi-plus" actionListener="#{Main.openNew()}" oncomplete="PF('dlg1New').show()" styleClass="ui-button-success" update="dialogs"/>
+
+                <p:dataTable var="product" value="#{Main.lista}">
+                    <p:column exportable="false" width="">
+                        <p:commandButton icon="pi pi-pencil" update="dialogs" oncomplete="PF('dlg1New').show()" style="margin-right: auto" actionListener="#{Main.editProduct(product)}"
+                                         styleClass="edit-button rounded-button ui-button-success"/>
+
+
+                        <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" oncomplete="PF('deleteProductDialog').show()" actionListener="#{Main.deleteProduct(product)}" update="mainForm">
+                            <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:column>
+                    <p:column headerText="Code">
+                        <h:outputText value="#{product.code}" />
+                    </p:column>
+
+                    <p:column headerText="Name">
+                        <h:outputText value="#{product.name}" />
+                    </p:column>
+
+                    <p:column headerText="Category">
+                        <h:outputText value="#{product.category}" />
+                    </p:column>
+
+                    <p:column headerText="Quantity">
+                        <h:outputText value="#{product.quantity}" style="text-align: right"/>
+                    </p:column>
+                    
+                </p:dataTable>
+            </div>
+        </h:form>
+
+        <h:form id="dialogs">
+            <p:dialog header="Product details" widgetVar="dlg1New" minHeight="40" width="350" showEffect="fade" responsive="true" modal="true">
+                <div>
+                    <p:outputLabel>Code </p:outputLabel>
+                    <p:inputText id="code" value="#{Main.selectedProduct.code}" disabled="#{Main.editando}"/>
+                </div>
+                <div>
+                    <p:outputLabel>Name </p:outputLabel>
+                    <p:inputText id="name" value="#{Main.selectedProduct.name}"  maxlength="20" />
+                </div>
+                <div>
+                    <p:outputLabel>Category</p:outputLabel>
+                    <p:selectOneRadio id="category" columns="2" layout="responsive" value="#{Main.selectedProduct.category}">
+                        <f:selectItem itemLabel="Accesories" itemValue="Accesories"></f:selectItem>
+                        <f:selectItem itemLabel="Clothing" itemValue="Clothing"></f:selectItem>
+                        <f:selectItem itemLabel="Electronics" itemValue="Electronics"></f:selectItem>
+                        <f:selectItem itemLabel="Fitness" itemValue="Fitness"></f:selectItem>
+                    </p:selectOneRadio>
+                </div>
+                <div>
+                    <p:outputLabel>Quantity</p:outputLabel>
+                    <p:inputNumber id="quantity" value="#{Main.selectedProduct.quantity}" emptyValue="0" decimalPlaces="0" minValue="0"/>
+                </div>
+                <div>
+                    <p:outputLabel>Price</p:outputLabel>
+                    <p:inputNumber id="price" value="#{Main.selectedProduct.price}" emptyValue="00.00"  minValue="0"/>
+                </div>
+                <div>
+                    <p:outputLabel>Birth</p:outputLabel>
+                    <p:datePicker id="birth"/>
+                </div>
+                <div>
+                    <p:outputLabel>Stock</p:outputLabel>
+                    <p:inputText id="stock" value="#{Main.selectedProduct.stock}"/>
+                </div>
+                <p:commandButton value="Save" icon="pi pi-check" actionListener="#{Main.addProduct()}" update="mainForm"/>
+                <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('dlg1New').hide()"/>
+            </p:dialog>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" />
+            </p:confirmDialog>
+        </h:form>
+
+    </h:body>
+</html>
