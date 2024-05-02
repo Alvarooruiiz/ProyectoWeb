@@ -20,6 +20,7 @@ public class Product {
     private Date birth;
     private boolean stock;
     private ArrayList<Lugar> lugares;
+   
     
 
     public Product() {

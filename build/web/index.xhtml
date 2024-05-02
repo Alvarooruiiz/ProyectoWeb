@@ -30,36 +30,57 @@
                     <p:toolbarGroup>
                         <p:commandButton value="New" icon="pi pi-plus" actionListener="#{Main.openNew()}" oncomplete="PF('dlg1New').show()" styleClass="ui-button-success" update="dialogs"/>
                     </p:toolbarGroup>
-                    <p:toolbarGroup>
-                        <div style="display: flex; flex-direction: column; margin-bottom: 10px">
-                            <h:outputLabel value="Filtrar por categoría:" style="font-weight: bold; margin-right: 10px; margin-bottom: 10px;" for="combo"/>
+                    <p:toolbarGroup> 
+                        <div style="display: flex; align-content: center; align-items: center">
+                            <div style="display: flex; flex-direction: column; margin-bottom: 10px">
+                                <h:outputLabel value="Fecha inicio: " style="font-weight: bold; margin-right: 10px; margin-bottom: 10px;" for="comboSearch"/>
+                                <p:datePicker id="dpFecha1" value="#{Main.filtroFecha1}" pattern="yyyy/MM/dd" timeZone="Europe/Madrid" maxdate="#{Main.filtroFecha2}" style="margin-right: 20px; align-content: center">
+                                    <p:ajax event="dateSelect" update="mainForm"/>
+                                </p:datePicker>
+                            </div>
+                            <div style="display: flex; flex-direction: column; margin-bottom: 10px">
+                                <h:outputLabel value="Fecha fin " style="font-weight: bold; margin-right: 10px; margin-bottom: 10px;" for="comboSearch"/>
+                                <p:datePicker id="dpFecha2" value="#{Main.filtroFecha2}" pattern="yyyy/MM/dd" timeZone="Europe/Madrid" mindate="#{Main.filtroFecha1}" maxdate="#{Main.fechaHoy()}" style="margin-right: 20px; align-content: center;">
+                                    <p:ajax event="dateSelect" update="mainForm"/>
+                                </p:datePicker>
 
-                            <p:selectOneMenu id="combo" widgetVar="combo" onchange="PF('dataTable').filter()" styleClass="custom-filter" style="margin-right: 20px; z-index: 2" value="Options">
-                                <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
-                                <f:selectItems value="#{Main.availableCategories}" />
-                            </p:selectOneMenu>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; margin-bottom: 10px">
+                                <h:outputLabel value="Filtrar por categoría:" style="font-weight: bold; margin-right: 10px; margin-bottom: 10px;" for="comboSearch"/>
+
+                                <p:selectOneMenu id="comboSearch" widgetVar="comboSearch" onchange="PF('dataTable').filter()" styleClass="custom-filter" style="margin-right: 20px; z-index: 2" value="#{Main.selectedCategory}">
+                                    <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{Main.availableCategories}" />
+                                </p:selectOneMenu>
+                            </div>
+                            <p:commandButton styleClass="ui-button-success" icon="pi pi-file-excel" style="margin-right: 20px; align-content: center " action="#{Main.exportToExcel()}" ajax="false">
+                                
+                            </p:commandButton>
+                            <p:commandButton icon="pi pi-search" id="btnSearch" widgetVar="btnSearch" update="mainForm" action="#{Main.mostrarTablaFiltro}"/>
                         </div>
-                        <p:commandButton styleClass="ui-button-success" icon="pi pi-file-excel" style="margin-right: 20px">
-                            <p:dataExporter type="xls" target="dataTable" fileName="products"/>
-                        </p:commandButton>
-                        <p:commandButton icon="pi pi-search" />
+
                     </p:toolbarGroup>
                 </p:toolbar>
 
-                <p:dataTable var="product" value="#{Main.lista}" widgetVar="dataTable" id="dataTable" rows="5"
+                <p:dataTable var="product" value="#{Main.listProductsFiltro}" widgetVar="dataTable" id="dataTable" rows="5"
                              paginator="true" paginatorPosition="bottom"
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
                              rowsPerPageTemplate="5,10,{ShowAll|'All'}"
                              rowStyleClass="#{(product.quantity eq 0) ? 'rojo' : ((product.quantity gt 20) ? 'verde' : null)}"
                              selectionMode="single"
-                             selection="#{Main.selectedProduct}" rowKey="#{product.code}">
+                             selection="#{Main.selectedProduct}" rowKey="#{product.code}"
+                             rowExpandMode="single">
                     <p:ajax event="rowSelect" listener="#{Main.onRowSelect}" update="mainForm:dataTableLugares"/>
+
+
+
                     <p:column exportable="false" width="">
-                        <p:commandButton icon="pi pi-pencil" update="dialogs" oncomplete="PF('dlg1New').show()" style="margin-right: 10px" actionListener="#{Main.editProduct(product)}"
+                        <p:commandButton icon="pi pi-pencil" update="dialogs mainForm" oncomplete="PF('dlg1New').show()" style="margin-right: 10px" actionListener="#{Main.editProduct(product)}"
                                          styleClass="edit-button rounded-button ui-button-success"/>
 
-                        <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" actionListener="#{Main.deleteProduct(product)}" update="mainForm" >
+                        <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" actionListener="#{Main.deleteProduct(product)}" update="mainForm:dataTable" >
                             <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
                         </p:commandButton>
                     </p:column>
@@ -108,15 +129,41 @@
                     <p:column headerText="Stock" style="text-align:center"  sortBy="#{product.stock}">
                         <p:selectBooleanCheckbox value="#{product.stock}" disabled="true"/>
                     </p:column>
+                    <p:column style="width:2rem">
+                        <p:rowToggler/>
+                    </p:column>
+                    <p:rowExpansion>
+                        <p:dataTable var="lugarExpansion" value="#{Main.getListaLugaresExpansion(product)}" widgetVar="dataTableLugaresExpansion" id="dataTableLugaresExpansion">
+                            <p:column>
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" actionListener="#{Main.deleteLugarExpansion(lugarExpansion,product)}" update="mainForm" >
+                                    <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+                            </p:column>
+                            <p:column headerText="id" style="text-align:left" sortBy="#{lugarExpansion.id}" filterBy="#{lugarExpansion.id}">
+                                <h:outputText value="#{lugarExpansion.id}"/>
+                            </p:column>
+                            <p:column headerText="Ciudad" style="text-align:left" sortBy="#{lugarExpansion.ciudad}" filterBy="#{lugarExpansion.ciudad}">
+                                <h:outputText value="#{lugarExpansion.ciudad}"/>
+                            </p:column>
+                            <p:column headerText="Pais" style="text-align:left" sortBy="#{lugarExpansion.pais}" filterBy="#{lugarExpansion.pais}">
+                                <h:outputText value="#{lugarExpansion.pais}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:rowExpansion>
 
                 </p:dataTable>
 
                 <p:dataTable var="lugar" value="#{Main.listaLugares}" widgetVar="dataTableLugares" id="dataTableLugares" rows="5"
-                    style="visibility: #{Main.mostrarTablaLugares ? 'visible' : 'collapse'}">
+                             style="visibility: #{Main.mostrarTablaLugares ? 'visible' : 'collapse'}"  draggableRows="true" rowIndexVar="rowIndex">
+                    <p:ajax event="rowReorder" update="mainForm:dataTableLugares"/>
                     <p:column>
                         <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" actionListener="#{Main.deleteLugar(lugar)}" update="mainForm:dataTableLugares" >
                             <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
                         </p:commandButton>
+                    </p:column>
+                    <p:column headerText="Número de fila">
+                        #{rowIndex + 1}
+
                     </p:column>
                     <p:column headerText="id" style="text-align:left" sortBy="#{lugar.id}" filterBy="#{lugar.id}">
                         <h:outputText value="#{lugar.id}"/>
@@ -148,7 +195,7 @@
                 <div style="margin: 10px">
                     <p:outputLabel>Category</p:outputLabel>
                     <p:selectOneRadio id="category" columns="2" layout="responsive" value="#{Main.selectedProduct.category}">
-                        <f:selectItem itemLabel="Accesories" itemValue="Accesories"></f:selectItem>
+                        <f:selectItem itemLabel="Accessories" itemValue="Accessories"></f:selectItem>
                         <f:selectItem itemLabel="Clothing" itemValue="Clothing"></f:selectItem>
                         <f:selectItem itemLabel="Electronics" itemValue="Electronics"></f:selectItem>
                         <f:selectItem itemLabel="Fitness" itemValue="Fitness"></f:selectItem>
