@@ -5,6 +5,7 @@ public class Lugar {
     int id;
     String ciudad;
     String pais;
+    int orden;
 
     public Lugar(int id, String ciudad, String pais) {
         this.id = id;
@@ -36,5 +37,13 @@ public class Lugar {
         this.pais = pais;
     }
 
-   
+    public int getOrden() {
+        return orden;
+    }
+
+    public void setOrden(int orden) {
+        this.orden = orden;
+    }
+
+ 
 }

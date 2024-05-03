@@ -37,9 +37,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.ReorderEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.ToggleEvent;
+import org.primefaces.event.data.FilterEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.charts.ChartData;
@@ -59,7 +62,9 @@ public class Main {
 
     private List<Product> listaProducts;
     private List<Product> listProductsFiltro;
+    private List<Product> listProductsFiltroFilterValue;
     private List<Lugar> listaLugares;
+    private List<Lugar> listaLugaresFilterValue;
     private Product selectedProduct;
     private Product auxProd;
     private boolean editando;
@@ -72,17 +77,20 @@ public class Main {
     private Date filtroFecha2;
     private Boolean fecha1Ingresada;
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private boolean dragEnabled = true;
+    private boolean filtroActivo = false;
 
     @PostConstruct
     public void init() {
         listaProducts = new ArrayList<>();
         listProductsFiltro = new ArrayList<>();
         fecha1Ingresada = true;
+        barChartModel = new BarChartModel();
 
         listaLugares = new ArrayList<>();
 
         try {
-            listaProducts.add(new Product("f230fh0g3", "Bamboo", "Accessories", 24, 25.50, sdf.parse("01/04/2024"), true, obtenerLugares()));
+            listaProducts.add(new Product("f230fh0g3", "Bamboo", "Accessories", 5, 25.50, sdf.parse("01/04/2024"), true, obtenerLugares()));
             listaProducts.add(new Product("nvklal433", "Black Watch", "Electronics", 5, 5.50, sdf.parse("01/01/2024"), false, obtenerLugares()));
             listaProducts.add(new Product("zz21cz3c1", "Blue Band", "Fitness", 2, 50.50, sdf.parse("23/03/2002"), true, obtenerLugares()));
             listaProducts.add(new Product("244wgerg2", "Blue T-Shirt", "Clothing", 25, 100, sdf.parse("01/12/2010"), false, obtenerLugares()));
@@ -96,10 +104,6 @@ public class Main {
         } catch (ParseException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for (Product p : listaProducts) {
-            listProductsFiltro.add(p);
-        }
-        createBarModel();
 
     }
 
@@ -346,6 +350,7 @@ public class Main {
 
         for (int i = 0; i < 3; i++) {
             lugaresAleatorios.add(listaLugares.get(i));
+            lugaresAleatorios.get(i).setOrden(i + 1);
         }
 
         return lugaresAleatorios;
@@ -363,40 +368,16 @@ public class Main {
         if (selectedProduct != null) {
             listaLugares = selectedProduct.getLugares();
             mostrarTablaLugares = true;
+            PrimeFaces.current().executeScript("PF('dataTableLugares').clearFilters()");
+
         }
     }
 
-//    public void mostrarTablaFiltro() {
-//        listProductsFiltro.clear();
-//        mostrarTablaLugares = false;
-//        PrimeFaces.current().executeScript("PF('dataTable').clearFilters()");
-//
-//        if (selectedCategory != null && selectedDate != null) {
-//            for (Product product : listaProducts) {
-//                if (selectedCategory.equals(product.getCategory()) && selectedDate.equals(product.getBirth())) {
-//                    listProductsFiltro.add(product);
-//                }
-//            }
-//        } else if (selectedCategory != null && selectedDate == null) {
-//            for (Product product : listaProducts) {
-//                if (selectedCategory.equals(product.getCategory())) {
-//                    listProductsFiltro.add(product);
-//                }
-//            }
-//        } else if (selectedCategory == null && selectedDate != null) {
-//            for (Product product : listaProducts) {
-//                if (selectedDate.equals(product.getBirth())) {
-//                    listProductsFiltro.add(product);
-//                }
-//            }
-//        } else {
-//            listProductsFiltro.addAll(listaProducts);
-//        }
-//    }
     public void mostrarTablaFiltro() {
         listProductsFiltro.clear();
         mostrarTablaLugares = false;
         PrimeFaces.current().executeScript("PF('dataTable').clearFilters()");
+        PrimeFaces.current().executeScript("PF('dataTableLugares').clearFilters()");
 
         if (selectedCategory != null && filtroFecha1 != null && filtroFecha2 != null) {
 
@@ -420,6 +401,12 @@ public class Main {
         } else {
             listProductsFiltro.addAll(listaProducts);
         }
+
+        if (!listProductsFiltro.isEmpty()) {
+            selectedProduct = listProductsFiltro.get(0);
+            onRowSelect();
+        }
+        createBarModel();
         showMessaggeGood("Se han encontrado " + listProductsFiltro.size() + " resultados");
     }
 
@@ -491,4 +478,59 @@ public class Main {
             FacesContext.getCurrentInstance().responseComplete();
         }
     }
+
+    public void rowReorder(ReorderEvent event) {
+        if (!isFiltroActivo()) {
+            List<Lugar> listado = selectedProduct.getLugares();
+            int fromIndex = event.getFromIndex();
+            int toIndex = event.getToIndex();
+            Lugar lugarMovido = listado.remove(fromIndex);
+            listado.add(toIndex, lugarMovido);
+
+            for (int i = 0; i < listado.size(); i++) {
+                Lugar lugar = listado.get(i);
+                lugar.setOrden(i + 1);
+            }
+        } else {
+            showError("No se puede reordenar mientras se está aplicando un filtro.");
+        }
+    }
+    
+    public boolean hayRegistros(){
+        return (listProductsFiltro.size()>0);
+    }
+
+    public void filtrado(FilterEvent event) {
+        setFiltroActivo(false); // Establecemos el filtro como activo
+    }
+
+    public void limpiarFiltro() {
+        setFiltroActivo(false); // Establecemos el filtro como inactivo
+        PrimeFaces.current().executeScript("PF('dataTableLugares').clearFilters()");
+    }
+
+    public boolean isFiltroActivo() {
+        return filtroActivo;
+    }
+
+    public void setFiltroActivo(boolean filtroActivo) {
+        this.filtroActivo = filtroActivo;
+    }
+
+    public List<Product> getListProductsFiltroFilterValue() {
+        return listProductsFiltroFilterValue;
+    }
+
+    public void setListProductsFiltroFilterValue(List<Product> listProductsFiltroFilterValue) {
+        this.listProductsFiltroFilterValue = listProductsFiltroFilterValue;
+    }
+
+    public List<Lugar> getListaLugaresFilterValue() {
+        return listaLugaresFilterValue;
+    }
+
+    public void setListaLugaresFilterValue(List<Lugar> listaLugaresFilterValue) {
+        this.listaLugaresFilterValue = listaLugaresFilterValue;
+    }
+
 }

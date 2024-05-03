@@ -54,10 +54,13 @@
                                     <f:selectItems value="#{Main.availableCategories}" />
                                 </p:selectOneMenu>
                             </div>
-                            <p:commandButton styleClass="ui-button-success" icon="pi pi-file-excel" style="margin-right: 20px; align-content: center " action="#{Main.exportToExcel()}" ajax="false">
-                                
+                            
+                            <p:commandButton styleClass="ui-button-success" icon="pi pi-file-excel" style="margin-right: 20px; align-content: center;"
+                                             action="#{Main.exportToExcel()}" ajax="false" rendered="#{not empty Main.listProductsFiltro }" />
+
+                          
+                            <p:commandButton icon="pi pi-search" id="btnSearch" widgetVar="btnSearch" update="mainForm" action="#{Main.mostrarTablaFiltro}">
                             </p:commandButton>
-                            <p:commandButton icon="pi pi-search" id="btnSearch" widgetVar="btnSearch" update="mainForm" action="#{Main.mostrarTablaFiltro}"/>
                         </div>
 
                     </p:toolbarGroup>
@@ -71,7 +74,8 @@
                              rowStyleClass="#{(product.quantity eq 0) ? 'rojo' : ((product.quantity gt 20) ? 'verde' : null)}"
                              selectionMode="single"
                              selection="#{Main.selectedProduct}" rowKey="#{product.code}"
-                             rowExpandMode="single">
+                             rowExpandMode="single"
+                             filteredValue="#{Main.listProductsFiltroFilterValue}">
                     <p:ajax event="rowSelect" listener="#{Main.onRowSelect}" update="mainForm:dataTableLugares"/>
 
 
@@ -142,10 +146,10 @@
                             <p:column headerText="id" style="text-align:left" sortBy="#{lugarExpansion.id}" filterBy="#{lugarExpansion.id}">
                                 <h:outputText value="#{lugarExpansion.id}"/>
                             </p:column>
-                            <p:column headerText="Ciudad" style="text-align:left" sortBy="#{lugarExpansion.ciudad}" filterBy="#{lugarExpansion.ciudad}">
+                            <p:column headerText="Ciudad" style="text-align:left" sortBy="#{lugarExpansion.ciudad}" filterBy="#{lugarExpansion.ciudad}" filterMatchMode="contains">
                                 <h:outputText value="#{lugarExpansion.ciudad}"/>
                             </p:column>
-                            <p:column headerText="Pais" style="text-align:left" sortBy="#{lugarExpansion.pais}" filterBy="#{lugarExpansion.pais}">
+                            <p:column headerText="Pais" style="text-align:left" sortBy="#{lugarExpansion.pais}" filterBy="#{lugarExpansion.pais}" filterMatchMode="contains">
                                 <h:outputText value="#{lugarExpansion.pais}"/>
                             </p:column>
                         </p:dataTable>
@@ -154,24 +158,26 @@
                 </p:dataTable>
 
                 <p:dataTable var="lugar" value="#{Main.listaLugares}" widgetVar="dataTableLugares" id="dataTableLugares" rows="5"
-                             style="visibility: #{Main.mostrarTablaLugares ? 'visible' : 'collapse'}"  draggableRows="true" rowIndexVar="rowIndex">
-                    <p:ajax event="rowReorder" update="mainForm:dataTableLugares"/>
+                             style="visibility: #{Main.mostrarTablaLugares ? 'visible' : 'collapse'}"  draggableRows="true" rowIndexVar="rowIndex"
+                             filteredValue="#{Main.listaLugaresFilterValue}">
+                    <p:ajax event="rowReorder" update="mainForm:dataTableLugares" listener="#{Main.rowReorder}"/>
+                    <p:ajax event="filter" update="mainForm:dataTableLugares" listener="#{Main.filtrado}"   oncomplete="#{Main.limpiarFiltro()}"/>
+
                     <p:column>
                         <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" actionListener="#{Main.deleteLugar(lugar)}" update="mainForm:dataTableLugares" >
                             <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
                         </p:commandButton>
                     </p:column>
-                    <p:column headerText="Número de fila">
-                        #{rowIndex + 1}
-
+                    <p:column headerText="orden" style="text-align:left">
+                        <h:outputText value="#{lugar.orden}"/>
                     </p:column>
                     <p:column headerText="id" style="text-align:left" sortBy="#{lugar.id}" filterBy="#{lugar.id}">
                         <h:outputText value="#{lugar.id}"/>
                     </p:column>
-                    <p:column headerText="Ciudad" style="text-align:left" sortBy="#{lugar.ciudad}" filterBy="#{lugar.ciudad}">
+                    <p:column headerText="Ciudad" style="text-align:left" sortBy="#{lugar.ciudad}" filterBy="#{lugar.ciudad}" filterMatchMode="contains">
                         <h:outputText value="#{lugar.ciudad}"/>
                     </p:column>
-                    <p:column headerText="Pais" style="text-align:left" sortBy="#{lugar.pais}" filterBy="#{lugar.pais}">
+                    <p:column headerText="Pais" style="text-align:left" sortBy="#{lugar.pais}" filterBy="#{lugar.pais}" filterMatchMode="contains">
                         <h:outputText value="#{lugar.pais}"/>
                     </p:column>
                 </p:dataTable>
