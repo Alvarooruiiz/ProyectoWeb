@@ -1,5 +1,7 @@
 package Tabla;
 
+import com.lowagie.text.Document;
+import com.lowagie.text.PageSize;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -10,6 +12,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -24,6 +27,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
@@ -31,16 +35,21 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.primefaces.PF;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.ReorderEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TabChangeEvent;
+import org.primefaces.event.TabCloseEvent;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.event.data.FilterEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -79,6 +88,12 @@ public class Main {
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     private boolean dragEnabled = true;
     private boolean filtroActivo = false;
+    private int posicionTab = 0;
+    private double totalPrecio = 0;
+
+    private static final long serialVersionUID = 2431097566797234783L;
+
+    private TabView tabView;
 
     @PostConstruct
     public void init() {
@@ -104,7 +119,7 @@ public class Main {
         } catch (ParseException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        totalPrecioAño();
     }
 
     public Boolean getFecha1Ingresada() {
@@ -124,6 +139,9 @@ public class Main {
     }
 
     public Date getFiltroFecha2() {
+        if (filtroFecha2 == null) {
+            filtroFecha2 = new Date();
+        }
         return filtroFecha2;
     }
 
@@ -179,47 +197,50 @@ public class Main {
     }
 
     public void createBarModel() {
-        barChartModel = new BarChartModel();
-        ChartData data = new ChartData();
+        if (posicionTab == 1) {
+            barChartModel = new BarChartModel();
+            ChartData data = new ChartData();
 
-        BarChartDataSet barDataSet = new BarChartDataSet();
-        barDataSet.setLabel("Precios");
+            BarChartDataSet barDataSet = new BarChartDataSet();
+            barDataSet.setLabel("Precios");
 
-        List<Number> values = new ArrayList<>();
-        for (Product p : listaProducts) {
-            values.add(p.getPrice());
+            List<Number> values = new ArrayList<>();
+            for (Product p : listaProducts) {
+                values.add(p.getPrice());
+            }
+            barDataSet.setData(values);
+
+            List<String> bgColor = new ArrayList<>();
+            bgColor.add("rgba(255, 99, 132, 0.2)");
+            bgColor.add("rgba(255, 159, 64, 0.2)");
+            bgColor.add("rgba(255, 205, 86, 0.2)");
+            bgColor.add("rgba(75, 192, 192, 0.2)");
+            bgColor.add("rgba(54, 162, 235, 0.2)");
+            bgColor.add("rgba(153, 102, 255, 0.2)");
+            bgColor.add("rgba(201, 203, 207, 0.2)");
+            barDataSet.setBackgroundColor(bgColor);
+
+            List<String> borderColor = new ArrayList<>();
+            borderColor.add("rgb(255, 99, 132)");
+            borderColor.add("rgb(255, 159, 64)");
+            borderColor.add("rgb(255, 205, 86)");
+            borderColor.add("rgb(75, 192, 192)");
+            borderColor.add("rgb(54, 162, 235)");
+            borderColor.add("rgb(153, 102, 255)");
+            borderColor.add("rgb(201, 203, 207)");
+            barDataSet.setBorderColor(borderColor);
+            barDataSet.setBorderWidth(1);
+
+            data.addChartDataSet(barDataSet);
+
+            List<String> labels = new ArrayList<>();
+            for (Product p : listaProducts) {
+                labels.add(p.getName());
+            }
+            data.setLabels(labels);
+            barChartModel.setData(data);
         }
-        barDataSet.setData(values);
 
-        List<String> bgColor = new ArrayList<>();
-        bgColor.add("rgba(255, 99, 132, 0.2)");
-        bgColor.add("rgba(255, 159, 64, 0.2)");
-        bgColor.add("rgba(255, 205, 86, 0.2)");
-        bgColor.add("rgba(75, 192, 192, 0.2)");
-        bgColor.add("rgba(54, 162, 235, 0.2)");
-        bgColor.add("rgba(153, 102, 255, 0.2)");
-        bgColor.add("rgba(201, 203, 207, 0.2)");
-        barDataSet.setBackgroundColor(bgColor);
-
-        List<String> borderColor = new ArrayList<>();
-        borderColor.add("rgb(255, 99, 132)");
-        borderColor.add("rgb(255, 159, 64)");
-        borderColor.add("rgb(255, 205, 86)");
-        borderColor.add("rgb(75, 192, 192)");
-        borderColor.add("rgb(54, 162, 235)");
-        borderColor.add("rgb(153, 102, 255)");
-        borderColor.add("rgb(201, 203, 207)");
-        barDataSet.setBorderColor(borderColor);
-        barDataSet.setBorderWidth(1);
-
-        data.addChartDataSet(barDataSet);
-
-        List<String> labels = new ArrayList<>();
-        for (Product p : listaProducts) {
-            labels.add(p.getName());
-        }
-        data.setLabels(labels);
-        barChartModel.setData(data);
     }
 
     public List<Product> getLista() {
@@ -246,40 +267,47 @@ public class Main {
     }
 
     public void addProduct() {
-        if (!editando) {
-            if (selectedProduct.getCode() == null || selectedProduct.getCode().isEmpty()) {
-                showError("El código no es correcto o está vacío");
-            } else if (selectedProduct.getName().isEmpty()) {
-                showError("El nombre no es correcto o está vacío");
-            } else if (selectedProduct.getCategory().isEmpty() || selectedProduct.getCategory() == null) {
-                showError("La categoría no es correcta o está vacía");
-            } else if (selectedProduct.getQuantity() < 0) {
-                showError("La cantidad no puede ser menor de 0");
-            } else {
-                boolean codeExists = false;
-                for (Product product : listaProducts) {
-                    if (product.getCode().equals(selectedProduct.getCode())) {
-                        codeExists = true;
-                        break;
+        if (listProductsFiltro.isEmpty()) {
+            showError("Actualice la tabla antes");
+        } else {
+            if (!editando) {
+                if (selectedProduct.getCode() == null || selectedProduct.getCode().isEmpty()) {
+                    showError("El código no es correcto o está vacío");
+                } else if (selectedProduct.getName().isEmpty()) {
+                    showError("El nombre no es correcto o está vacío");
+                } else if (selectedProduct.getCategory().isEmpty() || selectedProduct.getCategory() == null) {
+                    showError("La categoría no es correcta o está vacía");
+                } else if (selectedProduct.getQuantity() < 0) {
+                    showError("La cantidad no puede ser menor de 0");
+                } else if (selectedProduct.getBirth().equals("") || selectedProduct.getBirth() == null) {
+                    showError("Introduzca la fecha");
+                } else {
+                    boolean codeExists = false;
+                    for (Product product : listaProducts) {
+                        if (product.getCode().equals(selectedProduct.getCode())) {
+                            codeExists = true;
+                            break;
+                        }
+                    }
+
+                    if (codeExists) {
+                        showError("El código del producto ya existe en la lista");
+                    } else {
+                        selectedProduct.setLugares(obtenerLugares());
+                        listaProducts.add(selectedProduct);
+                        showMessaggeGood("Se ha añadido un producto");
+                        PrimeFaces.current().executeScript("PF('dlg1New').hide()");
+                        mostrarTablaFiltro();
+                        createBarModel();
                     }
                 }
-
-                if (codeExists) {
-                    showError("El código del producto ya existe en la lista");
-                } else {
-                    selectedProduct.setLugares(obtenerLugares());
-                    listaProducts.add(selectedProduct);
-                    PrimeFaces.current().executeScript("PF('dlg1New').hide()");
-                    mostrarTablaFiltro();
-                    createBarModel();
-                }
-            }
-        } else {
-            for (Product product : listaProducts) {
-                if (product.getCode().equals(selectedProduct.getCode())) {
-                    product = selectedProduct;
-                    PrimeFaces.current().executeScript("PF('dlg1New').hide()");
-                    showMessaggeGood("Se ha añadido un producto");
+            } else {
+                for (Product product : listaProducts) {
+                    if (product.getCode().equals(selectedProduct.getCode())) {
+                        product = selectedProduct;
+                        PrimeFaces.current().executeScript("PF('dlg1New').hide()");
+                        showMessaggeGood("Se ha editado el producto correctamente");
+                    }
                 }
             }
         }
@@ -299,14 +327,19 @@ public class Main {
         mostrarTablaFiltro();
         createBarModel();
         listaLugares = null;
+        showError("Producto eliminado con éxito");
     }
 
     public void deleteLugar(Lugar l) {
         selectedProduct.getLugares().remove(l);
+        listaLugares.remove(l);
+        actualizarOrden();
+        showError("Lugar eliminado con éxito");
     }
 
     public void deleteLugarExpansion(Lugar l, Product p) {
         p.getLugares().remove(l);
+        showError("Lugar eliminado con éxito");
     }
 
     public void editProduct(Product p) {
@@ -368,46 +401,75 @@ public class Main {
         if (selectedProduct != null) {
             listaLugares = selectedProduct.getLugares();
             mostrarTablaLugares = true;
-            PrimeFaces.current().executeScript("PF('dataTableLugares').clearFilters()");
+            PrimeFaces.current().executeScript("PF('dataTableLugares').clearFilters();");
 
         }
     }
 
     public void mostrarTablaFiltro() {
-        listProductsFiltro.clear();
-        mostrarTablaLugares = false;
-        PrimeFaces.current().executeScript("PF('dataTable').clearFilters()");
-        PrimeFaces.current().executeScript("PF('dataTableLugares').clearFilters()");
+        listProductsFiltro = new ArrayList<>();
+        listaLugares = new ArrayList<>();
 
-        if (selectedCategory != null && filtroFecha1 != null && filtroFecha2 != null) {
+        if (posicionTab == 0) {
+            PF.current().ajax().update("mainForm:dataTable");
+            barChartModel = new BarChartModel();
 
-            for (Product product : listaProducts) {
-                if (selectedCategory.equals(product.getCategory()) && comprobarFechas(product.getBirth(), filtroFecha1, filtroFecha2)) {
-                    listProductsFiltro.add(product);
+            mostrarTablaLugares = false;
+            if (selectedCategory != null && filtroFecha2 != null) {
+                if (filtroFecha1 == null) {
+                    Date fechaActual = new Date();
+
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(fechaActual);
+
+                    calendar.add(Calendar.DAY_OF_YEAR, -7);
+
+                    filtroFecha1 = calendar.getTime();
                 }
-            }
-        } else if (selectedCategory != null && filtroFecha1 == null) {
-            for (Product product : listaProducts) {
-                if (selectedCategory.equals(product.getCategory())) {
-                    listProductsFiltro.add(product);
+                for (Product product : listaProducts) {
+                    if (selectedCategory.equals(product.getCategory()) && comprobarFechas(product.getBirth(), filtroFecha1, filtroFecha2)) {
+                        listProductsFiltro.add(product);
+                    }
                 }
-            }
-        } else if (selectedCategory == null && filtroFecha1 != null && filtroFecha2 != null) {
-            for (Product product : listaProducts) {
-                if (comprobarFechas(product.getBirth(), filtroFecha1, filtroFecha2)) {
-                    listProductsFiltro.add(product);
+            } else if (selectedCategory != null && filtroFecha1 == null) {
+                for (Product product : listaProducts) {
+                    if (selectedCategory.equals(product.getCategory())) {
+                        listProductsFiltro.add(product);
+                    }
                 }
+            } else if (selectedCategory == null && filtroFecha1 != null && filtroFecha2 != null) {
+                for (Product product : listaProducts) {
+                    if (comprobarFechas(product.getBirth(), filtroFecha1, filtroFecha2)) {
+                        listProductsFiltro.add(product);
+                    }
+                }
+            } else {
+                listProductsFiltro.addAll(listaProducts);
             }
-        } else {
-            listProductsFiltro.addAll(listaProducts);
+
+            if (!listProductsFiltro.isEmpty()) {
+                selectedProduct = listProductsFiltro.get(0);
+                onRowSelect();
+            }
+
+            if (listProductsFiltro.isEmpty()) {
+                showError("No se ha encontrado ningún resultado");
+            }
+            PrimeFaces.current().ajax().update("mainForm");
+        } else if (posicionTab == 1) {
+            createBarModel();
+            PrimeFaces.current().ajax().update("mainForm:tabPanel:barChart");
+
         }
 
-        if (!listProductsFiltro.isEmpty()) {
-            selectedProduct = listProductsFiltro.get(0);
-            onRowSelect();
-        }
-        createBarModel();
-        showMessaggeGood("Se han encontrado " + listProductsFiltro.size() + " resultados");
+    }
+
+    public int getPosicionTab() {
+        return posicionTab;
+    }
+
+    public void setPosicionTab(int posicionTab) {
+        this.posicionTab = posicionTab;
     }
 
     public boolean comprobarFechas(Date fecha, Date fechaFiltro1, Date fechaFiltro2) {
@@ -433,6 +495,13 @@ public class Main {
     public void exportToExcel() throws IOException {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Products");
+            sheet.setColumnWidth(0, 4000);
+            sheet.setColumnWidth(1, 5000);
+            sheet.setColumnWidth(2, 5000);
+            sheet.setColumnWidth(3, 3000);
+            sheet.setColumnWidth(4, 5000);
+            sheet.setColumnWidth(5, 4000);
+            sheet.setColumnWidth(6, 3000);
 
             Row headerRow = sheet.createRow(0);
             String[] columns = {"Code", "Name", "Category", "Quantity", "Price", "Date", "Stock"};
@@ -444,6 +513,17 @@ public class Main {
             CellStyle headerCellStyle = workbook.createCellStyle();
             headerCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
             headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            CellStyle redRowStyle = workbook.createCellStyle();
+            redRowStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
+            redRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            CellStyle greenRowStyle = workbook.createCellStyle();
+            greenRowStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+            greenRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            CellStyle precioCellStyle = workbook.createCellStyle();
+            precioCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
             for (int i = 0; i < headerRow.getLastCellNum(); i++) {
                 headerRow.getCell(i).setCellStyle(headerCellStyle);
@@ -462,7 +542,20 @@ public class Main {
                 row.createCell(5).setCellValue(sdf.format(product.getBirth()));
                 String val = (product.isStock()) ? "Si" : "No";
                 row.createCell(6).setCellValue(val);
+
+       
+                if (product.getQuantity() == 0) {
+                    applyStyleToRow(row, redRowStyle);
+                } else if (product.getQuantity() >= 20) {
+                    applyStyleToRow(row, greenRowStyle);
+                }
+
             }
+
+            Row totalRow = sheet.createRow(rowNum);
+
+            totalRow.createCell(3).setCellValue("Total");
+            totalRow.createCell(4).setCellValue(formatoImporte.format(totalPrecio));
 
             workbook.write(out);
             byte[] content = out.toByteArray();
@@ -479,34 +572,37 @@ public class Main {
         }
     }
 
-    public void rowReorder(ReorderEvent event) {
-        if (!isFiltroActivo()) {
-            List<Lugar> listado = selectedProduct.getLugares();
-            int fromIndex = event.getFromIndex();
-            int toIndex = event.getToIndex();
-            Lugar lugarMovido = listado.remove(fromIndex);
-            listado.add(toIndex, lugarMovido);
-
-            for (int i = 0; i < listado.size(); i++) {
-                Lugar lugar = listado.get(i);
-                lugar.setOrden(i + 1);
-            }
-        } else {
-            showError("No se puede reordenar mientras se está aplicando un filtro.");
+    private void applyStyleToRow(Row row, CellStyle style) {
+        for (Cell cell : row) {
+            cell.setCellStyle(style);
         }
     }
-    
-    public boolean hayRegistros(){
-        return (listProductsFiltro.size()>0);
+
+    public void rowReorder(ReorderEvent event) {
+        if (listaLugaresFilterValue.size() == listaLugares.size()) {
+            Object elementoMovido = listaLugares.remove(event.getFromIndex());
+            listaLugares.add(event.getToIndex(), (Lugar) elementoMovido);
+            actualizarOrden();
+        }
+    }
+
+    private void actualizarOrden() {
+        for (int i = 0; i < listaLugares.size(); i++) {
+            listaLugares.get(i).setOrden(i + 1);
+        }
+    }
+
+    public boolean hayRegistros() {
+        return (!listProductsFiltro.isEmpty());
     }
 
     public void filtrado(FilterEvent event) {
-        setFiltroActivo(false); // Establecemos el filtro como activo
+        setFiltroActivo(false);
     }
 
     public void limpiarFiltro() {
-        setFiltroActivo(false); // Establecemos el filtro como inactivo
-        PrimeFaces.current().executeScript("PF('dataTableLugares').clearFilters()");
+        setFiltroActivo(false);
+        PrimeFaces.current().executeScript("PF('dataTableLugares').clearFilters();");
     }
 
     public boolean isFiltroActivo() {
@@ -531,6 +627,42 @@ public class Main {
 
     public void setListaLugaresFilterValue(List<Lugar> listaLugaresFilterValue) {
         this.listaLugaresFilterValue = listaLugaresFilterValue;
+    }
+
+    public void preProcessPDF(Object document) {
+        Document doc = (Document) document;
+        doc.setPageSize(PageSize.A4.rotate());
+    }
+
+    public TabView getTabView() {
+        return tabView;
+    }
+
+    public void setTabView(TabView tabView) {
+        this.tabView = tabView;
+    }
+
+    public void onTabChange(TabChangeEvent event) {
+        showMessaggeGood(event.getTab().getTitle());
+    }
+
+    public void onTabClose(TabCloseEvent event) {
+        showMessaggeGood(event.getTab().getTitle());
+    }
+
+    public void totalPrecioAño() {
+        for (Product p : listaProducts) {
+            totalPrecio += p.getPrice();
+        }
+
+    }
+
+    public double getTotalPrecio() {
+        return totalPrecio;
+    }
+
+    public void setTotalPrecio(double totalPrecio) {
+        this.totalPrecio = totalPrecio;
     }
 
 }
