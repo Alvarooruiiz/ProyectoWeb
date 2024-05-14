@@ -1,24 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Tabla;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-/**
- *
- * @author aruize
- */
 public class Product {
     private String code;
     private String name;
-    private String category;
+    private Categoria category;
     private int quantity;
     private double price;
     private Date birth;
-    private boolean stock;
+    private short stock;
     private ArrayList<Lugar> lugares;
     
    
@@ -27,7 +19,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(String code, String name, String category, int quantity, double price, Date birth, boolean stock, ArrayList<Lugar> lugares) {
+    public Product(String code, String name, Categoria category, int quantity, double price, Date birth, short stock, ArrayList<Lugar> lugares) {
         this.code = code;
         this.name = name;
         this.category = category;
@@ -65,16 +57,16 @@ public class Product {
     public void setBirth(Date birth) {
         this.birth = birth;
     }
-    
 
-    public boolean isStock() {
+    public short getStock() {
         return stock;
     }
 
-    public void setStock(boolean stock) {
+    public void setStock(short stock) {
         this.stock = stock;
-    }    
+    }
     
+
 
     public String getCode() {
         return code;
@@ -92,11 +84,11 @@ public class Product {
         this.name = name;
     }
 
-    public String getCategory() {
+    public Categoria getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Categoria category) {
         this.category = category;
     }
 
@@ -107,6 +99,4 @@ public class Product {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-    
-    
 }

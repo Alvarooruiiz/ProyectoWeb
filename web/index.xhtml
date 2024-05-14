@@ -3,7 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
         <title>Facelet Title</title>
     </h:head>
@@ -18,6 +20,64 @@
             background-image: none !important;
             color: #ffffff !important;
         }
+        body .ui-datatable .ui-datatable-header {
+            background: #0094d4;
+            border: 1px solid #e9ecef;
+            border-width: 1px 0 1px 0;
+            color: #495057;
+            padding: 1rem 1rem;
+            font-weight: 600;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+
+        }
+
+        body .ui-datatable .ui-datatable-header .flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ui-datatable .ui-column-filter {
+            display: none;
+            box-sizing: border-box;
+            width: 100%;
+            margin: .5rem auto auto auto;
+
+        }
+
+        body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-carat-2-n-s:before {
+            content: "";
+        }
+
+        body .ui-inputfield {
+            color: #495057;
+            background: #fff;
+            padding: .5rem .5rem;
+            border: 1px solid #ced4da;
+            outline: 0 none;
+            font-size: 1rem;
+            border-radius: 4px;
+            transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s, opacity .2s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        body .ui-dialog .ui-dialog-titlebar {
+            background: #0094d4 !important;
+            color: #fff;
+            font-weight: 700;
+            border-bottom: 0 none;
+            padding: 1.5rem;
+        }
+
+        body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon .ui-icon-closethick:before {
+            content: "";
+            color: white;
+        }
+
+
+
 
     </style>
     <h:body>
@@ -27,19 +87,20 @@
             <p:growl id="growl-sticky" for="sticky-key" showDetail="true" sticky="true" />
             <p:toolbar>
                 <p:toolbarGroup>
-                    <p:commandButton icon="pi pi-plus" actionListener="#{Main.openNew()}" oncomplete="PF('dlg1New').show()" styleClass="ui-button-success" update="dialogs"/>
+                    <p:commandButton icon="pi pi-plus" actionListener="#{Main.openNew()}" oncomplete="PF('dlg1New').show()" styleClass="ui-button-success" update="dialogs" disabled="#{Main.activarBtnAdd or !Main.mostrarDataTable}"/>
+                    <p:commandButton id="btnDeleteRows" widgetVar="btnDeleteRows" icon="pi pi-trash" actionListener="#{Main.deleteProductsList(Main.listLazyRows)}" styleClass="ui-button-danger" rendered="#{Main.tabView.activeIndex eq 2}" style="margin-left: 20px" disabled="#{empty Main.listLazyRows}"/>
                 </p:toolbarGroup>
                 <p:toolbarGroup> 
                     <div style="display: flex; align-content: center; align-items: center">
                         <div style="display: flex; flex-direction: column; margin-bottom: 10px">
                             <h:outputLabel value="Fecha inicio: " style="font-weight: bold; margin-right: 10px; margin-bottom: 10px;" for="comboSearch"/>
-                            <p:datePicker id="dpFecha1" value="#{Main.filtroFecha1}" pattern="dd/MM/yyyy" timeZone="Europe/Madrid" maxdate="#{Main.filtroFecha2}" style="margin-right: 20px; align-content: center">
+                            <p:datePicker id="dpFecha1" value="#{Main.filtroFecha1}" pattern="yyyy/MM/dd" timeZone="Europe/Madrid" maxdate="#{Main.filtroFecha2}" style="margin-right: 20px; align-content: center" disabled="#{Main.tabView.activeIndex eq 3}">
                                 <p:ajax event="dateSelect" update="mainForm"/>
                             </p:datePicker>
                         </div>
                         <div style="display: flex; flex-direction: column; margin-bottom: 10px">
                             <h:outputLabel value="Fecha fin " style="font-weight: bold; margin-right: 10px; margin-bottom: 10px;" for="comboSearch"/>
-                            <p:datePicker id="dpFecha2" value="#{Main.filtroFecha2}" pattern="dd/MM/yyyy" timeZone="Europe/Madrid" mindate="#{Main.filtroFecha1}" maxdate="#{Main.fechaHoy()}" style="margin-right: 20px; align-content: center;">
+                            <p:datePicker id="dpFecha2" value="#{Main.filtroFecha2}" pattern="yyyy/MM/dd" timeZone="Europe/Madrid" mindate="#{Main.filtroFecha1}" maxdate="#{Main.fechaHoy()}" style="margin-right: 20px; align-content: center;" disabled="#{Main.tabView.activeIndex eq 3}">
                                 <p:ajax event="dateSelect" update="mainForm"/>
                             </p:datePicker>
 
@@ -48,22 +109,20 @@
                         <div style="display: flex; flex-direction: column; margin-bottom: 10px">
                             <h:outputLabel value="Filtrar por categoría:" style="font-weight: bold; margin-right: 10px; margin-bottom: 10px;" for="comboSearch"/>
 
-                            <p:selectOneMenu id="comboSearch" widgetVar="comboSearch" onchange="PF('dataTable').filter()" styleClass="custom-filter" style="margin-right: 20px; z-index: 2" value="#{Main.selectedCategory}">
+                            <p:selectOneMenu id="comboSearch" widgetVar="comboSearch" onchange="PF('dataTable').filter()" styleClass="custom-filter" style="margin-right: 20px; z-index: 2" value="#{Main.selectedCategory}" disabled="#{Main.tabView.activeIndex eq 3}">
                                 <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
                                 <f:selectItems value="#{Main.availableCategories}" />
                             </p:selectOneMenu>
                         </div>
 
-                        <p:commandButton styleClass="ui-button-danger" icon="pi pi-file-pdf" rendered="#{not empty Main.listProductsFiltro }" style="margin-right: 20px; align-content: center;">
-                            <p:dataExporter type="pdf" target="dataTable" fileName="productsPDF" preProcessor="#{Main.preProcessPDF}" />
+                        <p:commandButton styleClass="ui-button-success" icon="pi pi-download" style="margin-right: 20px; align-content: center;"
+                                         action="#{Main.exportToZip()}" ajax="false" rendered="#{not empty Main.listProductsFiltro and Main.mostrarBotonDownload}" />
+                        <p:commandButton styleClass="ui-button-danger" icon="pi pi-file-pdf" rendered="#{not empty Main.listProductsFiltro and Main.mostrarBotonExportPdf}" style="margin-right: 20px; align-content: center;">
+                            <p:dataExporter type="pdf" target="mainForm:tabPanel:dataTable" fileName="productsPDF" preProcessor="#{Main.preProcessPDF}"/>
                         </p:commandButton>
-
                         <p:commandButton styleClass="ui-button-success" icon="pi pi-file-excel" style="margin-right: 20px; align-content: center;"
-                                         action="#{Main.exportToExcel()}" ajax="false" rendered="#{not empty Main.listProductsFiltro }" />
-
-
-                        <p:commandButton icon="pi pi-search" id="btnSearch" widgetVar="btnSearch" actionListener="#{Main.mostrarTablaFiltro}" oncomplete="PF('dataTable').clearFilters(); PF('dataTableLugares').clearFilters();" >
-                        </p:commandButton>
+                                         action="#{Main.exportToExcel()}" ajax="false" rendered="#{not empty Main.listProductsFiltro and Main.mostrarBotonExportExcel}" />
+                        <p:commandButton icon="pi pi-search" id="btnSearch" widgetVar="btnSearch" actionListener="#{Main.mostrarTablaFiltro}" disabled="#{Main.tabView.activeIndex eq 3}"/>
                     </div>
 
                 </p:toolbarGroup>
@@ -71,149 +130,256 @@
             </p:toolbar>
 
 
-            <p:tabView id="tabPanel" widgetVar="tabPanel" binding="#{Main.tabView}" dynamic="true" activeIndex="#{Main.posicionTab}">
+            <p:tabView id="tabPanel" widgetVar="tabPanel" binding="#{Main.tabView}"  activeIndex="#{Main.posicionTab}">
+                <p:ajax event="tabChange" listener="#{Main.handleTabChange}" update="mainForm"/>
+
                 <p:tab title="Datos">
-                    <p:dataTable var="product" value="#{Main.listProductsFiltro}" widgetVar="dataTable" id="dataTable" rows="5"
-                                 paginator="true" paginatorPosition="bottom"
-                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-                                 rowsPerPageTemplate="5,10,{ShowAll|'All'}"
-                                 rowStyleClass="#{(product.quantity eq 0) ? 'rojo' : ((product.quantity gt 20) ? 'verde' : null)}"
-                                 selectionMode="single"
-                                 selection="#{Main.selectedProduct}" rowKey="#{product.code}"
-                                 rowExpandMode="single"
-                                 filteredValue="#{Main.listProductsFiltroFilterValue}">
-                        <p:ajax event="rowSelect" listener="#{Main.onRowSelect}" update="mainForm:tabPanel:dataTableLugares"/>
+                    <h:panelGroup id="tabla1">
+                        <p:dataTable var="product" value="#{Main.listProductsFiltro}" widgetVar="dataTable" id="dataTable" rows="5"
+                                     paginator="true" paginatorPosition="bottom"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                     rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                                     rowStyleClass="#{(product.quantity eq 0) ? 'rojo' : ((product.quantity gt 20) ? 'verde' : null)}"
+                                     selectionMode="single"
+                                     selection="#{Main.selectedProduct}" rowKey="#{product.code}"
+                                     rowExpandMode="single"
+                                     filteredValue="#{Main.listProductsFiltroFilterValue}"
+                                     globalFilterOnly="#{Main.globalFilterOnly}"
+                                     >
+                            <p:ajax event="rowSelect" listener="#{Main.onRowSelect}" update="mainForm:tabPanel:dataTableLugares"/>
 
-                        <p:column exportable="false" width="">
-                            <p:commandButton icon="pi pi-pencil" update="dialogs mainForm" oncomplete="PF('dlg1New').show()" style="margin-right: 10px" actionListener="#{Main.editProduct(product)}"
-                                             styleClass="edit-button rounded-button ui-button-success"/>
+                            <ui:include src="WEB-INF/datatable-header.xhtml">
+                                <ui:param name="listaRendered" value="#{Main.mostrarTablaLugares}"/>
+                                <ui:param name="id" value="dataTable"/> 
+                                <ui:param name="listaSize" value="#{Main.listProductsFiltro.size()}"/>
+                                <ui:param name="actionBean" value="#{Main}"/>
+                                <ui:param name="tablaExport" value="dataTable"/>
+                                <ui:param name="nombreArchivo" value="TablaProductos"/>
+                                <ui:param name="verBuscador" value="true"/>
+                                <ui:param name="verTotal" value="true"/>
+                                <ui:param name="verExcel" value="#{not empty Main.listProductsFiltro}"/>
 
-                            <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" actionListener="#{Main.deleteProduct(product)}" update="mainForm" >
-                                <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
+                                <ui:param name="titulo" value="Total SGE externo"/>
+                            </ui:include>
+
+                            <p:ajax event="filter" update="totalText" />
+                            <p:column exportable="false" width="">
+                                <p:commandButton icon="pi pi-pencil" update="dialogs mainForm" oncomplete="PF('dlg1New').show()" style="margin-right: 10px" actionListener="#{Main.editProduct(product)}"
+                                                 styleClass="edit-button rounded-button ui-button-success"/>
+
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" actionListener="#{Main.deleteProduct(product)}" update="mainForm" >
+                                    <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+                            </p:column>
+
+                            <p:column headerText="Code" style="text-align:left" sortBy="#{product.code}" filterBy="#{product.code}">
+                                <h:outputText value="#{product.code}" />
+                            </p:column>
+
+                            <p:column headerText="Name" style="text-align:left" sortBy="#{product.name}" filterBy="#{product.name}">
+                                <h:outputText value="#{product.name}" />
+                            </p:column>
+
+                            <p:column headerText="Category" sortBy="#{product.category.nombre}" filterBy="#{product.category.nombre}">
+
+                                <h:outputText value="#{product.category.nombre}" />
+                            </p:column>
+
+                            <p:column headerText="Birth" style="text-align:left" sortBy="#{product.birth}" filterBy="#{Main.formatProductBirth(product.birth)}">
+
+                                <h:outputText value="#{product.birth}" >
+                                    <f:convertDateTime pattern="yyyy/MM/dd" timeZone="Europe/Madrid"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Quantity" style="text-align: right" sortBy="#{product.quantity}">
+                                <h:outputText value="#{product.quantity}">
+                                    <f:convertNumber pattern="##,##0" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Price" style="text-align:right" sortBy="#{product.price}">
+                                <h:outputText value="#{product.price}">
+                                    <f:convertNumber pattern="##,##0.00€" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Stock" style="text-align:center"  sortBy="#{product.stock}" exportValue="#{Main.convertirStock(product) ? 'Si' : 'No'}">
+                                <p:selectBooleanCheckbox value="#{Main.convertirStock(product)}" disabled="true"/>
+                            </p:column>
+                            <p:column id="toggler" style="width:2rem" exportable="false">
+                                <p:rowToggler/>
+                            </p:column>
+                            <p:columnGroup type="footer" rendered="#{Main.listProductsFiltro ne null and not empty Main.listProductsFiltro}">
+                                <p:row>
+                                    <p:column colspan="6" style="text-align:right" footerText="Totals:"/>
+                                    <p:column>
+                                        <f:facet name="footer">
+                                            <h:outputText value="#{Main.totalPrecio}" style="text-align:right">
+                                                <f:convertNumber type="currency" currencySymbol="€"/>
+                                            </h:outputText>
+                                        </f:facet>
+                                    </p:column>
+                                </p:row>
+                            </p:columnGroup>
+                            <p:rowExpansion>
+                                <p:dataTable var="lugarExpansion" value="#{Main.getListaLugaresExpansion(product)}" widgetVar="dataTableLugaresExpansion" id="dataTableLugaresExpansion">
+                                    <p:column>
+                                        <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" actionListener="#{Main.deleteLugarExpansion(lugarExpansion,product)}" update="mainForm" >
+                                            <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                    <p:column headerText="id" style="text-align:left" sortBy="#{lugarExpansion.id}" filterBy="#{lugarExpansion.id}">
+                                        <h:outputText value="#{lugarExpansion.id}"/>
+                                    </p:column>
+                                    <p:column headerText="Ciudad" style="text-align:left" sortBy="#{lugarExpansion.ciudad}" filterBy="#{lugarExpansion.ciudad}" filterMatchMode="contains">
+                                        <h:outputText value="#{lugarExpansion.ciudad}"/>
+                                    </p:column>
+                                    <p:column headerText="Pais" style="text-align:left" sortBy="#{lugarExpansion.pais}" filterBy="#{lugarExpansion.pais}" filterMatchMode="contains">
+                                        <h:outputText value="#{lugarExpansion.pais}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:rowExpansion>
+
+                        </p:dataTable>
+                    </h:panelGroup>
+
+
+
+                    <p:toolbar rendered="#{Main.mostrarTablaLugares}">
+                        <p:toolbarGroup>
+                            <p:commandButton icon="pi pi-plus" styleClass="ui-button-success" action="#{Main.chooseLugar}">
+                                <p:ajax event="dialogReturn" listener="#{Main.onLugarChosen}" update="mainForm:tabPanel:dataTableLugares" oncomplete="PF('dataTableLugares').clearFilters(); "/>
                             </p:commandButton>
-                        </p:column>
-
-                        <p:column headerText="Code" style="text-align:left" sortBy="#{product.code}" filterBy="#{product.code}">
-                            <h:outputText value="#{product.code}" />
-                        </p:column>
-
-                        <p:column headerText="Name" style="text-align:left" sortBy="#{product.name}" filterBy="#{product.name}">
-                            <h:outputText value="#{product.name}" />
-                        </p:column>
-
-                        <p:column headerText="Category" sortBy="#{product.category}" filterBy="#{product.category}">
-                            <f:facet name="filter">
-                                <p:selectOneMenu onchange="PF('dataTable').filter()" styleClass="custom-filter">
-                                    <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
-                                    <f:selectItems value="#{Main.availableCategories}" />
-                                </p:selectOneMenu>
-                            </f:facet>
-                            <h:outputText value="#{product.category}" />
-                        </p:column>
-
-                        <p:column headerText="Birth" style="text-align:left" sortBy="#{product.birth}" filterBy="#{product.birth}">
-                            <f:facet name="filter">
-                                <p:datePicker widgetVar="birthPicker" pattern="dd/MM/yyyy" onblur="PF('dataTable').filter()" >
-                                    <p:ajax event="dateSelect" oncomplete="PF('dataTable').filter()" />
-                                </p:datePicker>
-                            </f:facet>
-                            <h:outputText value="#{product.birth}" >
-                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Europe/Madrid"/>
-                            </h:outputText>
-                        </p:column>
-
-                        <p:column headerText="Quantity" style="text-align: right" sortBy="#{product.quantity}" >
-                            <h:outputText value="#{product.quantity}"/>
-                        </p:column>
-
-                        <p:column headerText="Price" style="text-align:right" sortBy="#{product.price}">
-                            <h:outputText value="#{product.price}">
-                                <f:convertNumber pattern="##,###.00€" />
-                            </h:outputText>
-                        </p:column>
-
-                        <p:column headerText="Stock" style="text-align:center"  sortBy="#{product.stock}"  exportValue="#{product.stock ? 'Si' : 'No'}">
-                            <p:selectBooleanCheckbox value="#{product.stock}" disabled="true"/>
-                        </p:column>
-                        <p:column id="toggler" style="width:2rem" exportable="false">
-                            <p:rowToggler/>
-                        </p:column>
-                        <p:columnGroup type="footer" rendered="#{Main.listProductsFiltro ne null and not empty Main.listProductsFiltro}">
-                            <p:row>
-                                <p:column colspan="6" style="text-align:right" footerText="Totals:"/>
-                                <p:column>
-                                    <f:facet name="footer">
-                                        <h:outputText value="#{Main.totalPrecio}" style="text-align:right">
-                                            <f:convertNumber type="currency" currencySymbol="€"/>
-                                        </h:outputText>
-                                    </f:facet>
-                                </p:column>
-                            </p:row>
-                        </p:columnGroup>
-                        <p:rowExpansion>
-                            <p:dataTable var="lugarExpansion" value="#{Main.getListaLugaresExpansion(product)}" widgetVar="dataTableLugaresExpansion" id="dataTableLugaresExpansion">
-                                <p:column>
-                                    <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" actionListener="#{Main.deleteLugarExpansion(lugarExpansion,product)}" update="mainForm" >
-                                        <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
-                                    </p:commandButton>
-                                </p:column>
-                                <p:column headerText="id" style="text-align:left" sortBy="#{lugarExpansion.id}" filterBy="#{lugarExpansion.id}">
-                                    <h:outputText value="#{lugarExpansion.id}"/>
-                                </p:column>
-                                <p:column headerText="Ciudad" style="text-align:left" sortBy="#{lugarExpansion.ciudad}" filterBy="#{lugarExpansion.ciudad}" filterMatchMode="contains">
-                                    <h:outputText value="#{lugarExpansion.ciudad}"/>
-                                </p:column>
-                                <p:column headerText="Pais" style="text-align:left" sortBy="#{lugarExpansion.pais}" filterBy="#{lugarExpansion.pais}" filterMatchMode="contains">
-                                    <h:outputText value="#{lugarExpansion.pais}"/>
-                                </p:column>
+                        </p:toolbarGroup>
+                    </p:toolbar>
 
 
-                            </p:dataTable>
-                        </p:rowExpansion>
-                    </p:dataTable>
-                    <p:dataTable var="lugar" value="#{Main.listaLugares}" widgetVar="dataTableLugares" id="dataTableLugares" rows="5" rendered="#{Main.mostrarTablaLugares}"
-                                 draggableRows="true"
-                                 filteredValue="#{Main.listaLugaresFilterValue}">
-                        <p:ajax event="rowReorder" update="dataTableLugares" listener="#{Main.rowReorder}" oncomplete="PF('dataTableLugares').clearFilters(); "/>
+                    <h:panelGroup id="lugares" rendered="#{Main.mostrarTablaLugares}">
+                        <p:dataTable var="lugar" value="#{Main.listaLugares}" widgetVar="dataTableLugares" id="dataTableLugares" rows="5"
+                                     draggableRows="true"
+                                     filteredValue="#{Main.listaLugaresFilterValue}" rendered="#{Main.mostrarTablaLugares}">
+                            <p:ajax event="rowReorder" update="dataTableLugares" listener="#{Main.rowReorder}" oncomplete="PF('dataTableLugares').clearFilters(); "/>
+                            <ui:include src="WEB-INF/datatable-header.xhtml">
+                                <ui:param name="listaRendered" value="#{not empty Main.listProductsFiltro}"/>
+                                <ui:param name="id" value="dataTableLugares"/> 
+                                <ui:param name="listaSize" value="#{Main.listaLugares.size()}"/>
+                                <ui:param name="actionBean" value="#{Main}"/>
+                                <ui:param name="excelMethod" value="exportToExcel"/>
+                                <ui:param name="verBuscador" value="true"/>
+                                <ui:param name="verExcel" value="true"/>
+                                <ui:param name="tablaExport" value="dataTableLugares"/>
+                                <ui:param name="nombreArchivo" value="TablaLugares"/>
+                                <ui:param name="verTotal" value="true"/>
+                                <ui:param name="titulo" value="Ciudades"/>
+                            </ui:include>
 
-                        <p:column>
-                            <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" actionListener="#{Main.deleteLugar(lugar)}" update="mainForm:tabPanel:dataTableLugares"  oncomplete="PF('dataTableLugares').clearFilters(); ">
-                                <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
-                            </p:commandButton>
-                        </p:column>
-                        <p:column headerText="orden" style="text-align:left">
-                            <h:outputText value="#{lugar.orden}"/>
-                        </p:column>
-                        <p:column headerText="id" style="text-align:left" sortBy="#{lugar.id}" filterBy="#{lugar.id}">
-                            <h:outputText value="#{lugar.id}"/>
-                        </p:column>
-                        <p:column headerText="Ciudad" style="text-align:left" sortBy="#{lugar.ciudad}" filterBy="#{lugar.ciudad}" filterMatchMode="contains">
-                            <h:outputText value="#{lugar.ciudad}"/>
-                        </p:column>
-                        <p:column headerText="Pais" style="text-align:left" sortBy="#{lugar.pais}" filterBy="#{lugar.pais}" filterMatchMode="contains">
-                            <h:outputText value="#{lugar.pais}"/>
-                        </p:column>
-                    </p:dataTable>
+                            <p:column exportable="false">
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" actionListener="#{Main.deleteLugar(lugar)}" update="mainForm:tabPanel:dataTableLugares"  oncomplete="PF('dataTableLugares').clearFilters(); ">
+                                    <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+                            </p:column>
+                            <p:column headerText="orden" style="text-align:left">
+                                <h:outputText value="#{lugar.orden}"/>
+                            </p:column>
+                            <p:column headerText="id" style="text-align:left" sortBy="#{lugar.id}" filterBy="#{lugar.id}">
+                                <h:outputText value="#{lugar.id}"/>
+                            </p:column>
+                            <p:column headerText="Ciudad" style="text-align:left" sortBy="#{lugar.ciudad}" filterBy="#{lugar.ciudad}" filterMatchMode="contains">
+                                <h:outputText value="#{lugar.ciudad}"/>
+                            </p:column>
+                            <p:column headerText="Pais" style="text-align:left" sortBy="#{lugar.pais}" filterBy="#{lugar.pais}" filterMatchMode="contains">
+                                <h:outputText value="#{lugar.pais}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGroup>
                 </p:tab>
                 <p:tab title="Estadística">
                     <div class="card">
                         <p:barChart model="#{Main.barChartModel}" style="width: 100%; height: 500px;" id="barChart" widgetVar="barChart"/>
                     </div>
                 </p:tab>
+                <p:tab title="Lazy">
+                    <h:panelGroup id="lazy" >
+                        <p:dataTable var="productLazy" value="#{Main.lazyModel}" filteredValue="#{Main.listProductsLazyFiltered}" rows="10" id="customerTable" widgetVar="customerTable" scrollRows="20" scrollable="true"
+                                     virtualScroll="true" scrollHeight="500" rowSelectMode="none" selection="#{Main.listLazyRows}">
+                            <p:ajax event="rowSelectCheckbox" update="mainForm:btnDeleteRows"/>
+                            <p:ajax event="rowUnselectCheckbox" update="mainForm:btnDeleteRows"/>
+                            <p:ajax event="toggleSelect" update="mainForm:btnDeleteRows"/>
+
+                            <ui:include src="WEB-INF/datatable-header.xhtml">
+                                <ui:param name="listaRendered" value="#{Main.mostrarLazy}"/>
+                                <ui:param name="id" value="customerTable"/> 
+                                <ui:param name="listaSize" value="#{Main.listaProducts.size()}"/>
+                                <ui:param name="actionBean" value="#{Main}"/>
+                                <ui:param name="excelMethod" value="exportToExcel"/>
+                                <ui:param name="verBuscador" value="true"/>
+                                <ui:param name="verExcel" value="true"/>
+                                <ui:param name="tablaExport" value="customerTable"/>
+                                <ui:param name="nombreArchivo" value="TablaLazy"/>
+                                <ui:param name="verTotal" value="true"/>
+                                <ui:param name="titulo" value="Lazy table"/>
+                            </ui:include>
+
+                            <p:column selectionMode="multiple"/>
+
+                            <p:column headerText="Code" style="text-align:left" sortBy="#{productLazy.code}" filterBy="#{productLazy.code}">
+                                <h:outputText value="#{productLazy.code}" />
+                            </p:column>
+
+                            <p:column headerText="Name" style="text-align:left" sortBy="#{productLazy.name}" filterBy="#{productLazy.name}">
+                                <h:outputText value="#{productLazy.name}" />
+                            </p:column>
+
+                            <p:column headerText="Category" sortBy="#{productLazy.category.nombre}" filterBy="#{productLazy.category.nombre}">
+
+                                <h:outputText value="#{productLazy.category.nombre}" />
+                            </p:column>
+
+                            <p:column headerText="Birth" style="text-align:left" sortBy="#{productLazy.birth}" filterBy="#{productLazy.birth}">
+
+                                <h:outputText value="#{productLazy.birth}" >
+                                    <f:convertDateTime pattern="yyyy/MM/dd" timeZone="Europe/Madrid"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Quantity" style="text-align: right" sortBy="#{productLazy.quantity}" >
+                                <h:outputText value="#{productLazy.quantity}"/>
+                            </p:column>
+
+                            <p:column headerText="Price" style="text-align:right" sortBy="#{productLazy.price}">
+                                <h:outputText value="#{productLazy.price}">
+                                    <f:convertNumber pattern="##,##0.00€" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Stock" style="text-align:center"  sortBy="#{productLazy.stock}"  exportValue="#{Main.convertirStock(productLazy) ? 'Si' : 'No'}">
+                                <p:selectBooleanCheckbox value="#{Main.convertirStock(productLazy)}" disabled="true"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGroup>
+                </p:tab>
+
+                <p:tab title="Palets">
+                    <p:toolbar>
+                        <p:toolbarGroup>
+                            <p:inputText id="sscc" value="#{Main.ssccIntroducido}"  style="width: 200px; margin-right: 20px" />
+                            <p:commandButton value="Buscar" icon="pi pi-search" actionListener="#{Main.buscarPaletPorSSCC}" update="mainForm"/>
+
+                        </p:toolbarGroup>
+
+                    </p:toolbar>
+                </p:tab>
             </p:tabView>
-
-
-
-
-
         </h:form>
 
-        <h:form id="dialogs">
-            <p:dialog header="Product details" widgetVar="dlg1New" minHeight="40" width="550" showEffect="fade" responsive="true" modal="true">
+        <h:form id="dialogs" >
+            <p:dialog header="#{Main.editando ? 'Editar ' : 'Crear '} producto" widgetVar="dlg1New" minHeight="40" width="550" showEffect="fade" responsive="true" modal="true">
+                <p:ajax event="close" listener="#{Main.mostrarTablaFiltro()}"/>
                 <div style="margin: 10px">
                     <p:outputLabel>Code </p:outputLabel><p></p>
-                    <p:inputText id="code" value="#{Main.selectedProduct.code}" disabled="#{Main.editando}"  style="width: 200px"/>
+                    <p:inputText id="code" value="#{Main.selectedProduct.code}" disabled="#{Main.editando}" style="width: 200px"/>
                 </div>
                 <div style="margin: 10px">
                     <p:outputLabel>Name </p:outputLabel><p></p>
@@ -221,11 +387,11 @@
                 </div>
                 <div style="margin: 10px">
                     <p:outputLabel>Category</p:outputLabel>
-                    <p:selectOneRadio id="category" columns="2" layout="responsive" value="#{Main.selectedProduct.category}" required="true" requiredMessage="Introduzca la categoria">
-                        <f:selectItem itemLabel="Accessories" itemValue="Accessories"></f:selectItem>
-                        <f:selectItem itemLabel="Clothing" itemValue="Clothing"></f:selectItem>
-                        <f:selectItem itemLabel="Electronics" itemValue="Electronics"></f:selectItem>
-                        <f:selectItem itemLabel="Fitness" itemValue="Fitness"></f:selectItem>
+                    <p:selectOneRadio id="category" columns="2" layout="responsive" value="#{Main.selectedProduct.category}">
+                        <f:selectItem itemLabel="#{Main.selectedProduct.category.cod}" itemValue="#{Main.selectedProduct.category.nombre}"></f:selectItem>
+                        <f:selectItem itemLabel="#{Main.selectedProduct.category.cod eq 2}" itemValue="#{Main.selectedProduct.category.nombre}"></f:selectItem>
+                        <f:selectItem itemLabel="#{Main.selectedProduct.category.cod eq 3}" itemValue="#{Main.selectedProduct.category.nombre}"></f:selectItem>
+                        <f:selectItem itemLabel="#{Main.selectedProduct.category.cod eq 4}" itemValue="#{Main.selectedProduct.category.nombre}"></f:selectItem>
                     </p:selectOneRadio>
                 </div>
 
@@ -233,7 +399,7 @@
                 </div>
                 <div style="margin: 10px">
                     <p:outputLabel>Quantity</p:outputLabel><p/>
-                    <p:inputNumber id="quantity" value="#{Main.selectedProduct.quantity}" emptyValue="0" decimalPlaces="0" minValue="0"  style="width: 200px"/>
+                    <p:inputNumber id="quantity" value="#{Main.selectedProduct.quantity}" emptyValue="0" decimalPlaces="0" minValue="0" maxValue="100000" style="width: 200px"/>
                 </div>
                 <div style="margin: 10px">
                     <p:outputLabel>Price</p:outputLabel><p/>
@@ -241,15 +407,14 @@
                 </div>
                 <div style="margin: 10px">
                     <p:outputLabel>Birth</p:outputLabel><p/>
-                    <p:datePicker id="birth" value="#{Main.selectedProduct.birth}" pattern="yyyy/MM/dd" timeZone="Europe/Madrid" maxdate="#{Main.fechaHoy()}" required="true" requiredMessage="Introduzca la fecha"/>
+                    <p:datePicker id="birth" value="#{Main.selectedProduct.birth}" pattern="yyyy/MM/dd" timeZone="Europe/Madrid" maxdate="#{Main.fechaHoy()}"/>
                 </div>
                 <div style="margin: 10px">
                     <p:outputLabel style="margin-right: 20px">Stock</p:outputLabel>
-                    <p:selectBooleanCheckbox value="#{Main.selectedProduct.stock}" /><p/>
+                    <p:selectBooleanCheckbox value="#{Main.seleccionStock}" /><p/>
                 </div>
                 <f:facet name="footer">
                     <p:commandButton value="Save" icon="pi pi-check" actionListener="#{Main.addProduct()}" update="mainForm"/>
-                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('dlg1New').hide()" class ="ui-button-secondary"/>
                 </f:facet>
 
             </p:dialog>
@@ -259,6 +424,7 @@
                 <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" />
             </p:confirmDialog>
         </h:form>
+
 
     </h:body>
 </html>

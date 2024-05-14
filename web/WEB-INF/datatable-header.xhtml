@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:facet name="header" id="headerFacet">
+        <h:panelGroup rendered="#{listaRendered}">
+
+
+            <div class="flex align-items-center justify-content-between">
+                <div align="left">
+                    <span style="color: white"> #{titulo} </span>
+                </div>
+                <div align="right">
+                    <span class="ui-input-icon-left">
+                        <i class="pi pi-search"/>
+                        <p:inputText id="globalFilter" widgetVar="globalFilter"  placeholder="Search" rendered="#{verBuscador}" onkeyup="delaySearch('#{id}')"/>
+                    </span>
+
+                    <p:commandButton styleClass="ui-button-success" icon="pi pi-file-excel" style="margin-left: 20px; align-content: center;"  rendered="#{verExcel}">
+                        <p:dataExporter type="xls" target="#{tablaExport}" fileName="#{nombreArchivo}"/>
+                    </p:commandButton>
+                    <h:outputText id="totalText" value="Total #{listaSize}" style="color: white; padding-left: 20px" rendered="#{verTotal}"/>
+                </div>
+            </div>
+
+            <script style="display: none">
+                let typingTimer;
+                const doneTypingInterval = 500;
+                    
+                function delaySearch(id) {
+                    clearTimeout(typingTimer);
+                    console.log("asdasdasdghasidjhasjf")
+                    typingTimer = setTimeout(function () {
+                        PF(id).filter();
+                    }, doneTypingInterval);
+
+                }
+
+            </script>
+        </h:panelGroup>
+
+    </f:facet>
+
+</ui:composition>
