@@ -7,7 +7,12 @@ package Tabla;
 public class Categoria {
     private int cod;
     private String nombre;
+    
+    
 
+    public Categoria() {
+    }
+    
     public Categoria(int cod, String nombre) {
         this.cod = cod;
         this.nombre = nombre;

@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <style>
+        body .ui-datatable .ui-datatable-header {
+            background: #0094d4;
+            border: 1px solid #e9ecef;
+            border-width: 1px 0 1px 0;
+            color: #495057;
+            padding: 1rem 1rem;
+            font-weight: 600;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+
+        }
+
+        body .ui-datatable .ui-datatable-header .flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ui-datatable .ui-column-filter {
+            display: none;
+            box-sizing: border-box;
+            width: 100%;
+            margin: .5rem auto auto auto;
+
+        }
+
+        body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-carat-2-n-s:before {
+            content: "";
+        }
+
+        body .ui-inputfield {
+            color: #495057;
+            background: #fff;
+            padding: .5rem .5rem;
+            border: 1px solid #ced4da;
+            outline: 0 none;
+            font-size: 1rem;
+            border-radius: 4px;
+            transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s, opacity .2s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        element.style {
+            border: 0px none;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+
+        body .ui-datatable .ui-datatable-header {
+            background: #0094d4 !important;
+            border: 1px solid #e9ecef;
+            border-width: 1px 0 1px 0;
+            color: #495057;
+            padding: 1rem 1rem;
+            font-weight: 600;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+
+        .ui-datatable .ui-column-filter {
+            display: none !important;
+            box-sizing: border-box;
+            width: 100%;
+            margin: .5rem auto auto auto;
+        }
+
+        body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-carat-2-n-s::before {
+            content: "" !important;
+        }
+
+        body .ui-dialog .ui-dialog-titlebar {
+            background: #0094d4 !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            border-bottom: 0 none;
+            padding: 1.5rem;
+        }
+
+        body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon .ui-icon-closethick:before {
+            content: "";
+            color: #ffffff !important;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+            margin-left: 10px;
+        }
+
+        .grid-container-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 10px;
+            margin-left: 10px;
+        }
+
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+        
+        .ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all ui-state-disabled {
+            width: 277px !important;
+        }
+        
+        .ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all{
+            width: 178px !important;
+        }
+
+    </style>
+
+
+    <h:head>
+        <title>TODO supply a title</title>
+    </h:head>
+
+
+    <h:body>
+        <h:form id="formArticulo">
+
+            <p:toolbar>
+                <p:toolbarGroup>
+                    <div style="display: flex; align-content: center; align-items: center; padding: 10px;">
+                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                            <h:outputLabel value="Con Tercero Depósito"/>
+                            <div class="ui-inputgroup">
+                                <div class="ui-inputgroup-addon"><i class="pi pi-check-square"></i></div>
+                                <p:inputText placeholder="Sin Tercero" disabled="true"/>
+                                <p:commandButton icon="pi pi-search"/>
+                                <p:commandButton icon="pi pi-times" styleClass="ui-button-danger"/>
+                            </div>
+                        </div>
+
+
+                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                            <h:outputLabel value="Id Artículo"/>
+                            <p:inputText value="" disabled="true"/>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                            <h:outputLabel value="Descripción"/>
+                            <p:inputText value="" disabled="true"/>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                            <h:outputLabel value="Referencia"/>
+                            <p:inputText value="" disabled="true"/>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                            <h:outputLabel value="Código de barras"/>
+                            <p:inputText value="" disabled="true"/>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                            <h:outputLabel value="Clasificación"/>
+                            <p:selectOneMenu id="comboSearchClasf" widgetVar="comboSearchClasf" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                                <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                            </p:selectOneMenu>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                            <h:outputLabel value="Estado"/>
+                            <p:selectOneMenu id="comboSearchEst" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                                <f:selectItem itemLabel="Activo" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                            </p:selectOneMenu>
+                        </div>
+
+                    </div>
+                </p:toolbarGroup>
+                <p:toolbarGroup>
+                    <p:commandButton icon="pi pi-filter" styleClass="ui-button-success" update="filterDialog" oncomplete="PF('dialogFilter').show()"/>
+                    <p:commandButton icon="pi pi-search" style="margin-left: 20px"/>
+                    <p:commandButton icon="pi pi-clone" style="margin-left: 20px"/>
+                </p:toolbarGroup>
+            </p:toolbar>
+
+
+
+
+            <p:dataTable var="linea" value="#{ArticuloPalet.listadoLineasPalet}" id="datatableAritulos" widgetVar="datatableAritulos" rows="10"
+                         scrollRows="20" scrollable="true" virtualScroll="true" scrollHeight="700" rowSelectMode="none">
+                <ui:include src="WEB-INF/datatable-header.xhtml">
+                    <ui:param name="listaRendered" value="true"/>
+                    <ui:param name="id" value="datatablePalet"/> 
+                    <ui:param name="listaSize" value="#{ArticuloPalet.listadoLineasPalet.size()}"/>
+                    <ui:param name="actionBean" value="#{ArticuloPalet}"/>
+                    <ui:param name="verBuscador" value="true"/>
+                    <ui:param name="verTotal" value="true"/>
+                    <ui:param name="verExcel" value="true"/>
+                    <ui:param name="tablaExport" value="datatableAritulos"/>
+                    <ui:param name="nombreArchivo" value="TablaArticulos"/>
+                    <ui:param name="titulo" value="Total de Artículos"/>
+                </ui:include>
+                <p:column exportable="false">
+                    <p:commandButton icon="pi pi-pencil" update="dialogs mainForm" oncomplete="PF('dlg1New').show()" style="margin-right: 10px" actionListener="#{Main.editProduct(product)}"
+                                     styleClass="edit-button rounded-button ui-button-success"/>
+
+                    <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" actionListener="#{Main.deleteProduct(product)}" update="mainForm" >
+                        <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
+                    </p:commandButton>
+                </p:column>
+                <p:column headerText="Articulo" filterBy="#{linea.articulocompleto.codigo}" sortBy="#{linea.articulocompleto.codigo}" width="50px">
+                    <h:outputText value="#{linea.articulocompleto.codigo}"/>
+                </p:column>
+
+                <p:column headerText="Referencia" filterBy="#{linea.articulocompleto.referencia}" sortBy="#{linea.articulocompleto.referencia}" width="300px">
+                    <h:outputText value="#{linea.articulocompleto.referencia}"/>
+                </p:column>
+
+                <p:column headerText="Descripcion" filterBy="#{linea.articulocompleto.descripcion}" sortBy="#{linea.articulocompleto.descripcion}" width="500px">
+                    <h:outputText value="#{linea.articulocompleto.descripcion}"/>
+                </p:column>
+
+                <p:column headerText="Cdigo de barras" filterBy="#{linea.articulocompleto.codigoBarras}" sortBy="#{linea.articulocompleto.codigoBarras}" width="150px">
+                    <h:outputText value="#{linea.articulocompleto.codigoBarras}"/>
+                </p:column>
+
+                <p:column headerText="Id Artículo Depósito" filterBy="#{linea.lote.codigo}" sortBy="#{linea.lote.codigo}" width="180px">
+                    <h:outputText value="#{linea.lote.codigo}"/>
+                </p:column>
+
+                <p:column headerText="Fecha de Alta" filterBy="#{linea.lote.caducidad}" sortBy="#{linea.lote.caducidad}" width="180px">
+                    <h:outputText value="#{linea.lote.caducidad}"/>
+                </p:column>
+                <p:column headerText="Marca" filterBy="#{linea.articulocompleto.unidadesCodigoBarras}" sortBy="#{linea.articulocompleto.unidadesCodigoBarras}" width="100px">
+                    <h:outputText value="#{linea.articulocompleto.unidadesCodigoBarras}"/>
+                </p:column>
+
+                <p:column headerText="Familia" width="100px">
+                    <h:outputText value="#{linea.lote.serie}"/>
+                </p:column>
+
+                <p:column headerText="Fecha Ult. Modif." width="170px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Lotes" selectionMode="multiple" width="70px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Caduc" width="70px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Control Seriado" width="70px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Estado" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="B.V." width="50px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Usuario Último Bloqueo Ventas" width="300px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Fecha Último Bloqueo Ventas" width="300px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="B.C." width="50px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Grupo Art." width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Tipo Picking" width="200px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Art. Clasificación" width="200px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Clasificación" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Con etiquetas" selectionMode="multiple" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Etiq. Portuguesa" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Etiquetado Port." width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Etiq. Italiana" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Etiquetado Ita." width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Etiq. Europea" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Propiedad de" width="150px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Pndte. Verificar" selectionMode="multiple" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Fecha Verificación" selectionMode="multiple" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Altura(cm)" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Ancho(cm)" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Largo(cm)" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Peso Neto(gr)" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Volumen Neto(cm3)" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Peso Bruto(gr)" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Volumen Bruto(cm3)" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+                <p:column headerText="Preventa" selectionMode="multiple" width="100px">
+                    <h:outputText value=""/>
+                </p:column>
+
+            </p:dataTable>
+
+
+        </h:form>
+
+        <h:form id="filterDialog">
+            <p:dialog header="Seleccione Filtros" id="dialogFilter" widgetVar="dialogFilter">
+                <div class="grid-container-2">
+                    <div class="grid-item">
+                        <h:outputLabel value="Familia"/>
+                        <div class="ui-inputgroup" >
+                            <div class="ui-inputgroup-addon"><i class="pi pi-check-square"></i></div>
+                            <p:inputText placeholder="Todos" disabled="true" style="width: 310px"/>
+                            <p:commandButton icon="pi pi-search"/>
+                            <p:commandButton icon="pi pi-times" styleClass="ui-button-danger"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-container-2">
+                    <div class="grid-item">
+                        <h:outputLabel value="Marca"/>
+                        <div class="ui-inputgroup">
+                            <div class="ui-inputgroup-addon"><i class="pi pi-check-square"></i></div>
+                            <p:inputText placeholder="Todos" disabled="true" style="width: 310px"/>
+                            <p:commandButton icon="pi pi-search"/>
+                            <p:commandButton icon="pi pi-times" styleClass="ui-button-danger"/>
+                        </div>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Niveles Clasificación"/>
+                        <div class="ui-inputgroup">
+                            <div class="ui-inputgroup-addon"><i class="pi pi-check-square"></i></div>
+                            <p:inputText placeholder="Todos" disabled="true" style="width: 310px"/>
+                            <p:commandButton icon="pi pi-search"/>
+                            <p:commandButton icon="pi pi-times" styleClass="ui-button-danger"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-container">
+                    <div class="grid-item">
+                        <h:outputLabel value="Bloqueo"/>
+                        <p:selectOneMenu id="comboSearchBloq" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Grupo Artículos"/>
+                        <p:selectOneMenu id="comboSearchGrupArt" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Etiqueta de"/>
+                        <p:selectOneMenu id="comboSearchEtiqDe" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Etiquetado"/>
+                        <p:selectOneMenu id="comboSearchEtiqdo" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Sin etiqueta" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="grid-container">
+                    <div class="grid-item">
+                        <h:outputLabel value="Control de Lote"/>
+                        <p:selectOneMenu id="comboSearchContrlLot" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Control de Caducidad"/>
+                        <p:selectOneMenu id="comboSearchContrlCad" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Pediente Verificación"/>
+                        <p:selectOneMenu id="comboSearchPendVer" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Fecha Ult. Modif."/>
+                        <p:selectOneMenu id="comboSearchFecUltModf" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Sin etiqueta" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="grid-container">
+                    <div class="grid-item">
+                        <h:outputLabel value="Peso Bruto"/>
+                        <p:selectOneMenu id="comboSearchPesBrut" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Volumen Bruto"/>
+                        <p:selectOneMenu id="comboSearchVolBrut" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Control Series"/>
+                        <p:selectOneMenu id="comboSearchContrlSeri" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Tipo Artículo"/>
+                        <p:selectOneMenu id="comboSearchTipoArt" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Sin etiqueta" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="grid-container">
+                    <div class="grid-item">
+                        <h:outputLabel value="Stock"/>
+                        <p:selectOneMenu id="comboSearchStock" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Preventa"/>
+                        <p:selectOneMenu id="comboSearchPrev" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Tipo Picking"/>
+                        <p:selectOneMenu id="comboSearchTipoPick" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Art. Clasificación"/>
+                        <p:selectOneMenu id="comboSearchArtClasif" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
+                            <f:selectItem itemLabel="Sin etiqueta" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="grid-container">
+                    <div class="grid-item">
+                        <h:outputLabel value="Min. Peso Bruto"/>
+                        <p:inputNumber id="minPesBrt" emptyValue="0,000" decimalPlaces="3" minValue="0" maxValue="100000" style="margin-right: 19px"/>
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Máx. Peso Bruto"/>
+                        <p:inputNumber id="maxPesBrt" emptyValue="0,000" decimalPlaces="3" minValue="0" maxValue="100000" />
+                    </div>
+                </div>
+
+
+
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

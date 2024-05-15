@@ -33,6 +33,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -44,6 +45,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -136,6 +139,9 @@ public class Main {
     private boolean seleccionStock;
 
     private ArrayList<Product> listLazyRows;
+    private ArrayList<Categoria> categories;
+
+    private Categoria categoriaValue;
 
     // <editor-fold defaultstate="collapsed" desc=" getters y setters "> 
     public Boolean getFecha1Ingresada() {
@@ -144,6 +150,22 @@ public class Main {
 
     public boolean isSeleccionStock() {
         return selectedProduct.getStock() == 0;
+    }
+
+    public Categoria getCategoriaValue() {
+        return categoriaValue;
+    }
+
+    public void setCategoriaValue(Categoria categoriaValue) {
+        this.categoriaValue = categoriaValue;
+    }
+
+    public ArrayList<Categoria> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(ArrayList<Categoria> categories) {
+        this.categories = categories;
     }
 
     public void setSeleccionStock(boolean seleccionStock) {
@@ -300,7 +322,7 @@ public class Main {
 
     public void editProduct(Product p) {
         editando = true;
-        this.selectedProduct = p;
+        this.selectedProduct = new Product(p.getCode(), p.getName(), p.getCategory(), p.getQuantity(), p.getPrice(), p.getBirth(), p.getStock(), p.getLugares());
 
     }
 
@@ -463,57 +485,65 @@ public class Main {
         listadoPalets = new ArrayList<>();
         listLazyRows = new ArrayList<>();
 
+        categoriaValue = new Categoria();
+
+        categories = new ArrayList<>();
+        categories.add(new Categoria(1, "Accessories"));
+        categories.add(new Categoria(2, "Electronics"));
+        categories.add(new Categoria(3, "Fitness"));
+        categories.add(new Categoria(4, "Clothing"));
+
         try {
-            listaProducts.add(new Product("f230fh0g3", "Bamboo", new Categoria(1, "Accessories"), 5, 25.50, sdf.parse("2024/01/04"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("nvklal433", "Black Watch", new Categoria(2, "Electronics"), 5, 5.50, sdf.parse("2024/01/01"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("zz21cz3c1", "Blue Band", new Categoria(3, "Fitness"), 2, 50.50, sdf.parse("2002/03/23"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("244wgerg2", "Blue T-Shirt",new Categoria(4, "Clothing"), 25, 100, sdf.parse("2010/12/01"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("8sn329d", "Red Headphones", new Categoria(2, "Electronics"), 0, 49.99, sdf.parse("2018/06/15"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("acv435s", "Silver Necklace", new Categoria(1, "Accessories"), 15, 79.99, sdf.parse("2017/10/10"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("1plm09s", "Green Yoga Mat",  new Categoria(3, "Fitness"), 30, 29.99, sdf.parse("2019/04/05"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("q1p9n3m", "Leather Jacket", new Categoria(4, "Clothing"), 0, 199.99, sdf.parse("2015/11/20"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("dk39n2p", "Wireless Mouse", new Categoria(2, "Electronics"), 20, 19.99, sdf.parse("2020/03/02"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("3km4n9s", "Running Shoes", new Categoria(5,"Footwear"), 10, 79.99, sdf.parse("2021/09/12"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("fg42k9s", "Stainless Steel Water Bottle", new Categoria(1, "Accessories"), 20, 15.99, sdf.parse("2023/07/20"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("12poq93", "Smartphone Holder", new Categoria(2, "Electronics"), 15, 9.99, sdf.parse("2022/11/10"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("klsdj90", "Yoga Block",  new Categoria(3, "Fitness"), 30, 10.50, sdf.parse("2023/03/05"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("qowpq3l", "Denim Jeans", new Categoria(4, "Clothing"), 30, 49.99, sdf.parse("2023/08/15"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("poiu876", "Portable Bluetooth Speaker", new Categoria(2, "Electronics"), 25, 29.99, sdf.parse("2022/06/20"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("zxcm32l", "Dumbbell Set",  new Categoria(3, "Fitness"), 20, 99.99, sdf.parse("2022/01/10"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("sd9fj23", "Hiking Boots", new Categoria(5,"Footwear"), 15, 129.99, sdf.parse("2024/05/05"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("nmbv34d", "Leather Wallet", new Categoria(1, "Accessories"), 10, 39.99, sdf.parse("2023/09/30"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("1iowq3d", "Wireless Earbuds", new Categoria(2, "Electronics"), 20, 79.99, sdf.parse("2021/12/12"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("alw32fl", "Yoga Mat Bag",  new Categoria(3, "Fitness"), 15, 19.99, sdf.parse("2023/02/18"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("fgo54n3", "Cotton T-Shirt", new Categoria(4, "Clothing"), 30, 19.99, sdf.parse("2024/03/24"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("jfdp32n", "Gaming Mouse", new Categoria(2, "Electronics"), 25, 49.99, sdf.parse("2022/07/09"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("qwpoi89", "Fitness Tracker",  new Categoria(3, "Fitness"), 20, 69.99, sdf.parse("2023/08/03"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("sdmz32l", "Sports Watch", new Categoria(1, "Accessories"), 20, 29.99, sdf.parse("2023/10/11"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("pokm98s", "Bluetooth Headphones", new Categoria(2, "Electronics"), 15, 99.99, sdf.parse("2022/05/17"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("awod32l", "Jump Rope",  new Categoria(3, "Fitness"), 25, 12.99, sdf.parse("2023/11/22"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("qweo87n", "Leather Belt", new Categoria(4, "Clothing"), 20, 24.99, sdf.parse("2023/01/01"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("mnzl23l", "Portable Power Bank", new Categoria(2, "Electronics"), 30, 39.99, sdf.parse("2022/09/29"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("zckm32l", "Resistance Bands Set",  new Categoria(3, "Fitness"), 20, 29.99, sdf.parse("2023/04/14"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("sdfg87n", "Canvas Backpack", new Categoria(1, "Accessories"), 15, 34.99, sdf.parse("2023/06/05"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("zxcv123", "Sunglasses", new Categoria(1, "Accessories"), 30, 19.99, sdf.parse("2024/07/15"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("qwer456", "Smartwatch", new Categoria(2, "Electronics"), 25, 79.99, sdf.parse("2023/10/20"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("lkjh789", "Exercise Ball",  new Categoria(3, "Fitness"), 20, 14.99, sdf.parse("2024/05/05"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("uiop321", "Hoodie", new Categoria(4, "Clothing"), 25, 39.99, sdf.parse("2023/12/10"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("bnmq654", "USB Flash Drive", new Categoria(2, "Electronics"), 40, 9.99, sdf.parse("2022/08/22"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("plko987", "Resistance Bands Set",  new Categoria(3, "Fitness"), 15, 24.99, sdf.parse("2023/02/18"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("jhgf654", "Messenger Bag", new Categoria(1, "Accessories"), 20, 29.99, sdf.parse("2024/04/03"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("vcxz321", "External Hard Drive", new Categoria(2, "Electronics"), 20, 69.99, sdf.parse("2022/11/12"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("poiuy098", "Yoga Pants",  new Categoria(3, "Fitness"), 30, 29.99, sdf.parse("2024/03/28"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("mnbv789", "Scarf", new Categoria(4, "Clothing"), 20, 19.99, sdf.parse("2023/09/15"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("lkjh098", "Wireless Charger", new Categoria(2, "Electronics"), 25, 34.99, sdf.parse("2022/07/06"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("poiuy456", "Foam Roller",  new Categoria(3, "Fitness"), 15, 19.99, sdf.parse("2023/10/11"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("qazx123", "Beanie", new Categoria(1, "Accessories"), 20, 14.99, sdf.parse("2023/11/29"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("wsxc456", "Bluetooth Speaker", new Categoria(2, "Electronics"), 30, 49.99, sdf.parse("2022/05/08"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("edcv789", "Exercise Mat",  new Categoria(3, "Fitness"), 20, 24.99, sdf.parse("2024/02/17"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("rfvb321", "Socks", new Categoria(4, "Clothing"), 35, 9.99, sdf.parse("2023/10/24"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("tgbn654", "Power Strip",new Categoria(2, "Electronics"), 20, 19.99, sdf.parse("2022/06/05"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("yhnm098", "Resistance Loop Bands",  new Categoria(3, "Fitness"), 25, 19.99, sdf.parse("2023/09/14"), (short) 1, obtenerLugares()));
-            listaProducts.add(new Product("ujmi123", "Hat", new Categoria(1, "Accessories"), 30, 12.99, sdf.parse("2023/12/20"), (short) 0, obtenerLugares()));
-            listaProducts.add(new Product("qwer789", "Wireless Keyboard", new Categoria(2, "Electronics"), 20, 29.99, sdf.parse("2022/08/01"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("f230fh0g3", "Bamboo", categories.get(0), 5, 25.50, sdf.parse("2024/01/04"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("nvklal433", "Black Watch", categories.get(1), 5, 5.50, sdf.parse("2024/01/01"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("zz21cz3c1", "Blue Band", categories.get(2), 2, 50.50, sdf.parse("2002/03/23"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("244wgerg2", "Blue T-Shirt", categories.get(3), 25, 100, sdf.parse("2010/12/01"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("8sn329d", "Red Headphones", categories.get(1), 0, 49.99, sdf.parse("2018/06/15"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("acv435s", "Silver Necklace", categories.get(0), 15, 79.99, sdf.parse("2017/10/10"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("1plm09s", "Green Yoga Mat", categories.get(2), 30, 29.99, sdf.parse("2019/04/05"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("q1p9n3m", "Leather Jacket", categories.get(3), 0, 199.99, sdf.parse("2015/11/20"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("dk39n2p", "Wireless Mouse", categories.get(1), 20, 19.99, sdf.parse("2020/03/02"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("3km4n9s", "Running Shoes", categories.get(2), 10, 79.99, sdf.parse("2021/09/12"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("fg42k9s", "Stainless Steel Water Bottle", categories.get(0), 20, 15.99, sdf.parse("2023/07/20"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("12poq93", "Smartphone Holder", categories.get(1), 15, 9.99, sdf.parse("2022/11/10"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("klsdj90", "Yoga Block", categories.get(2), 30, 10.50, sdf.parse("2023/03/05"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("qowpq3l", "Denim Jeans", categories.get(3), 30, 49.99, sdf.parse("2023/08/15"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("poiu876", "Portable Bluetooth Speaker", categories.get(1), 25, 29.99, sdf.parse("2022/06/20"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("zxcm32l", "Dumbbell Set", categories.get(2), 20, 99.99, sdf.parse("2022/01/10"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("sd9fj23", "Hiking Boots", categories.get(3), 15, 129.99, sdf.parse("2024/05/05"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("nmbv34d", "Leather Wallet", categories.get(0), 10, 39.99, sdf.parse("2023/09/30"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("1iowq3d", "Wireless Earbuds", categories.get(1), 20, 79.99, sdf.parse("2021/12/12"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("alw32fl", "Yoga Mat Bag", categories.get(2), 15, 19.99, sdf.parse("2023/02/18"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("fgo54n3", "Cotton T-Shirt", categories.get(3), 30, 19.99, sdf.parse("2024/03/24"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("jfdp32n", "Gaming Mouse", categories.get(1), 25, 49.99, sdf.parse("2022/07/09"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("qwpoi89", "Fitness Tracker", categories.get(2), 20, 69.99, sdf.parse("2023/08/03"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("sdmz32l", "Sports Watch", categories.get(0), 20, 29.99, sdf.parse("2023/10/11"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("pokm98s", "Bluetooth Headphones", categories.get(1), 15, 99.99, sdf.parse("2022/05/17"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("awod32l", "Jump Rope", categories.get(2), 25, 12.99, sdf.parse("2023/11/22"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("qweo87n", "Leather Belt", categories.get(3), 20, 24.99, sdf.parse("2023/01/01"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("mnzl23l", "Portable Power Bank", categories.get(1), 30, 39.99, sdf.parse("2022/09/29"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("zckm32l", "Resistance Bands Set", categories.get(2), 20, 29.99, sdf.parse("2023/04/14"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("sdfg87n", "Canvas Backpack", categories.get(0), 15, 34.99, sdf.parse("2023/06/05"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("zxcv123", "Sunglasses", categories.get(0), 30, 19.99, sdf.parse("2024/07/15"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("qwer456", "Smartwatch", categories.get(1), 25, 79.99, sdf.parse("2023/10/20"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("lkjh789", "Exercise Ball", categories.get(2), 20, 14.99, sdf.parse("2024/05/05"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("uiop321", "Hoodie", categories.get(3), 25, 39.99, sdf.parse("2023/12/10"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("bnmq654", "USB Flash Drive", categories.get(1), 40, 9.99, sdf.parse("2022/08/22"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("plko987", "Resistance Bands Set", categories.get(2), 15, 24.99, sdf.parse("2023/02/18"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("jhgf654", "Messenger Bag", categories.get(0), 20, 29.99, sdf.parse("2024/04/03"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("vcxz321", "External Hard Drive", categories.get(1), 20, 69.99, sdf.parse("2022/11/12"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("poiuy098", "Yoga Pants", categories.get(2), 30, 29.99, sdf.parse("2024/03/28"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("mnbv789", "Scarf", categories.get(3), 20, 19.99, sdf.parse("2023/09/15"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("lkjh098", "Wireless Charger", categories.get(1), 25, 34.99, sdf.parse("2022/07/06"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("poiuy456", "Foam Roller", categories.get(2), 15, 19.99, sdf.parse("2023/10/11"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("qazx123", "Beanie", categories.get(0), 20, 14.99, sdf.parse("2023/11/29"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("wsxc456", "Bluetooth Speaker", categories.get(1), 30, 49.99, sdf.parse("2022/05/08"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("edcv789", "Exercise Mat", categories.get(2), 20, 24.99, sdf.parse("2024/02/17"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("rfvb321", "Socks", categories.get(3), 35, 9.99, sdf.parse("2023/10/24"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("tgbn654", "Power Strip", categories.get(1), 20, 19.99, sdf.parse("2022/06/05"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("yhnm098", "Resistance Loop Bands", categories.get(2), 25, 19.99, sdf.parse("2023/09/14"), (short) 1, obtenerLugares()));
+            listaProducts.add(new Product("ujmi123", "Hat", categories.get(0), 30, 12.99, sdf.parse("2023/12/20"), (short) 0, obtenerLugares()));
+            listaProducts.add(new Product("qwer789", "Wireless Keyboard", categories.get(1), 20, 29.99, sdf.parse("2022/08/01"), (short) 1, obtenerLugares()));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -617,17 +647,31 @@ public class Main {
                     }
                 }
             } else {
-                for (Product product : listaProducts) {
-                    if (product.getCode().equals(selectedProduct.getCode())) {
-                        product = selectedProduct;
-                        PrimeFaces.current().executeScript("PF('dlg1New').hide()");
-                        showMessaggeGood("Se ha editado el producto correctamente");
+                if (selectedProduct.getCode() == null || selectedProduct.getCode().isEmpty()) {
+                    showError("El código no es correcto o está vacío");
+                } else if (selectedProduct.getName().isEmpty()) {
+                    showError("El nombre no es correcto o está vacío");
+                } else if (selectedProduct.getCategory() == null || selectedProduct.getCategory().getCod() <= 0) {
+                    showError("La categoría no es correcta o está vacía");
+                } else if (selectedProduct.getQuantity() < 0) {
+                    showError("La cantidad no puede ser menor de 0");
+                } else if (selectedProduct.getBirth() == null || selectedProduct.getBirth().toString().equals("")) {
+                    showError("Introduzca la fecha");
+                } else {
+                    for (Product product : listaProducts) {
+                        if (product.getCode().equals(selectedProduct.getCode())) {
+                            listaProducts.remove(product);
+                            listaProducts.add(selectedProduct);
+                            PrimeFaces.current().executeScript("PF('dlg1New').hide()");
+                            showMessaggeGood("Se ha editado el producto correctamente");
+                        }
                     }
                 }
+
             }
         }
         totalPrecioAño();
-
+    
     }
 
     public void showError(String error) {
@@ -758,7 +802,7 @@ public class Main {
                 listaLugares = new ArrayList<>();
                 lazyModel = new LazyCustomerDataModel(p);
 
-                if (selectedCategory != null && filtroFecha2 != null) {
+                if (categoriaValue != null && filtroFecha2 != null) {
                     if (filtroFecha1 == null) {
                         hayFiltro = true;
                         Date fechaActual = new Date();
@@ -771,18 +815,18 @@ public class Main {
                         filtroFecha1 = calendar.getTime();
                     }
                     for (Product product : listaProducts) {
-                        if (selectedCategory.equals(product.getCategory()) && comprobarFechas(product.getBirth(), filtroFecha1, filtroFecha2)) {
+                        if (categoriaValue.getCod() == (product.getCategory().getCod()) && comprobarFechas(product.getBirth(), filtroFecha1, filtroFecha2)) {
                             listProductsFiltro.add(product);
                         }
                     }
-                } else if (selectedCategory != null && filtroFecha1 == null) {
+                } else if (categoriaValue != null && filtroFecha1 == null) {
                     hayFiltro = true;
                     for (Product product : listaProducts) {
-                        if (selectedCategory.equals(product.getCategory())) {
+                        if (categoriaValue.getCod() == (product.getCategory().getCod())) {
                             listProductsFiltro.add(product);
                         }
                     }
-                } else if (selectedCategory == null && filtroFecha1 != null && filtroFecha2 != null) {
+                } else if (categoriaValue == null && filtroFecha1 != null && filtroFecha2 != null) {
                     hayFiltro = true;
                     for (Product product : listaProducts) {
                         if (comprobarFechas(product.getBirth(), filtroFecha1, filtroFecha2)) {
@@ -1395,6 +1439,40 @@ public class Main {
         params.put("palet", Arrays.asList(paletDetail));
 
         PrimeFaces.current().dialog().openDynamic("dialogPalet", options, params);
+    }
+
+    public Converter getCategoriaConverter() {
+        return new Converter() {
+            @Override
+            public Object getAsObject(FacesContext context, UIComponent component, String value) {
+                if (value == null || value.isEmpty()) {
+                    return null;
+                }
+                try {
+                    int cod = Integer.parseInt(value);
+                    for (Categoria category : categories) {
+                        if (category.getCod() == cod) {
+                            return category;
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    throw new ConverterException("Invalid value: " + value, e);
+                }
+                return null;
+            }
+
+            @Override
+            public String getAsString(FacesContext context, UIComponent component, Object value) {
+                if (value == null) {
+                    return "";
+                }
+                if (value instanceof Categoria) {
+                    return String.valueOf(((Categoria) value).getCod());
+                } else {
+                    throw new ConverterException("Value is not a valid Categoria: " + value);
+                }
+            }
+        };
     }
 
 }

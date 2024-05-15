@@ -109,9 +109,9 @@
                         <div style="display: flex; flex-direction: column; margin-bottom: 10px">
                             <h:outputLabel value="Filtrar por categoría:" style="font-weight: bold; margin-right: 10px; margin-bottom: 10px;" for="comboSearch"/>
 
-                            <p:selectOneMenu id="comboSearch" widgetVar="comboSearch" onchange="PF('dataTable').filter()" styleClass="custom-filter" style="margin-right: 20px; z-index: 2" value="#{Main.selectedCategory}" disabled="#{Main.tabView.activeIndex eq 3}">
+                            <p:selectOneMenu id="comboSearch" widgetVar="comboSearch" styleClass="custom-filter" style="margin-right: 20px; z-index: 2" value="#{Main.categoriaValue}" disabled="#{Main.tabView.activeIndex eq 3}" converter="categoryConverter">
                                 <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
-                                <f:selectItems value="#{Main.availableCategories}" />
+                                <f:selectItems value="#{Main.categories}" var="category" itemLabel="#{category.nombre}" itemValue="#{category}"/>
                             </p:selectOneMenu>
                         </div>
 
@@ -308,7 +308,7 @@
                             <p:ajax event="rowUnselectCheckbox" update="mainForm:btnDeleteRows"/>
                             <p:ajax event="toggleSelect" update="mainForm:btnDeleteRows"/>
 
-                            <ui:include src="WEB-INF/datatable-header.xhtml">
+                                <ui:include src="WEB-INF/datatable-header.xhtml">
                                 <ui:param name="listaRendered" value="#{Main.mostrarLazy}"/>
                                 <ui:param name="id" value="customerTable"/> 
                                 <ui:param name="listaSize" value="#{Main.listaProducts.size()}"/>
@@ -387,11 +387,8 @@
                 </div>
                 <div style="margin: 10px">
                     <p:outputLabel>Category</p:outputLabel>
-                    <p:selectOneRadio id="category" columns="2" layout="responsive" value="#{Main.selectedProduct.category}">
-                        <f:selectItem itemLabel="#{Main.selectedProduct.category.cod}" itemValue="#{Main.selectedProduct.category.nombre}"></f:selectItem>
-                        <f:selectItem itemLabel="#{Main.selectedProduct.category.cod eq 2}" itemValue="#{Main.selectedProduct.category.nombre}"></f:selectItem>
-                        <f:selectItem itemLabel="#{Main.selectedProduct.category.cod eq 3}" itemValue="#{Main.selectedProduct.category.nombre}"></f:selectItem>
-                        <f:selectItem itemLabel="#{Main.selectedProduct.category.cod eq 4}" itemValue="#{Main.selectedProduct.category.nombre}"></f:selectItem>
+                    <p:selectOneRadio id="category" columns="2" layout="responsive" value="#{Main.selectedProduct.category}"  converter="categoryConverter">
+                        <f:selectItems value="#{Main.categories}" var="category" itemLabel="#{category.nombre}" itemValue="#{category}"/>
                     </p:selectOneRadio>
                 </div>
 
@@ -414,7 +411,7 @@
                     <p:selectBooleanCheckbox value="#{Main.seleccionStock}" /><p/>
                 </div>
                 <f:facet name="footer">
-                    <p:commandButton value="Save" icon="pi pi-check" actionListener="#{Main.addProduct()}" update="mainForm"/>
+                    <p:commandButton value="Save" icon="pi pi-check" actionListener="#{Main.addProduct()}" update="mainForm" />
                 </f:facet>
 
             </p:dialog>
