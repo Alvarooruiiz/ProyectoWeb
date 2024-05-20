@@ -302,7 +302,8 @@
                 </p:tab>
                 <p:tab title="Lazy">
                     <h:panelGroup id="lazy" >
-                        <p:dataTable var="productLazy" value="#{Main.lazyModel}" filteredValue="#{Main.listProductsLazyFiltered}" rows="10" id="customerTable" widgetVar="customerTable" scrollRows="20" scrollable="true"
+                        <p:dataTable var="productLazy" value="#{Main.lazyModel}" filteredValue="#{Main.listProductsLazyFiltered}" rows="10" 
+                                     id="customerTable" widgetVar="customerTable" scrollRows="20" scrollable="true"
                                      virtualScroll="true" scrollHeight="500" rowSelectMode="none" selection="#{Main.listLazyRows}">
                             <p:ajax event="rowSelectCheckbox" update="mainForm:btnDeleteRows"/>
                             <p:ajax event="rowUnselectCheckbox" update="mainForm:btnDeleteRows"/>

@@ -800,7 +800,7 @@ public class Main {
                 listProductsFiltro = new ArrayList<>();
                 ArrayList<Product> p = new ArrayList<>();
                 listaLugares = new ArrayList<>();
-                lazyModel = new LazyCustomerDataModel(p);
+                lazyModel = new LazyCustomerDataModelProductos(p);
 
                 if (categoriaValue != null && filtroFecha2 != null) {
                     if (filtroFecha1 == null) {
@@ -852,7 +852,7 @@ public class Main {
 
                 listProductsFiltro = new ArrayList();
                 listaLugares = new ArrayList();
-                lazyModel = new LazyCustomerDataModel(listProductsFiltro);
+                lazyModel = new LazyCustomerDataModelProductos(listProductsFiltro);
                 activarBtnAdd = true;
                 if (selectedCategory != null && filtroFecha2 != null) {
                     if (filtroFecha1 == null) {
@@ -943,7 +943,7 @@ public class Main {
                     listProductsFiltro.addAll(listaProducts);
 
                 }
-                lazyModel = new LazyCustomerDataModel(listProductsFiltro);
+                lazyModel = new LazyCustomerDataModelProductos(listProductsFiltro);
                 mostrarTablaLugares = false;
                 mostrarDataTable = false;
 

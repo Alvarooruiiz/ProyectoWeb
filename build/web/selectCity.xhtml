@@ -24,7 +24,7 @@
         <h:form id="formLugar">
             <p:growl id="growl" showDetail="true" />
             <p:growl id="growl-sticky" for="sticky-key" showDetail="true" sticky="true" />
-            <p:dataTable var="lugar" value="#{Main.listaLugares}" selection="#{MainDialog.selectedLugares}" rowKey="#{lugar.id}"  rowSelectMode="none">
+            <p:dataTable var="lugar" value="#{Main.listaLugares}" selection="#{MainDialog.selectedLugares}" rowKey="#{lugar.id}" rowSelectMode="none">
                 <p:ajax event="rowSelectCheckbox" update="formLugar:btnAdd"/>
                 <p:ajax event="rowUnselectCheckbox" update="formLugar:btnAdd"/>
                 <p:ajax event="toggleSelect" update="formLugar:btnAdd"/>

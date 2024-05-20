@@ -18,9 +18,11 @@
                         <p:inputText id="globalFilter" widgetVar="globalFilter"  placeholder="Search" rendered="#{verBuscador}" onkeyup="delaySearch('#{id}')"/>
                     </span>
 
-                    <p:commandButton styleClass="ui-button-success" icon="pi pi-file-excel" style="margin-left: 20px; align-content: center;"  rendered="#{verExcel}">
-                        <p:dataExporter type="xls" target="#{tablaExport}" fileName="#{nombreArchivo}"/>
+                    <p:commandButton styleClass="ui-button-success" icon="pi pi-file-excel" style="margin-left: 20px; align-content: center;"  rendered="#{verExcelDataExporter}">
+                        <p:dataExporter type="xls" target="#{tablaExport}" fileName="#{nombreArchivo}" postProcessor="#{MainItems.onRowExportXLS}"/>
                     </p:commandButton>
+
+                    <p:commandButton styleClass="ui-button-success" icon="pi pi-file-excel" style="margin-left: 20px; align-content: center;"  rendered="#{verExcelJava}" action="#{MainItems.exportToExcel(nombreArchivo)}" ajax="false"/>
                     <h:outputText id="totalText" value="Total #{listaSize}" style="color: white; padding-left: 20px" rendered="#{verTotal}"/>
                 </div>
             </div>
@@ -31,7 +33,6 @@
                     
                 function delaySearch(id) {
                     clearTimeout(typingTimer);
-                    console.log("asdasdasdghasidjhasjf")
                     typingTimer = setTimeout(function () {
                         PF(id).filter();
                     }, doneTypingInterval);

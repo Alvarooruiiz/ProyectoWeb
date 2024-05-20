@@ -115,73 +115,116 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
             flex-direction: column;
             margin-bottom: 10px;
         }
-        
-        .ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all ui-state-disabled {
-            width: 277px !important;
+
+
+
+
+        .ui-widget-header .ui-inputfield, .ui-widget-content .ui-inputfield {
+            font-weight: normal;
+            width: 158px;
+
         }
-        
-        .ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all{
-            width: 178px !important;
+
+        .ui-inputgroup{
+            width: 345px;
         }
+
+        .inputsTop{
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+            margin-left: 20px
+        }
+
+        body .ui-selectonemenu {
+            vertical-align: middle;
+            border: 1px solid #ced4da;
+            position: relative;
+            transform: none;
+            padding: 0;
+            transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s, opacity .2s;
+            border-radius: 4px;
+            background: #fff;
+            max-width: 158px;
+        }
+
+        body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-carat-2-n-s:before {
+            content: "" !important;
+        }
+
+
+
+
 
     </style>
 
 
     <h:head>
-        <title>TODO supply a title</title>
+        <title>Items</title>
     </h:head>
 
 
     <h:body>
         <h:form id="formArticulo">
-
+            <p:growl id="growl" showDetail="true" />
+            <p:growl id="growl-sticky" for="sticky-key" showDetail="true" sticky="true" />
             <p:toolbar>
                 <p:toolbarGroup>
-                    <div style="display: flex; align-content: center; align-items: center; padding: 10px;">
-                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                    <div style="display: flex;
+                         align-content: center;
+                         align-items: center;
+                         padding: 10px;">
+                        <div style="display: flex;
+                             flex-direction: column;
+                             margin-bottom: 10px;
+                             margin-left: 20px">
                             <h:outputLabel value="Con Tercero Depósito"/>
-                            <div class="ui-inputgroup">
-                                <div class="ui-inputgroup-addon"><i class="pi pi-check-square"></i></div>
-                                <p:inputText placeholder="Sin Tercero" disabled="true"/>
-                                <p:commandButton icon="pi pi-search"/>
-                                <p:commandButton icon="pi pi-times" styleClass="ui-button-danger"/>
+                            <div class="ui-inputgroup" style="width: auto">
+                                <p:commandButton icon="pi pi-check-square" styleClass="ui-button-secondary" />
+                                <p:inputText value="#{MainItems.terceroString}" disabled="true" id="textoTercero" widgetVar="textoTercero" placeholder="Sin Terceros"/>
+                                <p:commandButton icon="pi pi-search" actionListener="#{MainItems.selectionDialog('tercero')}">
+                                    <p:ajax event="dialogReturn" listener="#{MainItems.dialogReturn}" update="formArticulo"/>
+                                </p:commandButton>
+                                <p:commandButton icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{MainItems.limpiarTercero}" update="formArticulo" disabled="#{empty MainItems.terceroString}"/>
                             </div>
                         </div>
 
 
-                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                        <div class="inputsTop">
                             <h:outputLabel value="Id Artículo"/>
-                            <p:inputText value="" disabled="true"/>
+                            <p:inputText value="#{MainItems.idArticulo}"/>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                        <div class="inputsTop">
                             <h:outputLabel value="Descripción"/>
-                            <p:inputText value="" disabled="true"/>
+                            <p:inputText value="#{MainItems.idDescripcion}"/>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                        <div class="inputsTop">
                             <h:outputLabel value="Referencia"/>
-                            <p:inputText value="" disabled="true"/>
+                            <p:inputText value="#{MainItems.idReferencia}"/>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                        <div class="inputsTop">
                             <h:outputLabel value="Código de barras"/>
-                            <p:inputText value="" disabled="true"/>
+                            <p:inputText value="#{MainItems.idCodBarras}"/>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                        <div class="inputsTop">
                             <h:outputLabel value="Clasificación"/>
-                            <p:selectOneMenu id="comboSearchClasf" widgetVar="comboSearchClasf" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                                <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                                <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                            <p:selectOneMenu id="comboSearchClasf" widgetVar="comboSearchClasf" styleClass="custom-filter" value="#{MainItems.idClasificacion}">
+                                <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                                <f:selectItems value="#{MainItems.listaClasificaciones}" var="clasificaciones" itemLabel="#{clasificaciones.clasificacion}" itemValue="#{clasificaciones.clasificacion}"/>
                             </p:selectOneMenu>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-left: 20px">
+                        <div class="inputsTop">
                             <h:outputLabel value="Estado"/>
-                            <p:selectOneMenu id="comboSearchEst" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                                <f:selectItem itemLabel="Activo" itemValue="#{null}" noSelectionOption="true" />
-                                <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                            <p:selectOneMenu id="comboSearchEst" widgetVar="comboSearchEst" styleClass="custom-filter" value="#{MainItems.idEstado}">
+                                <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                                <f:selectItem itemLabel="Activo" itemValue="0"/>
+                                <f:selectItem itemLabel="Baja" itemValue="1"/>
+                                <f:selectItem itemLabel="Baja Transitoria" itemValue="2"/>
                             </p:selectOneMenu>
                         </div>
 
@@ -189,7 +232,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                 </p:toolbarGroup>
                 <p:toolbarGroup>
                     <p:commandButton icon="pi pi-filter" styleClass="ui-button-success" update="filterDialog" oncomplete="PF('dialogFilter').show()"/>
-                    <p:commandButton icon="pi pi-search" style="margin-left: 20px"/>
+                    <p:commandButton icon="pi pi-search" style="margin-left: 20px" actionListener="#{MainItems.search()}"/>
                     <p:commandButton icon="pi pi-clone" style="margin-left: 20px"/>
                 </p:toolbarGroup>
             </p:toolbar>
@@ -197,177 +240,199 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
 
 
 
-            <p:dataTable var="linea" value="#{ArticuloPalet.listadoLineasPalet}" id="datatableAritulos" widgetVar="datatableAritulos" rows="10"
-                         scrollRows="20" scrollable="true" virtualScroll="true" scrollHeight="700" rowSelectMode="none">
+            <p:dataTable var="articulos" value="#{MainItems.lazyDataModel}" id="datatableArticulos" widgetVar="datatableArticulos" rows="10"
+                         scrollRows="20" scrollable="true" virtualScroll="true" scrollHeight="650" rowSelectMode="none" 
+                         filteredValue="#{MainItems.listArticulosLazyFiltered}">
                 <ui:include src="WEB-INF/datatable-header.xhtml">
                     <ui:param name="listaRendered" value="true"/>
-                    <ui:param name="id" value="datatablePalet"/> 
-                    <ui:param name="listaSize" value="#{ArticuloPalet.listadoLineasPalet.size()}"/>
-                    <ui:param name="actionBean" value="#{ArticuloPalet}"/>
+                    <ui:param name="id" value="datatableArticulos"/> 
+                    <ui:param name="listaSize" value="#{MainItems.listaArticulos.size()}"/>
+                    <ui:param name="actionBean" value="#{MainItems}"/>
                     <ui:param name="verBuscador" value="true"/>
                     <ui:param name="verTotal" value="true"/>
-                    <ui:param name="verExcel" value="true"/>
-                    <ui:param name="tablaExport" value="datatableAritulos"/>
+                    <ui:param name="verExcelDataExporter" value="false"/>
+                    <ui:param name="verExcelJava" value="#{MainItems.listaArticulos ne null}"/>
+                    <ui:param name="tablaExport" value="datatableArticulos"/>
                     <ui:param name="nombreArchivo" value="TablaArticulos"/>
                     <ui:param name="titulo" value="Total de Artículos"/>
                 </ui:include>
-                <p:column exportable="false">
-                    <p:commandButton icon="pi pi-pencil" update="dialogs mainForm" oncomplete="PF('dlg1New').show()" style="margin-right: 10px" actionListener="#{Main.editProduct(product)}"
+                <p:column exportable="false" width="100px">
+                    <p:commandButton icon="pi pi-pencil" oncomplete="PF('dlg1New').show()" style="margin-right: 10px"
                                      styleClass="edit-button rounded-button ui-button-success"/>
 
-                    <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" actionListener="#{Main.deleteProduct(product)}" update="mainForm" >
+                    <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash">
                         <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
                     </p:commandButton>
                 </p:column>
-                <p:column headerText="Articulo" filterBy="#{linea.articulocompleto.codigo}" sortBy="#{linea.articulocompleto.codigo}" width="50px">
-                    <h:outputText value="#{linea.articulocompleto.codigo}"/>
+                <p:column headerText="Articulo" width="69px" style=" text-align: left" filterBy="#{articulos.idArticulo}" sortBy="#{articulos.idArticulo}">
+                    <h:outputText value="#{articulos.idArticulo}"/>
                 </p:column>
 
-                <p:column headerText="Referencia" filterBy="#{linea.articulocompleto.referencia}" sortBy="#{linea.articulocompleto.referencia}" width="300px">
-                    <h:outputText value="#{linea.articulocompleto.referencia}"/>
+                <p:column headerText="Referencia"  width="300px" style=" text-align: left" filterBy="#{articulos.referencia}" sortBy="#{articulos.referencia}">
+                    <h:outputText value="#{articulos.referencia}"/>
                 </p:column>
 
-                <p:column headerText="Descripcion" filterBy="#{linea.articulocompleto.descripcion}" sortBy="#{linea.articulocompleto.descripcion}" width="500px">
-                    <h:outputText value="#{linea.articulocompleto.descripcion}"/>
+                <p:column headerText="Descripcion" width="500px" style=" text-align: left" filterBy="#{articulos.descripcion}" sortBy="#{articulos.descripcion}">
+                    <h:outputText value="#{articulos.descripcion}"/>
                 </p:column>
 
-                <p:column headerText="Cdigo de barras" filterBy="#{linea.articulocompleto.codigoBarras}" sortBy="#{linea.articulocompleto.codigoBarras}" width="150px">
-                    <h:outputText value="#{linea.articulocompleto.codigoBarras}"/>
+                <p:column headerText="Cdigo de barras" width="150px" style=" text-align: left" filterBy="#{articulos.codigoBarras}" sortBy="#{articulos.codigoBarras}">
+                    <h:outputText value="#{articulos.codigoBarras}"/>
                 </p:column>
 
-                <p:column headerText="Id Artículo Depósito" filterBy="#{linea.lote.codigo}" sortBy="#{linea.lote.codigo}" width="180px">
-                    <h:outputText value="#{linea.lote.codigo}"/>
+                <p:column headerText="Id Artículo Depósito" width="180px" style=" text-align: left" filterBy="#{articulos.idArticuloDeposito}" sortBy="#{articulos.idArticuloDeposito}">
+                    <h:outputText value="#{articulos.idArticuloDeposito}"/>
                 </p:column>
 
-                <p:column headerText="Fecha de Alta" filterBy="#{linea.lote.caducidad}" sortBy="#{linea.lote.caducidad}" width="180px">
-                    <h:outputText value="#{linea.lote.caducidad}"/>
+                <p:column headerText="Fecha de Alta" width="180px" style=" text-align: left">
+                    <h:outputText value="#{articulos.fechaAlta}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                    </h:outputText>
                 </p:column>
-                <p:column headerText="Marca" filterBy="#{linea.articulocompleto.unidadesCodigoBarras}" sortBy="#{linea.articulocompleto.unidadesCodigoBarras}" width="100px">
-                    <h:outputText value="#{linea.articulocompleto.unidadesCodigoBarras}"/>
-                </p:column>
-
-                <p:column headerText="Familia" width="100px">
-                    <h:outputText value="#{linea.lote.serie}"/>
+                <p:column headerText="Marca" width="100px" style=" text-align: left" filterBy="#{articulos.idMarca.nombre}" sortBy="#{articulos.idMarca.nombre}">
+                    <h:outputText value="#{articulos.idMarca.nombre}"/>
                 </p:column>
 
-                <p:column headerText="Fecha Ult. Modif." width="170px">
-                    <h:outputText value=""/>
+                <p:column headerText="Familia" width="100px" style=" text-align: left" filterBy="#{articulos.idFamilia.nombre}" sortBy="#{articulos.idFamilia.nombre}">
+                    <h:outputText value="#{articulos.idFamilia.nombre}"/>
                 </p:column>
 
-                <p:column headerText="Lotes" selectionMode="multiple" width="70px">
-                    <h:outputText value=""/>
+                <p:column headerText="Fecha Ult. Modif." width="170px" style=" text-align: left">
+                    <h:outputText value="#{articulos.fechaUltModif}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                    </h:outputText>
                 </p:column>
 
-                <p:column headerText="Caduc" width="70px">
-                    <h:outputText value=""/>
+                <p:column headerText="Lotes" width="70px" style=" text-align: center" sortBy="#{articulos.controlLotes}" exportValue="#{articulos.controlLotes ? 'Sí' : 'No'}">
+                    <p:selectBooleanCheckbox disabled="true" value="#{articulos.controlLotes}"/>
                 </p:column>
 
-                <p:column headerText="Control Seriado" width="70px">
-                    <h:outputText value=""/>
+                <p:column headerText="Caduc" width="70px" style=" text-align: center" sortBy="#{articulos.controlCaducidad}" exportValue="#{articulos.controlCaducidad ? 'Sí' : 'No'}">
+                    <p:selectBooleanCheckbox disabled="true" value="#{articulos.controlCaducidad}" />
                 </p:column>
 
-                <p:column headerText="Estado" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Control Seriado" width="70px" style=" text-align: left" sortBy="#{articulos.controlSeries}">
+                    <h:outputText value="#{articulos.controlSeries ? 'Si' : 'No'}"/>
                 </p:column>
 
-                <p:column headerText="B.V." width="50px">
-                    <h:outputText value=""/>
+                <p:column headerText="Estado" width="100px" style=" text-align: center" sortBy="#{articulos.estado}">
+                    <h:outputText value="#{articulos.estado eq 0 ? 'ACTIVO' : 'INACTIVO'}"/>
                 </p:column>
 
-                <p:column headerText="Usuario Último Bloqueo Ventas" width="300px">
-                    <h:outputText value=""/>
+                <p:column headerText="B.V." width="50px" style=" text-align: center" sortBy="#{articulos.bloqueoVentas}" exportValue="#{articulos.bloqueoVentas ? 'Sí' : 'No'}">
+                    <p:selectBooleanCheckbox disabled="true" value="#{articulos.bloqueoVentas}"/>
                 </p:column>
 
-                <p:column headerText="Fecha Último Bloqueo Ventas" width="300px">
-                    <h:outputText value=""/>
+                <p:column headerText="Usuario Último Bloqueo Ventas" width="300px" style=" text-align: center" filterBy="#{articulos.usuarioUltBloqueoVentas.username}" sortBy="#{articulos.usuarioUltBloqueoVentas.username}">
+                    <h:outputText value="#{articulos.usuarioUltBloqueoVentas.username}"/>
                 </p:column>
 
-                <p:column headerText="B.C." width="50px">
-                    <h:outputText value=""/>
+                <p:column headerText="Fecha Último Bloqueo Ventas" width="300px" style=" text-align: left" filterBy="#{articulos.fechaUltBloqueoVentas}" sortBy="#{articulos.fechaUltBloqueoVentas}">
+                    <h:outputText value="#{articulos.fechaUltBloqueoVentas}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                    </h:outputText>
                 </p:column>
 
-                <p:column headerText="Grupo Art." width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="B.C." width="50px" style=" text-align: center" sortBy="#{articulos.bloqueoCompras}" exportValue="#{articulos.bloqueoCompras ? 'Sí' : 'No'}">
+                    <p:selectBooleanCheckbox disabled="true" value="#{articulos.bloqueoCompras}"/>
                 </p:column>
 
-                <p:column headerText="Tipo Picking" width="200px">
-                    <h:outputText value=""/>
+                <p:column headerText="Grupo Art." width="100px"  style=" text-align: left" filterBy="#{articulos.articuloGrupo.etiquetaGrupo.descripcion}" sortBy="#{articulos.articuloGrupo.etiquetaGrupo.descripcion}">
+                    <h:outputText value="#{articulos.articuloGrupo.etiquetaGrupo.descripcion}"/>
                 </p:column>
 
-                <p:column headerText="Art. Clasificación" width="200px">
-                    <h:outputText value=""/>
+                <p:column headerText="Tipo Picking" width="200px" style=" text-align: left" filterBy="#{articulos.txtTipoPicking}" sortBy="#{articulos.txtTipoPicking}">
+                    <h:outputText value="#{articulos.txtTipoPicking}"/>
                 </p:column>
 
-                <p:column headerText="Clasificación" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Art. Clasificación" width="200px" style=" text-align: left" filterBy="#{articulos.idArticuloClasificacion.descripcion}" sortBy="#{articulos.idArticuloClasificacion.descripcion}">
+                    <h:outputText value="#{articulos.idArticuloClasificacion.descripcion}"/>
                 </p:column>
 
-                <p:column headerText="Con etiquetas" selectionMode="multiple" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Clasificación" width="100px" style=" text-align: center" filterBy="#{articulos.txtClasificacion}" sortBy="#{articulos.txtClasificacion}">
+                    <h:outputText value="#{articulos.txtClasificacion}"/>
                 </p:column>
 
-                <p:column headerText="Etiq. Portuguesa" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Con etiquetas" width="100px" style=" text-align: center" sortBy="#{articulos.etiqueta}" exportValue="#{articulos.etiqueta ? 'Sí' : 'No'}">
+                    <p:selectBooleanCheckbox disabled="true" value="#{articulos.etiqueta}"/>
                 </p:column>
 
-                <p:column headerText="Etiquetado Port." width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Etiq. Portuguesa" width="100px" style=" text-align: center" sortBy="#{articulos.etiquetaProtuguesa}" exportValue="#{articulos.etiquetaProtuguesa ? 'Sí' : 'No'}">
+                    <p:selectBooleanCheckbox disabled="true" value="#{articulos.etiquetaProtuguesa}"/>
                 </p:column>
 
-                <p:column headerText="Etiq. Italiana" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Etiquetado Port." width="100px" style=" text-align: center" sortBy="#{articulos.etiquetadoPortugues}" exportValue="#{articulos.etiquetadoPortugues ? 'Sí' : 'No'}">
+                    <p:selectBooleanCheckbox disabled="true" value="#{articulos.etiquetadoPortugues}"/>
                 </p:column>
 
-                <p:column headerText="Etiquetado Ita." width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Etiq. Italiana" width="100px" style=" text-align: center" sortBy="#{articulos.etiquetaItaliana}" exportValue="#{articulos.etiquetaItaliana ? 'Sí' : 'No'}">
+                    <p:selectBooleanCheckbox disabled="true" value="#{articulos.etiquetaItaliana}"/>
                 </p:column>
 
-                <p:column headerText="Etiq. Europea" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Etiquetado Ita." width="100px" style=" text-align: center" sortBy="#{articulos.etiquetadoItaliano}" exportValue="#{articulos.etiquetadoItaliano ? 'Sí' : 'No'}">
+                    <p:selectBooleanCheckbox disabled="true" value="#{articulos.etiquetadoItaliano}"/>
                 </p:column>
 
-                <p:column headerText="Propiedad de" width="150px">
-                    <h:outputText value=""/>
+                <p:column headerText="Etiq. Europea" width="100px" style=" text-align: center" sortBy="#{articulos.etiquetaEuropea}" exportValue="#{articulos.etiquetaEuropea ? 'Sí' : 'No'}">
+                    <p:selectBooleanCheckbox disabled="true" value="#{articulos.etiquetaEuropea}"/>
                 </p:column>
 
-                <p:column headerText="Pndte. Verificar" selectionMode="multiple" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Propiedad de" width="150px" filterBy="#{articulos.idUsuarioCreacion}" sortBy="#{articulos.idUsuarioCreacion}">
+                    <h:outputText value="#{articulos.idUsuarioCreacion}"/>
                 </p:column>
 
-                <p:column headerText="Fecha Verificación" selectionMode="multiple" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Pndte. Verificar" width="100px" style=" text-align: center" sortBy="#{articulos.pendienteVerificar}" exportValue="#{articulos.pendienteVerificar ? 'Sí' : 'No'}">
+                    <p:selectBooleanCheckbox disabled="true" value="#{articulos.pendienteVerificar}"/>
                 </p:column>
 
-                <p:column headerText="Altura(cm)" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Fecha Verificación" width="100px" style=" text-align: center" sortBy="#{articulos.controlLotes}" exportValue="#{articulos.controlLotes ? 'Sí' : 'No'}">
+                    <p:selectBooleanCheckbox disabled="true" value="#{articulos.fechaUltimaVerificacion ne null ? 'true' : 'false'}"/>
                 </p:column>
 
-                <p:column headerText="Ancho(cm)" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Altura(cm)" width="100px" style=" text-align: right" filterBy="#{articulos.alto}" sortBy="#{articulos.alto}">
+                    <h:outputText value="#{articulos.alto}">
+                        <f:convertNumber pattern="#.#" />
+                    </h:outputText>
                 </p:column>
 
-                <p:column headerText="Largo(cm)" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Ancho(cm)" width="100px" style=" text-align: right" filterBy="#{articulos.ancho}" sortBy="#{articulos.ancho}">
+                    <h:outputText value="#{articulos.ancho}">
+                        <f:convertNumber pattern="#.#" />
+                    </h:outputText>
                 </p:column>
 
-                <p:column headerText="Peso Neto(gr)" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Largo(cm)" width="100px" style=" text-align: right" filterBy="#{articulos.largo}" sortBy="#{articulos.largo}">
+                    <h:outputText value="#{articulos.largo}">
+                        <f:convertNumber pattern="#.#" />
+                    </h:outputText>
                 </p:column>
 
-                <p:column headerText="Volumen Neto(cm3)" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Peso Neto(gr)" width="100px" style=" text-align: right" filterBy="#{articulos.pesoNeto}" sortBy="#{articulos.pesoNeto}">
+                    <h:outputText value="#{articulos.pesoNeto}">
+                        <f:convertNumber pattern="#.#" />
+                    </h:outputText>
                 </p:column>
 
-                <p:column headerText="Peso Bruto(gr)" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Volumen Neto(cm3)" width="100px" style=" text-align: right" filterBy="#{articulos.volumenNeto}" sortBy="#{articulos.volumenNeto}">
+                    <h:outputText value="#{articulos.volumenNeto}">
+                        <f:convertNumber pattern="#.#" />
+                    </h:outputText>
                 </p:column>
 
-                <p:column headerText="Volumen Bruto(cm3)" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Peso Bruto(gr)" width="100px" style=" text-align: right" filterBy="#{articulos.pesoBruto}" sortBy="#{articulos.pesoBruto}">
+                    <h:outputText value="#{articulos.pesoBruto}">
+                        <f:convertNumber pattern="#,###.#" />
+                    </h:outputText>
                 </p:column>
 
-                <p:column headerText="Preventa" selectionMode="multiple" width="100px">
-                    <h:outputText value=""/>
+                <p:column headerText="Volumen Bruto(cm3)" width="100px" style=" text-align: right" filterBy="#{articulos.volumen}" sortBy="#{articulos.volumen}">
+                    <h:outputText value="#{articulos.volumen}">
+                        <f:convertNumber pattern="#,###.#" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Preventa" width="100px" style=" text-align: center" sortBy="#{articulos.preventa}" exportValue="#{articulos.preventa ? 'Sí' : 'No'}">
+                    <p:selectBooleanCheckbox disabled="true" value="#{articulos.preventa}"/>
                 </p:column>
 
             </p:dataTable>
@@ -376,15 +441,17 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
         </h:form>
 
         <h:form id="filterDialog">
-            <p:dialog header="Seleccione Filtros" id="dialogFilter" widgetVar="dialogFilter">
+            <p:dialog header="Seleccione Filtros" id="dialogFilter" widgetVar="dialogFilter" width="800" draggable="true" modal="true">
                 <div class="grid-container-2">
                     <div class="grid-item">
                         <h:outputLabel value="Familia"/>
                         <div class="ui-inputgroup" >
-                            <div class="ui-inputgroup-addon"><i class="pi pi-check-square"></i></div>
-                            <p:inputText placeholder="Todos" disabled="true" style="width: 310px"/>
-                            <p:commandButton icon="pi pi-search"/>
-                            <p:commandButton icon="pi pi-times" styleClass="ui-button-danger"/>
+                            <p:commandButton icon="pi pi-check-square" styleClass="ui-button-secondary"/>
+                            <p:inputText value="#{MainItems.familiaString}" disabled="true" style="width: 310px" id="textoFamilia" widgetVar="textoFamilia" placeholder="Todos"/>
+                            <p:commandButton icon="pi pi-search" actionListener="#{MainItems.selectionDialog('familia')}">
+                                <p:ajax event="dialogReturn" listener="#{MainItems.dialogReturn}" update="textoFamilia btnLimpiarFamilia"/>
+                            </p:commandButton>
+                            <p:commandButton icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{MainItems.limpiarFamilia}" disabled="#{empty MainItems.familiaString}" id="btnLimpiarFamilia" widgetVar="btnLimpiarFamilia" update="textoFamilia btnLimpiarFamilia"/>
                         </div>
                     </div>
                 </div>
@@ -393,49 +460,64 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                     <div class="grid-item">
                         <h:outputLabel value="Marca"/>
                         <div class="ui-inputgroup">
-                            <div class="ui-inputgroup-addon"><i class="pi pi-check-square"></i></div>
-                            <p:inputText placeholder="Todos" disabled="true" style="width: 310px"/>
-                            <p:commandButton icon="pi pi-search"/>
-                            <p:commandButton icon="pi pi-times" styleClass="ui-button-danger"/>
+                            <p:commandButton icon="pi pi-check-square" styleClass="ui-button-secondary"/>
+                            <p:inputText value="#{MainItems.marcaString}" disabled="true" style="width: 310px" id="textoMarca" widgetVar="textoMarca" placeholder="Todos"/>
+                            <p:commandButton icon="pi pi-search" actionListener="#{MainItems.selectionDialog('marca')}">
+                                <p:ajax event="dialogReturn" listener="#{MainItems.dialogReturn}" update="textoMarca btnLimpiarMarca"/>
+                            </p:commandButton>
+                            <p:commandButton icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{MainItems.limpiarMarca}" disabled="#{empty MainItems.marcaString}" id="btnLimpiarMarca" widgetVar="btnLimpiarMarca" update="textoMarca btnLimpiarMarca"/>
                         </div>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Niveles Clasificación"/>
                         <div class="ui-inputgroup">
-                            <div class="ui-inputgroup-addon"><i class="pi pi-check-square"></i></div>
-                            <p:inputText placeholder="Todos" disabled="true" style="width: 310px"/>
-                            <p:commandButton icon="pi pi-search"/>
-                            <p:commandButton icon="pi pi-times" styleClass="ui-button-danger"/>
+
+                            <p:inputText value="#{MainItems.nivelString}" disabled="true" style="width: 310px" id="textoNivel" widgetVar="textoNivel" placeholder="Todos"/>
+                            <p:commandButton icon="pi pi-search" actionListener="#{MainItems.selectionDialog('nivel')}">
+                                <p:ajax event="dialogReturn" listener="#{MainItems.dialogReturn}" update="textoNivel btnLimpiarNivel"/>
+                            </p:commandButton>
+                            <p:commandButton icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{MainItems.limpiarNivel()}" disabled="#{empty MainItems.nivelString}" id="btnLimpiarNivel" widgetVar="btnLimpiarNivel" update="textoNivel btnLimpiarNivel"/>
                         </div>
                     </div>
                 </div>
                 <div class="grid-container">
                     <div class="grid-item">
                         <h:outputLabel value="Bloqueo"/>
-                        <p:selectOneMenu id="comboSearchBloq" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchBloq" widgetVar="comboSearchBloq" styleClass="custom-filter" style="margin-right: 20px" value="#{MainItems.idBloqueo}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Ninguno" itemValue="-1"/>
+                            <f:selectItem itemLabel="Bloqueo Ventas" itemValue="1"/>
+                            <f:selectItem itemLabel="Bloqueo Compras" itemValue="2"/>
+                            <f:selectItem itemLabel="Ambos" itemValue="3"/>
                         </p:selectOneMenu>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Grupo Artículos"/>
-                        <p:selectOneMenu id="comboSearchGrupArt" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchGrupArt" widgetVar="comboSearchGrupArt" styleClass="custom-filter" style="margin-right: 20px" value="#{MainItems.idGrupoArticulo}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                            <f:selectItem itemLabel="No" itemValue="0"/>
+                            <f:selectItem itemLabel="Kit" itemValue="1"/>
+                            <f:selectItem itemLabel="Pack" itemValue="2"/>
+                            <f:selectItem itemLabel="Lote" itemValue="3"/>
+
                         </p:selectOneMenu>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Etiqueta de"/>
-                        <p:selectOneMenu id="comboSearchEtiqDe" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchEtiqDe" widgetVar="comboSearchEtiqDe" styleClass="custom-filter" style="margin-right: 20px; max-width: 158px" value="#{MainItems.idEtiquetaDe}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Sin Etiqueta" itemValue="-1"/>
+                            <f:selectItem itemLabel="Todos" itemValue="2"/>
+                            <f:selectItems value="#{MainItems.listaPaises}" var="countries" itemLabel="#{countries.nombre}" itemValue="#{countries.idPais}"/>
                         </p:selectOneMenu>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Etiquetado"/>
-                        <p:selectOneMenu id="comboSearchEtiqdo" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Sin etiqueta" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchEtiqdo" widgetVar="comboSearchEtiqdo" styleClass="custom-filter" style="margin-right: 20px; max-width: 158px" value="#{MainItems.idEtiquetado}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Sin etiqueta" itemValue="-1"/>
+                            <f:selectItems value="#{MainItems.listaPaises}" var="countriesEtiquetado" itemLabel="#{countriesEtiquetado.nombre}" itemValue="#{countriesEtiquetado.idPais}"/>
                         </p:selectOneMenu>
                     </div>
                 </div>
@@ -443,30 +525,38 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                 <div class="grid-container">
                     <div class="grid-item">
                         <h:outputLabel value="Control de Lote"/>
-                        <p:selectOneMenu id="comboSearchContrlLot" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchContrlLot" widgetVar="comboSearchContrlLot" styleClass="custom-filter" style="margin-right: 20px" value="#{MainItems.idControlDeLote}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                            <f:selectItem itemLabel="No" itemValue="0"/>
+                            <f:selectItem itemLabel="Si" itemValue="1"/>
                         </p:selectOneMenu>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Control de Caducidad"/>
-                        <p:selectOneMenu id="comboSearchContrlCad" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchContrlCad" widgetVar="comboSearchContrlCad" styleClass="custom-filter" style="margin-right: 20px" value="#{MainItems.idControlDeCaducidad}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                            <f:selectItem itemLabel="No" itemValue="0"/>
+                            <f:selectItem itemLabel="Si" itemValue="1"/>
                         </p:selectOneMenu>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Pediente Verificación"/>
-                        <p:selectOneMenu id="comboSearchPendVer" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchPendVer" widgetVar="comboSearchPendVer" styleClass="custom-filter" style="margin-right: 20px" value="#{MainItems.idPendienteVerificacion}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                            <f:selectItem itemLabel="No" itemValue="0"/>
+                            <f:selectItem itemLabel="Si" itemValue="1"/>
                         </p:selectOneMenu>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Fecha Ult. Modif."/>
-                        <p:selectOneMenu id="comboSearchFecUltModf" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Sin etiqueta" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchFecUltModf" widgetVar="comboSearchFecUltModf" styleClass="custom-filter" style="margin-right: 20px" value="#{MainItems.idFechUltModif}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                            <f:selectItem itemLabel="Sin Fecha" itemValue="0"/>
+                            <f:selectItem itemLabel="Con Fecha" itemValue="1"/>
                         </p:selectOneMenu>
                     </div>
                 </div>
@@ -474,71 +564,91 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                 <div class="grid-container">
                     <div class="grid-item">
                         <h:outputLabel value="Peso Bruto"/>
-                        <p:selectOneMenu id="comboSearchPesBrut" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchPesBrut" widgetVar="comboSearchPesBrut" styleClass="custom-filter" style="margin-right: 20px" value="#{MainItems.idPesoBruto}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                            <f:selectItem itemLabel="Sin Peso" itemValue="0"/>
+                            <f:selectItem itemLabel="Con Peso" itemValue="1"/>
                         </p:selectOneMenu>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Volumen Bruto"/>
-                        <p:selectOneMenu id="comboSearchVolBrut" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchVolBrut" widgetVar="comboSearchVolBrut" styleClass="custom-filter" style="margin-right: 20px" value="#{MainItems.idVolumentBruto}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                            <f:selectItem itemLabel="Sin Volumen" itemValue="0"/>
+                            <f:selectItem itemLabel="Con Volumen" itemValue="1"/>
                         </p:selectOneMenu>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Control Series"/>
-                        <p:selectOneMenu id="comboSearchContrlSeri" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchContrlSeri" widgetVar="comboSearchContrlSeri" styleClass="custom-filter" style="margin-right: 20px" value="#{MainItems.idControlSeries}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                            <f:selectItem itemLabel="No" itemValue="0"/>
+                            <f:selectItem itemLabel="Solo en Ventas" itemValue="1"/>
+                            <f:selectItem itemLabel="Lote Unitario" itemValue="2"/>
                         </p:selectOneMenu>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Tipo Artículo"/>
-                        <p:selectOneMenu id="comboSearchTipoArt" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Sin etiqueta" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchTipoArt" widgetVar="comboSearchTipoArt" styleClass="custom-filter" style="margin-right: 20px" value="#{MainItems.idTipoArticulo}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                            <f:selectItem itemLabel="Sin Asignar" itemValue="0"/>
+                            <f:selectItems value="#{MainItems.listaTiposArticulo}" var="tipoArticulo" itemLabel="#{tipoArticulo.descripcion}" itemValue="#{tipoArticulo.idTipoArticulo}"/>
                         </p:selectOneMenu>
                     </div>
                 </div>
                 <div class="grid-container">
                     <div class="grid-item">
                         <h:outputLabel value="Stock"/>
-                        <p:selectOneMenu id="comboSearchStock" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchStock" widgetVar="comboSearchStock" styleClass="custom-filter" style="margin-right: 20px" value="#{MainItems.idStock}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                            <f:selectItem itemLabel="Sin Stock" itemValue="0"/>
+                            <f:selectItem itemLabel="Con Stock" itemValue="1"/>
                         </p:selectOneMenu>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Preventa"/>
-                        <p:selectOneMenu id="comboSearchPrev" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchPrev" widgetVar="comboSearchPrev" styleClass="custom-filter" style="margin-right: 20px" value="#{MainItems.idPreventa}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                            <f:selectItem itemLabel="No" itemValue="0"/>
+                            <f:selectItem itemLabel="Si" itemValue="1"/>
                         </p:selectOneMenu>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Tipo Picking"/>
-                        <p:selectOneMenu id="comboSearchTipoPick" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchTipoPick" widgetVar="comboSearchTipoPick" styleClass="custom-filter" style="margin-right: 20px"  value="#{tiposPicking}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                            <f:selectItems value="#{MainItems.listaTiposPicking}" var="tiposPicking" itemLabel="#{tiposPicking.descripcion}" itemValue="#{tiposPicking.idTipoPicking}"/>
                         </p:selectOneMenu>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Art. Clasificación"/>
-                        <p:selectOneMenu id="comboSearchArtClasif" widgetVar="comboSearchEst" styleClass="custom-filter" style="margin-right: 20px; z-index: 2">
-                            <f:selectItem itemLabel="Sin etiqueta" itemValue="#{null}" noSelectionOption="true" />
-                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        <p:selectOneMenu id="comboSearchArtClasif" widgetVar="comboSearchArtClasif" styleClass="custom-filter" style="margin-right: 20px;" value="#{MainItems.idArtClasif}">
+                            <p:ajax event="change" process="@this"/>
+                            <f:selectItem itemLabel="Sin etiqueta" itemValue="-1"/>
+                            <f:selectItems value="#{MainItems.listaArticuloClasificacions}" var="artClasicacion" itemLabel="#{artClasicacion.descripcion}" itemValue="#{artClasicacion.idArticuloClasificacion}"/>
                         </p:selectOneMenu>
                     </div>
                 </div>
-                <div class="grid-container">
+                <div class="grid-container" >   
                     <div class="grid-item">
                         <h:outputLabel value="Min. Peso Bruto"/>
-                        <p:inputNumber id="minPesBrt" emptyValue="0,000" decimalPlaces="3" minValue="0" maxValue="100000" style="margin-right: 19px"/>
+                        <p:inputNumber id="minPesBrt" emptyValue="0" decimalPlaces="3" minValue="0" maxValue="100000" style="margin-right: 20px" inputStyle="text-align : right" value="#{MainItems.minPesoBruto}">
+                            <p:ajax event="blur" process="@this" />
+                        </p:inputNumber>
                     </div>
                     <div class="grid-item">
                         <h:outputLabel value="Máx. Peso Bruto"/>
-                        <p:inputNumber id="maxPesBrt" emptyValue="0,000" decimalPlaces="3" minValue="0" maxValue="100000" />
+                        <p:inputNumber id="maxPesBrt" emptyValue="0" decimalPlaces="3" minValue="0" maxValue="100000" inputStyle="text-align : right" value="#{MainItems.maxPesoBruto}">
+                            <p:ajax event="blur" process="@this" />
+                        </p:inputNumber>
+
                     </div>
                 </div>
 
