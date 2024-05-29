@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:head>
+        <title>Consulta Empaquetado del tercero </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+
+    <style>
+        body .ui-dialog .ui-dialog-titlebar {
+            background: #0094d4 !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            border-bottom: 0 none;
+            padding: 1.5rem;
+        }
+
+        .ui-datatable .ui-column-filter {
+            display: none !important;
+            box-sizing: border-box;
+            width: 100%;
+            margin: .5rem auto auto auto;
+        }
+
+
+        body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-carat-2-n-s:before {
+            content: "" !important;
+        }
+
+        .inputsTop{
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+            margin-left: 20px
+        }
+
+        body .ui-datatable .ui-datatable-header {
+            background: #0094d4 !important;
+            border: 1px solid #e9ecef;
+            border-width: 1px 0 1px 0;
+            color: #495057;
+            padding: 1rem 1rem;
+            font-weight: 600;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        .MarginBottom10 {
+            margin-bottom: 10px !important;
+        }
+        .MarRight10 {
+            margin-right: 10px !important;
+        }
+        .flex-inline-block {
+            display: inline-block;
+            position: relative;
+        }
+        .flex-inline-block {
+            display: inline-block;
+            position: relative;
+        }
+
+        .ui-fluid .ui-inputtextarea {
+            width: 100%;
+        }
+        .ui-fluid .ui-inputfield {
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+        }
+        body .ui-inputtextarea {
+            vertical-align: top;
+        }
+
+        .MarginTop10 {
+            margin-top: 10px !important;
+        }
+
+        body .ui-datatable.ui-datatable-striped .ui-datatable-data>tr.ui-datatable-odd {
+            background: #d7d7d7;
+        }
+
+        body .ui-accordion .ui-accordion-header.ui-state-active {
+            background: #a7c1db;
+            border-color: #dee2e6;
+            color: #495057;
+        }
+
+    </style>
+
+    <h:body>
+        <h:form>
+            <div>
+                <p:tabView>
+                    <p:tab title="Contenedores (#{Empaquetado.packedContainers.size()})" id="contenedores">
+                        <p:dataTable var="contenedor" value="#{Empaquetado.packedContainers}"
+                                     rowKey="#{contenedor.contenedorLogistico.idContenedorLogistico}" id="dataTableContenedores" widgetVar="dataTableContenedores" scrollable="true"
+                                     rows="6" paginator="true" paginatorPosition="bottom" stripedRows="true" filteredValue="#{Empaquetado.packedContainersFiltered}">
+
+                            <ui:include src="../WEB-INF/datatable-header.xhtml">
+                                <ui:param name="listaRendered" value="#{Empaquetado.packedContainers ne null}"/>
+                                <ui:param name="id" value="dataTableContenedores"/> 
+                                <ui:param name="listaSize" value="#{Empaquetado.packedContainers.size()}"/>
+                                <ui:param name="actionBean" value="#{Empaquetado}"/>
+                                <ui:param name="verBuscador" value="true"/>
+                                <ui:param name="verTotal" value="true"/>
+                                <ui:param name="verExcelJava" value="false"/>
+                                <ui:param name="verExcelDialog" value="false"/>
+                                <ui:param name="verExcelDataExporter" value="false"/>
+                                <ui:param name="tablaExport" value="dataTableContenedores"/>
+                                <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                                <ui:param name="titulo" value="Total de contenedores"/>
+                            </ui:include>
+
+
+
+                            <p:column headerText="Contenedor" width="50px">
+                                <h:outputText value="#{contenedor.empaquetadoActualCLPK.idContenedorLogistico}"/>
+                            </p:column>
+                            <p:column headerText="Ubicación" width="40px">
+                                <h:outputText value="#{contenedor.expedicion.textoErrorIntegracion}"/>
+                            </p:column>
+                            <p:column headerText="Fecha Ubicación" width="40px">
+                                <h:outputText value="#{contenedor.expedicion.fechaCreacion}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="Europe/Madrid"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Prioridad" width="40px">
+                                <h:outputText value="#{contenedor.expedicion.prioridad}"/>
+                            </p:column>
+                            <p:column headerText="Pedido" width="40px" sortBy="#{contenedor.expedicion.idPedidoSalida.idPedidoSalida}">
+                                <h:outputText value="#{contenedor.expedicion.idPedidoSalida.idPedidoSalida}"/>
+                            </p:column>
+                            <p:column headerText="Serie/Número" width="40px">
+                                <h:outputText value="#{contenedor.expedicion.serieDocumento}"/>
+                            </p:column>
+                            <p:column headerText="Pedido ERP" width="40px">
+                                <h:outputText value="#{contenedor.expedicion.idPedidoSalida.pedidoERP}"/>
+                            </p:column>
+                            <p:column headerText="Fecha Pedido" width="40px" >
+                                <h:outputText value="#{contenedor.expedicion.idPedidoSalida.fecha}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Europe/Madrid"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Expedición" width="40px" style="text-align: right">
+                                <h:outputText value="#{contenedor.expedicion.idExpedicion}"/>
+                            </p:column>
+                            <p:column headerText="Documento" width="40px" >
+                                <h:outputText value="#{contenedor.expedicion.serieDocumento}"/>
+                            </p:column>
+                            <p:column headerText="Autorizado" width="40px">
+                                <h:outputText value="#{contenedor.expedicion.textoEstadoTracking}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Empaquetado" id="empaquetado">
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Id Empaquetado"/>
+                                <p:inputText value="#{Empaquetado.packed.idEmpaquetadoActual}" disabled="true" style="text-align: end"/>
+                            </div>
+
+                            <div class="inputsTop">
+                                <h:outputLabel value="Código Tercero"/>
+                                <div class="ui-inputgroup">
+                                    <p:commandButton icon="pi pi-info-circle"/>
+                                    <p:inputText value="#{Empaquetado.packed.idTercero}" disabled="true" style="text-align: end; width: 160px"/>
+                                </div>
+                            </div>
+
+                            <div class="inputsTop">
+                                <h:outputLabel value="Tercero"/>
+                                <p:inputText value="#{Empaquetado.packed.nombreTercero}" disabled="true"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Fecha Inicio"/>
+                                <p:datePicker id="dateFin" value="#{Empaquetado.packed.fechaInicio}" locale="es"
+                                              disabled="true" pattern="dd/MM/yyyy HH:mm:ss"/>
+                            </div>
+
+                            <div class="inputsTop">
+                                <h:outputLabel value="Usuario Inicio"/>
+                                <p:inputText value="#{Empaquetado.packed.nombreUsuarioInicio}" disabled="true"/>
+                            </div>
+                        </div>
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Centro"/>
+                                <p:inputText value="#{Empaquetado.packed.nombreCentro}" disabled="true"/>
+                            </div>
+
+                            <div class="inputsTop">
+                                <h:outputLabel value="Código Tercero Centro"/>
+                                <p:inputText value="#{Empaquetado.packed.idTerceroCentro}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Centro del Tercero"/>
+                                <p:inputText value="#{Empaquetado.packed.idCentro}" disabled="true"/>
+                            </div>
+                        </div>
+
+                        <p:tabView>
+
+
+                            <p:tab title="Pedidos/Expediciones" id="pedexp">
+                                <p:dataTable var="pedExp" value="#{Empaquetado.packedDetails}"
+                                             rowKey="#{pedExp.empaquetadoActualDetallePK.idEmpaquetadoActual}" id="dataTablePedExp" widgetVar="dataTablePedExp" scrollable="true"
+                                             rows="6" paginator="true" paginatorPosition="bottom" stripedRows="true" filteredValue="#{Empaquetado.packedDetailsFiltered}">
+                                    <ui:include src="../WEB-INF/datatable-header.xhtml">
+                                        <ui:param name="listaRendered" value="#{Empaquetado.packedDetails ne null}"/>
+                                        <ui:param name="id" value="dataTablePedExp"/> 
+                                        <ui:param name="listaSize" value="#{Empaquetado.packedDetails.size()}"/>
+                                        <ui:param name="actionBean" value="#{Empaquetado}"/>
+                                        <ui:param name="verBuscador" value="true"/>
+                                        <ui:param name="verTotal" value="true"/>
+                                        <ui:param name="verExcel" value="false"/>
+                                        <ui:param name="tablaExport" value="dataTablePedExp"/>
+                                        <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                                        <ui:param name="titulo" value="Total Pedidos Empaquetados"/>
+                                    </ui:include>
+
+                                    <p:column headerText="Pedido" width="40px"  
+                                              style="text-align: right">
+                                        <h:outputText value="#{pedExp.empaquetadoActualDetallePK.idEmpaquetadoActual}"/>
+                                    </p:column>
+                                    <p:column headerText="Pedido ERP" width="40px">
+                                        <h:outputText value="#{pedExp.expedicion.idPedidoSalida.pedidoERP}"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha" width="40px" >
+                                        <h:outputText value="#{pedExp.expedicion.idPedidoSalida.fecha}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Europe/Madrid"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Expedición" width="40px" style="text-align: right">
+                                        <h:outputText value="#{pedExp.expedicion.idExpedicion}"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha Cierre Expedición" width="40px" >
+                                        <h:outputText value="#{pedExp.expedicion.fechaCierre}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Europe/Madrid"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Estado Expedición" width="40px">
+                                        <h:outputText value="#{pedExp.expedicion.estado == 0 ? 'Cerrado' : 'Abierto'}"/>
+                                    </p:column>
+                                    <p:column headerText="Total Artículos" width="40px" style="text-align: right">
+                                        <h:outputText value="#{pedExp.expedicion.numeroBultos}"/>
+                                    </p:column>
+
+
+                                </p:dataTable>
+                            </p:tab>
+
+                            <p:tab title="Contenedores Logísticos" id="contLogis">
+                                <p:dataTable var="contLogis" value="#{Empaquetado.packedContainersDetail}"
+                                             rowKey="#{contLogis.contenedorLogistico.idContenedorLogistico}" id="dataTableContLogis" widgetVar="dataTableContLogis" scrollable="true"
+                                             rows="6" paginator="true" paginatorPosition="bottom" stripedRows="true" filteredValue="#{Empaquetado.packedContainersDetailFiltered}">
+                                    
+                                    <!--
+                                    <ui:include src="../WEB-INF/datatable-header.xhtml">
+                                        <ui:param name="listaRendered" value="#{Empaquetado.packedContainersDetail ne null}"/>
+                                        <ui:param name="id" value="dataTableContLogis"/> 
+                                        <ui:param name="listaSize" value="#{Empaquetado.packedContainersDetail.size()}"/>
+                                        <ui:param name="actionBean" value="#{Empaquetado}"/>
+                                        <ui:param name="verBuscador" value="true"/>
+                                        <ui:param name="verTotal" value="true"/>
+                                        <ui:param name="verExcel" value="false"/>
+                                        <ui:param name="tablaExport" value="dataTableContLogis"/>
+                                        <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                                        <ui:param name="titulo" value="Total de Contenedores Logísticos"/>
+                                    </ui:include>
+                                    -->
+                                    
+                                    <p:column headerText="Id Contenedor Logístico" width="110px" style="text-align: right">
+                                        <p:commandLink actionListener="#{Empaquetado.dialogContenedorLogistico(contLogis.contenedorLogistico.idContenedorLogistico)}"
+                                                       value="#{contLogis.contenedorLogistico.idContenedorLogistico}"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha Creación" width="80px" sortBy="#{contLogis.fechaCreacion}" >
+                                        <h:outputText value="#{contLogis.fechaCreacion}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="Europe/Madrid"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Tipo Contenedor" width="60px">
+                                        <h:outputText value="#{contLogis.contenedorLogistico.tipoContenedorLogistico.descripcion}"/>
+                                    </p:column>
+                                    <p:column headerText="Peso Bruto" width="40px"
+                                              style="text-align: right">
+                                        <h:outputText value="#{contLogis.contenedorLogistico.pesoBruto}">
+                                            <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Tara" width="40px"
+                                              style="text-align: right">
+                                        <h:outputText value="#{contLogis.contenedorLogistico.tara}">
+                                            <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Altura" width="40px"
+                                              style="text-align: right">
+                                        <h:outputText value="#{contLogis.contenedorLogistico.altura}">
+                                            <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Volumen" width="40px"
+                                              style="text-align: right">
+                                        <h:outputText value="#{contLogis.contenedorLogistico.volumen}">
+                                            <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Nº Paquetes" width="40px" 
+                                              style="text-align: right">
+                                        <h:outputText value="#{contLogis.contenedorLogistico.numeroPalets}"/>
+                                    </p:column>
+                                    <p:column headerText="Agencia Tracking" width="40px">
+                                        <h:outputText value="#{contLogis.contenedorLogistico.idAgenciaTransporteTracking.identificacion}"/>
+                                    </p:column>
+                                    <p:column headerText="Tracking" width="40px">
+                                        <h:outputText value="#{contLogis.contenedorLogistico.tracking}"/>
+                                    </p:column>
+                                    <p:column headerText="Código de barras" width="40px" >
+                                        <h:outputText value="#{contLogis.contenedorLogistico.codigoBarras}"/>
+                                    </p:column>
+                                    <p:column headerText="Nº Bultos" width="40px" style="text-align: right">
+                                        <h:outputText value="#{contLogis.contenedorLogistico.numeroBultos}"/>
+                                    </p:column>
+
+
+                                </p:dataTable>
+                            </p:tab>
+
+
+                            <p:tab title="Log" id="logTab">
+                                <div style="display: flex" class="MarginTop10">
+
+                                    <div class="flex-inline-block MarRight10 MarginBottom10">
+                                        <p:dataTable var="log" value="#{Empaquetado.packedLogs}"
+                                                     rowKey="#{log.idEmpaquetadoActualLog}" id="dataTableLog" widgetVar="dataTableLog" 
+                                                     rows="6" paginator="true" paginatorPosition="bottom" stripedRows="true" filteredValue="#{Empaquetado.packedLogsFiltered}">
+
+                                            <ui:include src="../WEB-INF/datatable-header.xhtml">
+                                                <ui:param name="listaRendered" value="#{Empaquetado.packedLogs ne null}"/>
+                                                <ui:param name="id" value="dataTableLog"/> 
+                                                <ui:param name="listaSize" value="#{Empaquetado.packedLogs.size()}"/>
+                                                <ui:param name="actionBean" value="#{Empaquetado}"/>
+                                                <ui:param name="verBuscador" value="true"/>
+                                                <ui:param name="verTotal" value="true"/>
+                                                <ui:param name="verExcel" value="false"/>
+                                                <ui:param name="tablaExport" value="dataTableLog"/>
+                                                <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                                                <ui:param name="titulo" value="Total de Días"/>
+                                            </ui:include>
+                                            <p:column headerText="Fecha" width="40px" sortBy="#{log.fechaCreacion}">
+                                                <h:outputText value="#{log.fechaCreacion}" >
+                                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="Europe/Madrid"/>
+                                                </h:outputText>
+                                            </p:column>
+
+                                            <p:column headerText="Usuario" width="40px">
+                                                <h:outputText value="#{log.idUsuario}"/>
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </div>
+
+                                    <div class="flex-inline-block">
+                                        <p:inputTextarea  
+                                            class="ui-inputfield ui-inputtextarea ui-widget ui-state-default ui-corner-all ui-state-disabled ui-inputtextarea-resizable" 
+                                            disabled="disabled" cols="20" rows="3" maxlength="2147483647" 
+                                            style="overflow-x: hidden; overflow-wrap: break-word; height: 61px; width: 830px"/>
+                                    </div>
+                                </div>
+                            </p:tab>
+                        </p:tabView>    
+                    </p:tab>
+                </p:tabView> 
+            </div>
+        </h:form>
+    </h:body>
+</html>

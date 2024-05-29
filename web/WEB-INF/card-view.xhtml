@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <style>
+        .overview-title{
+            font-weight: 600;
+            font-size: 1.25rem;
+            vertical-align: middle;
+            margin-right: 0.5rem;
+            
+        }
+        .widget-overview-box-small {
+            width: 275px;
+            border-left: 4px solid !important;
+            border-left-color: #64B5F6 !important;
+        }
+
+        .widget-overview-box-small {
+            width: 275px;
+            border-left: 4px solid !important;
+            border-left-color: #64B5F6 !important;
+            border-radius: 4px;
+            box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            border: 4px;
+        }
+    </style>
+    <div class="card no-gutter widget-overview-box-small widget-overview-box-1"
+         style="padding: 0.7rem; width: max-content; margin: 10px 10px 0px 0px; min-width: 200px">
+
+
+        <div class="overview-title">
+            <h:outputLabel value="#{titulo}" style="color: #64B5F6;"/>
+        </div>
+        <div class="overview-title">
+            <h:outputLabel value="#{num}"/>
+        </div>
+
+
+
+
+    </div>
+</ui:composition>

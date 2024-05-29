@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <style>
+        .inputsTop{
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+            margin-left: 20px;
+            margin-bottom: 15px;
+            margin-top: 10px;
+            font-size: 11.5px !important;
+        }
+
+        .ui-selectonemenu label.ui-selectonemenu-label {
+            cursor: pointer;
+            width: 200px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .flex-inline-block {
+            display: inline-block !important;
+            position: relative !important;
+        }
+
+        .MarRight10 {
+            margin-right: 10px !important;
+        }
+
+        .MarginBottom10 {
+            margin-bottom: 10px !important;
+        }
+
+        .flex-direction-column {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+        }
+
+        .ui-selectonemenu label.ui-selectonemenu-label {
+            cursor: pointer;
+            height: 40px !important;
+        }
+
+        body .ui-dialog .ui-dialog-titlebar {
+            background: #0094d4 !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            border-bottom: 0 none;
+            padding: 1.5rem;
+        }
+
+        body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon .ui-icon-closethick:before {
+            content: "" !important;
+            color: #ffffff !important;
+        }
+
+        .grid-container-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 10px;
+            margin-left: 10px;
+        }
+
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+        .inputLineas .ui-inputfield {
+            width: 75px !important;
+
+        }
+
+        .asd .ui-radiobutton ui-widget {
+            margin-bottom: 20px !important;
+        }
+
+        body .ui-datatable.ui-datatable-striped .ui-datatable-data>tr.ui-datatable-odd {
+            background: #d7d7d7;
+        }
+
+    </style>
+    <h:head>
+        <title>Control panel</title>
+    </h:head>
+
+    <h:body>
+        <h:form id="formControlPanel">
+            <p:growl id="growl" showDetail="true" />
+            <p:growl id="growl-sticky" for="sticky-key" showDetail="true" sticky="true" />
+
+            <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+            <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                <p:graphicImage url="resources/load.gif" style="width: 60px; height: 60px; margin-top: 29px"/>
+            </p:dialog>
+
+
+
+            <p:toolbar>
+                <p:toolbarGroup>
+                    <div style="display: flex;
+                         align-content: center;
+                         align-items: center;
+                         padding: 10px;">
+                        <div class="inputsTop">
+
+                            <h:outputLabel value="Centro" />
+                            <p:selectOneMenu id="comboSearchCentro" widgetVar="comboSearchCentro"
+                                             styleClass="custom-filter" 
+                                             filter="true" filterMatchMode="startsWith" value="#{ControlPanel.centerId}">
+                                <p:ajax event="change" process="@this" listener="#{ControlPanel.actualizarAlmacenCombo}" update="comboSearchAlmacen"/>
+                                <f:selectItems value="#{ControlPanel.listaCentros}" var="centros" itemLabel="#{centros.idCentro} - #{centros.nombre}" itemValue="#{centros.idCentro}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="inputsTop">
+                            <h:outputLabel value="Almacén"/>
+                            <p:selectOneMenu id="comboSearchAlmacen" widgetVar="comboSearchAlmacen"
+                                             styleClass="custom-filter" 
+                                             filter="true" filterMatchMode="startsWith" value="#{ControlPanel.warehouseId}">
+                                <f:selectItems value="#{ControlPanel.listaAlmacenes}" var="alamcen" itemLabel="#{alamcen.centroAlmacenPK.idAlmacen} - #{alamcen.nombre}" itemValue="#{alamcen.centroAlmacenPK.idAlmacen}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="inputsTop">
+                            <h:outputLabel value="Tipo Pedido"/>
+                            <p:selectOneMenu id="comboSearchTipoPedido" widgetVar="comboSearchTipoPedido"
+                                             styleClass="custom-filter" >
+                                <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                                <f:selectItem itemLabel="Directo" itemValue="0"/>
+                                <f:selectItem itemLabel="Inverso" itemValue="1"/>
+                            </p:selectOneMenu>
+                        </div>
+
+                        <div style="margin-left: 10px">
+                            <p:commandButton icon="pi pi-search" style="margin-left: 10px" actionListener="#{ControlPanel.buscar}" />
+                            <p:commandButton icon="pi pi-shopping-bag" style="margin-left: 10px" actionListener="#{ControlPanel.selectionDialog('centroalmacen')}">
+                                <p:ajax event="dialogReturn" listener="#{ControlPanel.dialogReturn}" update="formControlPanel"/>
+                            </p:commandButton>
+                            <p:commandButton icon="pi pi-cog" style="margin-left: 10px" update="formDialog" oncomplete="PF('dialogFilter').show()" actionListener="#{ControlPanel.ubicacionesDisponibles}"/>
+                        </div>
+                    </div>
+                </p:toolbarGroup>
+                <p:toolbarGroup>
+                    <div>
+                        <p:commandButton icon="pi pi-box" style="margin-left: 10px"/>
+                    </div>
+                </p:toolbarGroup>
+            </p:toolbar>
+
+            <div class="flex-inline-block MarRight10 MarginBottom10">
+                <div class="flex-direction-column">
+                    <ui:include src="WEB-INF/card-view.xhtml">
+                        <ui:param name="titulo" value="Total Pedidos Pendientes"/>
+                        <ui:param name="num" value="#{ControlPanel.pendingItems.size()}"/>
+                    </ui:include>
+                    <ui:include src="WEB-INF/card-view.xhtml">
+                        <ui:param name="titulo" value="Total de Pedidos"/>
+                        <ui:param name="num" value="#{ControlPanel.orders.size()}"/>
+                    </ui:include>
+                    <ui:include src="WEB-INF/card-view.xhtml">
+                        <ui:param name="titulo" value="Total Pedidos Pendientes"/>
+                        <ui:param name="num" value="#{ControlPanel.pendingOrders.size()}"/>
+                    </ui:include>
+                    <ui:include src="WEB-INF/card-view.xhtml">
+                        <ui:param name="titulo" value="Total Pedidos Preparados"/>
+                        <ui:param name="num" value="#{ControlPanel.preparedOrders.size()}"/>
+                    </ui:include>
+                    <ui:include src="WEB-INF/card-view.xhtml">
+                        <ui:param name="titulo" value="Total Pedidos Verificados"/>
+                        <ui:param name="num" value="#{ControlPanel.verificatedOrders.size()}"/>
+                    </ui:include>
+                    <ui:include src="WEB-INF/card-view.xhtml">
+                        <ui:param name="titulo" value="Total de Pedidos Cerrados"/>
+                        <ui:param name="num" value="#{ControlPanel.closedOrders.size()}"/>
+                    </ui:include>
+                    <ui:include src="WEB-INF/card-view.xhtml">
+                        <ui:param name="titulo" value="Total de Pedidos Enviados"/>
+                        <ui:param name="num" value="#{ControlPanel.sentOrders.size()}"/>
+                    </ui:include>
+                    <ui:include src="WEB-INF/card-view.xhtml">
+                        <ui:param name="titulo" value="Total Pedidos Empaquetados"/>
+                        <ui:param name="num" value="#{ControlPanel.packedOrders.size()}"/>
+                    </ui:include>
+                </div>
+            </div>
+
+            <div>
+                <p:tabView activeIndex="#{ControlPanel.indexTab}" id="tabViewListas" widgetVar="tabViewListas">
+                    <p:ajax event="tabChange" update="formControlPanel" listener="#{ControlPanel.handleTabChange}"/>
+                    <p:tab title="Artículos Pendientes" id="itemsPending">
+                        <ui:include src="WEB-INF/dataTable-articulosPendientes.xhtml">
+                            <ui:param name="dtArtPend" value="dtArtPend"/>
+                            <ui:param name="methodExport" value="showExcel"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="Pedidos" id="orders">
+                        <ui:include src="WEB-INF/dataTable-controlPanelGeneral.xhtml">
+                            <ui:param name="indexTab" value="#{ControlPanel.indexTab}"/>
+                            <ui:param name="listaGeneral" value="#{ControlPanel.orders}"/> 
+                            <ui:param name="methodExport" value="showExcel"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="Pendientes" id="pendingOrders">
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:button value="Cambiar Prioridad" icon="pi pi-pencil" />
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                        <ui:include src="WEB-INF/dataTable-controlPanelGeneral.xhtml">
+                            <ui:param name="indexTab" value="#{ControlPanel.indexTab}"/>
+                            <ui:param name="listaGeneral" value="#{ControlPanel.pendingOrders}"/> 
+                            <ui:param name="methodExport" value="showExcel"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="Preparación" id="preparedOrders">
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:button value="Cambiar Prioridad" icon="pi pi-pencil" />
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                        <ui:include src="WEB-INF/dataTable-controlPanelGeneral.xhtml">
+                            <ui:param name="indexTab" value="#{ControlPanel.indexTab}"/>
+                            <ui:param name="listaGeneral" value="#{ControlPanel.preparedOrders}"/> <ui:param name="methodExport" value="showExcel"/>
+                        </ui:include>
+                    </p:tab>
+
+                    <p:tab title="Verificación" id="verificationOrders">
+                        <ui:include src="WEB-INF/dataTable-controlPanelGeneral.xhtml">
+                            <ui:param name="indexTab" value="#{ControlPanel.indexTab}"/>
+                            <ui:param name="listaGeneral" value="#{ControlPanel.verificatedOrders}"/> 
+                            <ui:param name="methodExport" value="showExcel"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="Pedidos Cerrados" id="closedOrders">
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:button icon="pi pi-bookmark" styleClass="ui-button-danger"/>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                        <ui:include src="WEB-INF/dataTable-controlPanelGeneral.xhtml">
+                            <ui:param name="indexTab" value="#{ControlPanel.indexTab}"/>
+                            <ui:param name="listaGeneral" value="#{ControlPanel.closedOrders}"/> 
+                            <ui:param name="methodExport" value="showExcel"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="Pedidos Enviados" id="sentOrders">
+                        <ui:include src="WEB-INF/dataTable-controlPanelGeneral.xhtml">
+                            <ui:param name="indexTab" value="#{ControlPanel.indexTab}"/>
+                            <ui:param name="listaGeneral" value="#{ControlPanel.sentOrders}"/> 
+                            <ui:param name="methodExport" value="showExcel"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="Empaquetados" id="packed">
+                        <ui:include src="WEB-INF/dataTable-empaquetado.xhtml">
+                            <ui:param name="dialogExport" value="dialogExport"/>
+                            <ui:param name="formDialogExport" value="formExportExcelDialog"/>
+                        </ui:include>
+                    </p:tab>
+                </p:tabView>
+            </div>
+        </h:form>
+
+
+
+        <h:form id="formDialog">
+            <p:dialog header="Asignar Pedidos de Picking Inverso a Ubicaciones Libres" id="dialogFilter" widgetVar="dialogFilter" width="800" draggable="true" modal="true">
+                <div style=" margin-top: 20px">
+                    <p:outputLabel value="Centro" style="margin-right: 20px;"/>
+                    <p:selectOneMenu id="comboSearchCentroDialog" widgetVar="comboSearchCentroDialog"
+                                     styleClass="custom-filter" disabled="true" style="width: 90%"
+                                     filter="true" filterMatchMode="startsWith" value="#{ControlPanel.centerId}">
+                        <p:ajax event="change" process="@this" listener="#{ControlPanel.actualizarAlmacenCombo}" update="comboSearchCentroDialog"/>
+                        <f:selectItems value="#{ControlPanel.listaCentros}" var="centros" itemLabel="#{centros.idCentro} - #{centros.nombre}" itemValue="#{centros.idCentro}"/>
+                    </p:selectOneMenu>
+                </div>
+                <div style=" margin-top: 20px">
+                    <p:outputLabel value="Almacén" style="margin-right: 20px"/>
+                    <p:selectOneMenu id="comboSearchAlmacenDialog" widgetVar="comboSearchAlmacenDialog"
+                                     styleClass="custom-filter" style="width: 88%;" disabled="true"
+                                     filter="true" filterMatchMode="startsWith" value="#{ControlPanel.warehouseId}">
+                        <f:selectItems value="#{ControlPanel.listaAlmacenes}" var="alamcen" 
+                                       itemLabel="#{alamcen.centroAlmacenPK.idAlmacen} - #{alamcen.nombre}" itemValue="#{alamcen.centroAlmacenPK.idAlmacen}"/>
+                    </p:selectOneMenu>
+                </div>
+                <div style=" margin-top: 20px; display: flex; flex-direction: row">
+                    <p:outputLabel value="Calles" style="margin-right: 20px; margin-top: 10px;"/>
+                    <div class="ui-inputgroup" style="width: auto">
+                        <p:inputText value="#{ControlPanel.zonaString}" disabled="true" id="textoCalles" widgetVar="textoCalles" style="width: 606px !important;"/>
+                        <p:commandButton icon="pi pi-search" actionListener="#{ControlPanel.selectionDialog('calles')}">
+                            <p:ajax event="dialogReturn" listener="#{ControlPanel.dialogReturn}" update="formDialog:textoCalles formDialog:clearZona"/>
+                        </p:commandButton>
+                        <p:commandButton id="clearZona" widgetVar="clearZona" icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{ControlPanel.limpiarCalle}" update="textoCalles clearZona" disabled="#{empty ControlPanel.zonaString}"/>
+                    </div>
+                </div>
+                <div style=" margin-top: 20px; display: flex; flex-direction: row">
+                    <p:outputLabel value="Clasificación" style="margin-right: 20px; margin-top: 10px;"/>
+                    <div class="ui-inputgroup" style="width: auto">
+                        <p:inputText value="#{ControlPanel.clasifString}" disabled="true" id="textoclasif" widgetVar="textoclasif" style="width: 560px !important;"/>
+                        <p:commandButton icon="pi pi-search" actionListener="#{ControlPanel.selectionDialog('clasif')}">
+                            <p:ajax event="dialogReturn" listener="#{ControlPanel.dialogReturn}" update="formDialog:textoclasif formDialog:clearClasif"/>
+                        </p:commandButton>
+                        <p:commandButton id="clearClasif" widgetVar="clearClasif" icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{ControlPanel.limpiarClasif}" update="textoclasif clearClasif" disabled="#{empty ControlPanel.clasifString}"/>
+                    </div>
+                </div>
+                <div style="margin-top: 20px">
+                    <p:outputLabel value="Nº de Pedidos máximos a asignar" style="margin-right: 20px; margin-top: 20px"/>
+                    <p:inputText id="txt" style="width: 99%; margin-top: 10px" value="#{ControlPanel.totalMaxOrders}"/>
+                    <p:slider for="txt" style="margin-top: 20px" maxValue="#{ControlPanel.totalMaxOrders}"/>
+                    <p:outputLabel value="Ubicaciones Disponibles: #{ControlPanel.totalMaxOrders}" style="margin-top: 20px"/>
+                </div>
+                <div style="display: flex; justify-content: flex-end">
+                    <p:commandButton icon="pi pi-save" styleClass="ui-button-success" style="margin-top: 20px; align-content: end"/>
+                </div>
+            </p:dialog>
+        </h:form>
+
+
+
+        <h:form id="dlgAsigPed">
+            <p:dialog header="Asignar Pedidos al Centro #{ControlPanel.centerId}/#{ControlPanel.warehouseId}" 
+                      id="dialogSelect" widgetVar="dialogSelect" draggable="true" modal="true"
+                      width="1810" height="700">
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Centro de Origen"/>
+                                <p:inputText value="#{ControlPanel.centroAlmacenSelected.nombreCentro}" disabled="true"/>
+                            </div>
+
+                            <div class="inputsTop">
+                                <h:outputLabel value="Almacén de Origen"/>
+                                <p:inputText value="#{ControlPanel.centroAlmacenSelected.nombre}" disabled="true"/>
+                            </div>
+                            <div class="inputsTop">
+                                <p:commandButton icon="pi pi-filter" styleClass="ui-button-success" style="margin-top: 10px; margin-left: 10px"
+                                                 update="filterDialogTercero" oncomplete="PF('dialogFilterTercero').show()"/>
+                            </div>
+
+                        </div>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup>
+                        <p:commandButton icon="pi pi-save" styleClass="ui-button-success" style="margin-left: 20px" 
+                                         oncomplete="if (#{ControlPanel.isPedidoSelected()}) PF('dialogFilterSave').show()" 
+
+                                         disabled="#{not ControlPanel.isPedidoSelected()}" id="btnSave" widgetVar="btnSave"/>
+                        <p:commandButton icon="pi pi-search" style="margin-left: 20px" actionListener="#{ControlPanel.motrarPedidos()}"/> 
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:dataTable var="pedido" value="#{ControlPanel.listPedidos}" selection="#{ControlPanel.listPedidosSelected}"
+                             rowKey="#{pedido.idPedidoSalida}" id="dataTablePedidoSalida" widgetVar="dataTablePedidoSalida" scrollable="true"
+                             rows="6" paginator="true" paginatorPosition="bottom" rowSelectMode="none"
+                             stripedRows="true">
+                    <p:ajax event="rowSelectCheckbox" update="dlgAsigPed:btnSave"/>
+                    <p:ajax event="rowUnselectCheckbox" update="dlgAsigPed:btnSave"/>
+                    <p:ajax event="toggleSelect" update="dlgAsigPed:btnSave"/>
+                    <ui:include src="WEB-INF/datatable-header.xhtml">
+                        <ui:param name="listaRendered" value="#{ControlPanel.listPedidos ne null}"/>
+                        <ui:param name="id" value="dataTablePedidoSalida"/> 
+                        <ui:param name="listaSize" value="#{ControlPanel.listPedidos.size()}"/>
+                        <ui:param name="actionBean" value="#{ControlPanel}"/>
+                        <ui:param name="verBuscador" value="true"/>
+                        <ui:param name="verTotal" value="true"/>
+                        <ui:param name="verExcel" value="false"/>
+                        <ui:param name="tablaExport" value="dataTablePedidoSalida"/>
+                        <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                        <ui:param name="titulo" value="Total de Pedidos"/>
+                    </ui:include>
+
+                    <p:column selectionMode="multiple" exportable="false" width="30px"/>
+                    <p:column headerText="Pedido" width="40px" filterBy="#{pedido.idPedidoSalida}" sortBy="#{pedido.idPedidoSalida}">
+                        <h:outputText value="#{pedido.idPedidoSalida}"/>
+                    </p:column>
+                    <p:column headerText="NºSerie" width="40px" filterBy="#{pedido.serie}" sortBy="#{pedido.serie}">
+                        <h:outputText value="#{pedido.serie}"/>
+                    </p:column>
+
+                    <p:column headerText="Fecha Pedido" width="100px" sortBy="#{pedido.fecha}">
+                        <h:outputText value="#{pedido.fecha}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Fecha Servicio" width="70px" sortBy="#{pedido.fechaServicio}">
+                        <h:outputText value="#{pedido.fechaServicio}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" locale="es"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Su Pedido" width="60px" filterBy="#{pedido.suPedido}" sortBy="#{pedido.suPedido}">
+                        <h:outputText value="#{pedido.suPedido}"/>
+                    </p:column>
+                    <p:column headerText="Tipos Embalaje" width="70px" filterBy="#{pedido.textoTipoEmbalaje}" sortBy="#{pedido.textoTipoEmbalaje}">
+                        <h:outputText value="#{pedido.textoTipoEmbalaje}"/>
+                    </p:column>
+                    <p:column headerText="Cliente" width="40px" filterBy="#{pedido.idTercero.razonSocial}" sortBy="#{pedido.idTercero.razonSocial}">
+                        <h:outputText value="#{pedido.idTercero.razonSocial}"/>
+                    </p:column>
+                    <p:column headerText="Email" width="40px" filterBy="#{pedido.idTercero.email1}" sortBy="#{pedido.idTercero.email1}">
+                        <h:outputText value="#{pedido.idTercero.email1}"/>
+                    </p:column>
+                    <p:column headerText="Prioridad" width="50px" filterBy="#{pedido.prioridad}" sortBy="#{pedido.prioridad}">
+                        <h:outputText value="#{pedido.prioridad}"/>
+                    </p:column>
+                    <p:column headerText="Líneas" width="40px" filterBy="#{pedido.etiquetado}" sortBy="#{pedido.lineas}">
+                        <h:outputText value="#{pedido.lineas}"/>
+                    </p:column>
+                    <p:column headerText="Clasificación de Pedido" width="100px" filterBy="#{pedido.clasificacion}" sortBy="#{pedido.clasificacion}">
+                        <h:outputText value="#{pedido.clasificacion}"/>
+                    </p:column>
+                    <p:column headerText="Agencia de Transporte" width="120px" filterBy="#{pedido.idAgenciaTransporte.nombre}" sortBy="#{pedido.idAgenciaTransporte.nombre}">
+                        <h:outputText value="#{pedido.idAgenciaTransporte.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Forma de Pago" width="70px" filterBy="#{pedido.metodoDePago}" sortBy="#{pedido.metodoDePago}">
+                        <h:outputText value="#{pedido.metodoDePago}"/>
+                    </p:column>
+                    <p:column headerText="Código Postal" width="70px" filterBy="#{pedido.idTercero.codigoPostal}" sortBy="#{pedido.idTercero.codigoPostal}">
+                        <h:outputText value="#{pedido.idTercero.codigoPostal}"/>
+                    </p:column>
+                    <p:column headerText="Población" width="60px" filterBy="#{pedido.idAgenciaTransporte.nombre}" sortBy="#{pedido.idTercero.poblacion}">
+                        <h:outputText value="#{pedido.idTercero.poblacion}"/>
+                    </p:column>
+                    <p:column headerText="Provincia" width="60px" filterBy="#{pedido.idTercero.provincia}" sortBy="#{pedido.idTercero.provincia}">
+                        <h:outputText value="#{pedido.idTercero.provincia}"/>
+                    </p:column>
+
+                </p:dataTable>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="filterDialogTercero">
+            <p:dialog header="Seleccione Filtros" id="dialogFilterTercero" widgetVar="dialogFilterTercero" width="480" draggable="true" modal="true">
+                <div class="grid-container-2">
+                    <div class="grid-item">
+                        <h:outputLabel value="Fecha Inicio Pedido"/>
+                        <p:datePicker id="spanish" value="#{ControlPanel.fechInicPed}" locale="es" monthNavigator="true" yearNavigator="true" pattern="yyyy-MMM-dd" />
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Fecha Final Pedido"/>
+                        <p:datePicker id="fechFinPed" value="#{ControlPanel.fechFinPed}" locale="es" monthNavigator="true" yearNavigator="true" pattern="dd/MMM/yyyy" />
+                    </div>
+                </div>
+                <div class="grid-container-2">
+                    <div class="grid-item">
+                        <h:outputLabel value="Fecha Inicio Servicio"/>
+                        <p:datePicker id="fechInicSer" value="#{ControlPanel.fechInicSer}" locale="es" monthNavigator="true" yearNavigator="true" pattern="dd/MMM/yyyy" />
+                    </div>
+                    <div class="grid-item">
+                        <h:outputLabel value="Fecha Final Servicio"/>
+                        <p:datePicker id="fechFinSer" value="#{ControlPanel.fechFinSer}" locale="es" monthNavigator="true" yearNavigator="true" pattern="dd/MMM/yyyy" />
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <h:outputLabel value="Tercero"/>
+                    <div class="ui-inputgroup">
+                        <p:inputText value="#{ControlPanel.terceroString}" disabled="true" style="width: 350px" id="textoTercero" widgetVar="textoTercero"/>
+                        <p:commandButton icon="pi pi-search" actionListener="#{ControlPanel.selectionDialog('terceroSingle')}">
+                            <p:ajax event="dialogReturn" listener="#{ControlPanel.dialogReturn}" update="textoTercero btnCentroTercero btnLimpiarTercero"/>
+                        </p:commandButton>
+                        <p:commandButton icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{ControlPanel.limpiarTercero()}" disabled="#{empty ControlPanel.terceroString}"
+                                         id="btnLimpiarTercero" widgetVar="btnLimpiarTercero" update="textoTercero btnLimpiarTercero textoCentroTercero btnLimpiarCentroTercero"/>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <h:outputLabel value="Centro del Tercero"/>
+                    <div class="ui-inputgroup">
+                        <p:inputText value="#{ControlPanel.centroTerceroString}" disabled="true" style="width: 350px" id="textoCentroTercero" widgetVar="textoCentroTercero"/>
+                        <p:commandButton icon="pi pi-search" actionListener="#{ControlPanel.selectionDialog('centroTercero')}" disabled="#{empty ControlPanel.terceroString}"
+                                         id="btnCentroTercero" widgetVar="btnCentroTercero">
+                            <p:ajax event="dialogReturn" listener="#{ControlPanel.dialogReturn}"  update="textoCentroTercero btnLimpiarCentroTercero"/>
+                        </p:commandButton>
+                        <p:commandButton icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{ControlPanel.limpiarCentroTercero()}"
+                                         disabled="#{empty ControlPanel.centroTerceroString}" id="btnLimpiarCentroTercero" widgetVar="btnLimpiarCentroTercero"
+                                         update="textoCentroTercero btnLimpiarCentroTercero"/>
+                    </div>
+                </div>
+                <h:outputLabel value="Líneas Pendientes"/>
+                <p:inputNumber value="#{ControlPanel.lineasPendientes}" id="minNUm" styleClass="inputLineas" style="margin-left: 10px !important;"/>
+                <h:outputLabel value="Hasta"/>
+                <p:inputNumber value="#{ControlPanel.lineasPendientesHasta}" styleClass="inputLineas" style="margin-left: 10px !important; margin-right: 10px !important"/>
+                <div class="grid-item">
+                    <h:outputLabel value="Tipología de Pedido"/>
+                    <p:selectCheckboxMenu id="multiple"
+                                          filter="true" filterMatchMode="startsWith"
+                                          label="tipologia" multiple="true" emptyLabel="Please select..." updateLabel="true"
+                                          style="min-width: 15rem" scrollHeight="250" 
+                                          value="#{ControlPanel.listaTipologiaPedidosSelected}">
+                        <p:ajax event="change" />
+                        <f:selectItems value="#{ControlPanel.listaTipologiaPedido}" var="tipologia" itemLabel="#{tipologia.descripcion}" />
+                    </p:selectCheckboxMenu>
+                </div>
+            </p:dialog>
+        </h:form >
+
+
+        <h:form id="saveButton">
+            <p:dialog header="Seleccione circuito de Picking" id="dialogFilterSave" widgetVar="dialogFilterSave" width="400" draggable="true" modal="true" style="margin: 20px">
+                <p:selectOneRadio id="page" value="#{ControlPanel.radioSelected}" layout="pageDirection" style="margin-top: 10px; padding: 10px" styleClass="asd">
+                    <f:selectItem itemLabel="Solo cambiar de almacén" itemValue="0" />
+                    <f:selectItem itemLabel="Picking directo" itemValue="1"/>
+                    <f:selectItem itemLabel="Picking inverso" itemValue="2"/>
+                    <p:ajax event="change" update="selectOneMenuPanel" />
+
+                </p:selectOneRadio>
+
+                <h:panelGroup id="selectOneMenuPanel" style="margin-top: 10px">
+                    <div class="inputsTop">
+                        <p:outputLabel value="Seleccionar Cola" rendered="#{ControlPanel.radioSelected eq '1'}"/>
+                        <p:selectOneMenu id="colaSelection" widgetVar="colaSelection" value="#{ControlPanel.idCola}"
+                                         var="c" 
+                                         filter="true" filterMatchMode="startsWith"
+                                         rendered="#{ControlPanel.radioSelected eq '1'}">
+                            <f:selectItem itemLabel="Cola Automática" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{ControlPanel.listColas}" var="cola"
+                                           itemLabel="#{cola.descripcion}" itemValue="#{cola.idCola}"/>
+                        </p:selectOneMenu>
+                    </div>
+
+
+
+                    <div class="inputsTop">
+                        <p:selectBooleanCheckbox id="pInverso" widgetVar="pInverso" value="#{ControlPanel.locateOrder }" itemLabel="Ubicar el Pedido"
+                                                 rendered="#{ControlPanel.radioSelected eq '2'}"/>
+                    </div>
+                </h:panelGroup >
+                <div style="text-align: right; margin-top: 10px; margin-right: 10px">
+                    <p:commandButton value="Guardar" styleClass="ui-button-success" icon="pi pi-save"  action="#{ControlPanel.asignarPedido()}"
+                                     id="btnAddSavePicking" widgetVar="btnAddSavePicking" update="saveButton"/>
+                </div>
+
+            </p:dialog>
+        </h:form>
+
+        <h:form id="formExportExcelDialog">
+            <p:dialog header="Exportación" id="dialogExport" widgetVar="dialogExport" width="490" draggable="true" modal="true">
+                <div style="display: flex; margin-right: 10px">
+                    <div class="inputsTop">
+                        <p:outputLabel value="Fecha Inicio"/>
+                        <p:datePicker id="dateInic" value="#{ControlPanel.fecInic}" locale="es"
+                                      monthNavigator="true" yearNavigator="true" pattern="dd/MM/yyyy" />
+                    </div>
+                    <div class="inputsTop">
+                        <p:outputLabel value="Fecha Final"/>
+                        <p:datePicker id="dateFin" value="#{ControlPanel.fecFin}" locale="es"
+                                      monthNavigator="true" yearNavigator="true" pattern="dd/MM/yyyy"/>
+
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center;margin-bottom: 15px">
+                    <p:toggleSwitch value="#{ControlPanel.artPendTodosCentros}"/>
+                    <p:outputLabel value="Exportar Artículos Pendientes de todos los Centros" style="margin-top: 2px; margin-left: 5px"/>
+                </div>
+
+
+
+                <p:commandButton value="Aceptar" action="#{ControlPanel.exportToExcel()}" ajax="false" update="dlgAsigPed" style="width: 440px;"/>
+            </p:dialog>
+        </h:form>
+
+    </h:body>
+</html>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <style>
+        body .ui-paginator .ui-paginator-current, body .ui-paginator .ui-paginator-rpp-options {
+            margin: .5rem;
+            display: inline-block;
+            vertical-align: middle;
+            border-radius: 7px !important;
+            border-block: revert;
+        }
+
+        .ui-datatable .ui-column-filter {
+            display: none;
+            box-sizing: border-box;
+            width: 100%;
+            margin: .5rem auto auto auto;
+
+        }
+        body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-carat-2-n-s:before {
+            content: "";
+        }
+
+        body .ui-datatable .ui-datatable-header {
+            background: #0094d4;
+            border: 1px solid #e9ecef;
+            border-width: 1px 0 1px 0;
+            color: #495057;
+            padding: 1rem 1rem;
+            font-weight: 600;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+        
+        body .ui-datatable.ui-datatable-striped .ui-datatable-data>tr.ui-datatable-odd {
+            background: #d7d7d7;
+        }
+
+    </style>
+    <div>
+        <p:dataTable value="#{ControlPanel.packedOrders}" var="packOrd" rows="10" paginator="true" paginatorPosition="bottom"
+                     rowsPerPageTemplate="5,10,{ShowAll|'All'}" stripedRows="true" id="dtEmp" widgetVar="dtEmp">
+            <ui:include src="datatable-header.xhtml">
+                <ui:param name="listaRendered" value="#{not empty ControlPanel.packedOrders }"/>
+                <ui:param name="id" value="dtEmp"/> 
+                <ui:param name="listaSize" value="#{ControlPanel.packedOrders.size()}"/>
+                <ui:param name="actionBean" value="#{ControlPanel}"/>
+                <ui:param name="tablaExport" value="dtEmp"/>
+                <ui:param name="nombreArchivo" value="Articulos Pendiente"/>
+                <ui:param name="verBuscador" value="true"/>
+                <ui:param name="verTotal" value="true"/>
+                <ui:param name="verExcelDataExporter" value="false"/>
+                <ui:param name="verExcelJava" value="false"/>
+                <ui:param name="dialogExport" value="#{dialogExport}"/>
+                <ui:param name="verExcelDialog" value="false"/>
+                <ui:param name="formDialogExport" value="#{formDialogExport}"/>
+                <ui:param name="titulo" value="Total Pedidos Empaquetados"/>
+            </ui:include>
+
+            <p:column headerText="Empaquetado" width="150px" style="text-align: end">
+                <p:commandLink id="ajax" action="#{ControlPanel.dialogContenedor(packOrd.expedicion.idPedidoSalida.idTercero.idTercero, packOrd.expedicion.idPedidoSalida.idTerceroCentro.idTerceroCentro)}" class="mr-4"
+                               value="#{packOrd.empaquetadoActual.idEmpaquetadoActual}" style="text-align: end"/>
+            </p:column>
+            <p:column headerText="Orden" width="150px" sortBy="#{packOrd.expedicion.idPedidoSalida.ordenPalet}" filterBy="#{packOrd.expedicion.idPedidoSalida.ordenPalet}"
+                       style="text-align: right">
+                <h:outputText value="#{packOrd.expedicion.idExpedicion}"/>
+            </p:column>
+            <p:column headerText="Pedido" width="400px" sortBy="#{packOrd.expedicion.idPedidoSalida.pedidoERP}" filterBy="#{packOrd.expedicion.idPedidoSalida.pedidoERP}">
+                <h:outputText value="#{packOrd.expedicion.idPedidoSalida.pedidoERP}"/>
+            </p:column>
+            <p:column headerText="Serie/Número" width="150px" sortBy="#{packOrd.expedicion.idPedidoSalida.serie}" filterBy="#{packOrd.expedicion.idPedidoSalida.serie}">
+                <h:outputText value="#{packOrd.expedicion.idPedidoSalida.serie}"/>
+            </p:column>
+            <p:column headerText="Fecha Pedido" width="150px" sortBy="#{packOrd.expedicion.idPedidoSalida.fechaPedido}">
+                <h:outputText value="#{packOrd.expedicion.idPedidoSalida.fechaPedido}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Fecha Servicio" width="150px" sortBy="#{packOrd.expedicion.idPedidoSalida.fechaServicio}">
+                <h:outputText value="#{packOrd.expedicion.idPedidoSalida.fechaServicio}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Nombre del Tercero" width="300px" sortBy="#{packOrd.expedicion.idPedidoSalida.idTercero.nombreComercial}" filterBy="#{packOrd.expedicion.idPedidoSalida.idTercero.nombreComercial}">
+                <h:outputText value="#{packOrd.expedicion.idPedidoSalida.idTercero.nombreComercial}"/>
+            </p:column>
+            <p:column headerText="Nombre Tercero Centro" width="200px" sortBy="#{packOrd.expedicion.idPedidoSalida.idCentro}" filterBy="#{packOrd.expedicion.idPedidoSalida.idCentro}">
+                <h:outputText value="#{packOrd.expedicion.idPedidoSalida.idCentro}"/>
+            </p:column>
+            <p:column headerText="Agencia de Trasporte" width="150px" sortBy="#{packOrd.expedicion.agenciaTransporte.idAgenciaTransporte}" filterBy="#{packOrd.expedicion.agenciaTransporte.idAgenciaTransporte}">
+                <h:outputText value="#{packOrd.expedicion.agenciaTransporte.idAgenciaTransporte}"/>
+            </p:column>
+            <p:column headerText="Cliente" width="150px" sortBy="#{packOrd.expedicion.idPedidoSalida.idTercero.razonSocial}" filterBy="#{packOrd.expedicion.idPedidoSalida.idTercero.razonSocial}">
+                <h:outputText value="#{packOrd.expedicion.idPedidoSalida.idTercero.razonSocial}"/>
+            </p:column>
+            <p:column headerText="Teléfono" width="150px" sortBy="#{packOrd.expedicion.idPedidoSalida.envioTelefono}" filterBy="#{packOrd.expedicion.idPedidoSalida.envioTelefono}">
+                <h:outputText value="#{packOrd.expedicion.idPedidoSalida.envioTelefono}"/>
+            </p:column>
+            <p:column headerText="Email" width="150px" sortBy="#{packOrd.expedicion.idPedidoSalida.envioEmail}" filterBy="#{packOrd.expedicion.idPedidoSalida.envioEmail}">
+                <h:outputText value="#{packOrd.expedicion.idPedidoSalida.envioEmail}"/>
+            </p:column>
+            <p:column headerText="Su Pedido" width="150px" sortBy="#{packOrd.expedicion.idPedidoSalida.suPedido}" filterBy="#{packOrd.expedicion.idPedidoSalida.suPedido}">
+                <h:outputText value="#{packOrd.expedicion.idPedidoSalida.suPedido}"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+</ui:composition>

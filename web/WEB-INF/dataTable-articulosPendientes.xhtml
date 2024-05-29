@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <style>
+        body .ui-paginator .ui-paginator-current, body .ui-paginator .ui-paginator-rpp-options {
+            margin: .5rem;
+            display: inline-block;
+            vertical-align: middle;
+            border-radius: 7px !important;
+            border-block: revert;
+        }
+
+        .ui-datatable .ui-column-filter {
+            display: none;
+            box-sizing: border-box;
+            width: 100%;
+            margin: .5rem auto auto auto;
+
+        }
+
+        body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon .ui-icon-closethick:before {
+            content: "";
+            color: #ffffff !important;
+        }
+        body .ui-datatable .ui-datatable-header {
+            background: #0094d4;
+            border: 1px solid #e9ecef;
+            border-width: 1px 0 1px 0;
+            color: #495057;
+            padding: 1rem 1rem;
+            font-weight: 600;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        body .ui-datatable.ui-datatable-striped .ui-datatable-data>tr.ui-datatable-odd {
+            background: #d7d7d7;
+        }
+
+    </style>
+
+    <div style="padding: 1rem;">
+        <p:dataTable value="#{ControlPanel.pendingItems}" var="artPen" rows="10" paginator="true" paginatorPosition="bottom"
+                     rowsPerPageTemplate="5,10,{ShowAll|'All'}" 
+                     id="#{dtArtPend}" widgetVar="#{dtArtPend}" stripedRows="true"> 
+            <ui:include src="datatable-header.xhtml">
+                <ui:param name="listaRendered" value="#{not empty ControlPanel.pendingItems }"/>
+                <ui:param name="id" value="dtArtPend"/> 
+                <ui:param name="listaSize" value="#{ControlPanel.pendingItems.size()}"/>
+                <ui:param name="actionBean" value="#{ControlPanel}"/>
+                <ui:param name="tablaExport" value="dtArtPend"/>
+                <ui:param name="nombreArchivo" value="Articulos Pendiente"/>
+                <ui:param name="verBuscador" value="true"/>
+                <ui:param name="verTotal" value="true"/>
+                <ui:param name="verExcelDataExporter" value="false"/>
+                <ui:param name="verExcelJava" value="false"/>
+                <ui:param name="titulo" value="Total Artículos Pendientes"/>
+                <ui:param name="verExcelDialog" value="true"/>
+                <ui:param name="methodExport" value="#{methodExport}"/>
+            </ui:include>
+            <p:column headerText="Artículo" width="150px" sortBy="#{artPen.articulo.idArticulo}" filterBy="#{artPen.articulo.idArticulo}">
+                <h:outputText value="#{artPen.articulo.idArticulo}"/>
+            </p:column>
+            <p:column headerText="Referencia" width="150px" sortBy="#{artPen.articulo.referencia}" filterBy="#{artPen.articulo.referencia}">
+                <h:outputText value="#{artPen.articulo.referencia}"/>
+            </p:column>
+            <p:column headerText="Descripción" width="420px" sortBy="#{artPen.articulo.descripcion}" filterBy="#{artPen.articulo.descripcion}">
+                <h:outputText value="#{artPen.articulo.descripcion}"/>
+            </p:column>
+            <p:column headerText="Código de barras" width="150px" sortBy="#{artPen.articulo.codigoBarras}" filterBy="#{artPen.articulo.codigoBarras}">
+                <h:outputText value="#{artPen.articulo.codigoBarras}"/>
+            </p:column>
+            <p:column headerText="Min.Fec.Pedido" width="150px" sortBy="#{artPen.fechaPedido}">
+                <h:outputText value="#{artPen.fechaPedido}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Servido" width="150px" sortBy="#{artPen.servido}" filterBy="#{artPen.servido}" style="text-align: right">
+                <h:outputText value="#{artPen.servido}">
+                    <f:convertNumber locale="es-ES" maxFractionDigits="0" type="currency" currencySymbol=""/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Pedido" width="150px" sortBy="#{artPen.pedido}" filterBy="#{artPen.pedido}" style="text-align: right">
+                <h:outputText value="#{artPen.pedido}">
+                    <f:convertNumber locale="es-ES" maxFractionDigits="0" type="currency" currencySymbol=""/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Se necesita" width="150px" sortBy="#{artPen.necesario}" filterBy="#{artPen.necesario}" style="text-align: right">
+                <h:outputText value="#{artPen.necesario}">
+                    <f:convertNumber locale="es-ES" maxFractionDigits="0" type="currency" currencySymbol=""/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Stock playa" width="150px" sortBy="#{artPen.stockPlaya}" filterBy="#{artPen.stockPlaya}" style="text-align: right">
+                <h:outputText value="#{artPen.stockPlaya}">
+                    <f:convertNumber locale="es-ES" maxFractionDigits="0" type="currency" currencySymbol=""/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Stock suelo" width="150px" sortBy="#{artPen.stockSuelo}" filterBy="#{artPen.stockSuelo}" style="text-align: end">
+                <h:outputText value="#{artPen.stockSuelo}">
+                    <f:convertNumber locale="es-ES" maxFractionDigits="0" type="currency" currencySymbol=""  />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Stock muelle" width="150px" sortBy="#{artPen.stockMuelle}" filterBy="#{artPen.stockMuelle}" style="text-align: right">
+                <h:outputText value="#{artPen.stockMuelle}">
+                    <f:convertNumber locale="es-ES" maxFractionDigits="0" type="currency" currencySymbol=""  />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="F.Últ.Coloc.Playa" width="150px" sortBy="#{artPen.fechaUltimaColocacionPlaya}">
+                <h:outputText value="#{artPen.fechaUltimaColocacionPlaya}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Stock Almacén" width="120px" sortBy="#{artPen.stockAlmacen}" filterBy="#{artPen.stockAlmacen}" style="text-align: right">
+                <h:outputText value="#{artPen.stockAlmacen}">
+                    <f:convertNumber locale="es-ES" maxFractionDigits="0" type="currency" currencySymbol=""  />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="F.Últ.Coloc.Alamacén" width="170px" sortBy="#{artPen.fechaUltimaColocacionAlmacen}">
+                <h:outputText value="#{artPen.fechaUltimaColocacionAlmacen}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Clasificación" width="200px" sortBy="#{artPen.clasificacion}" filterBy="#{artPen.clasificacion}">
+                <h:outputText value="#{artPen.clasificacion}"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+</ui:composition>

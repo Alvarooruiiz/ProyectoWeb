@@ -5,16 +5,31 @@
 package Items;
 
 import Tabla.PeticionJSON;
+import es.inerttia.ittws.controllers.CentroAlmacenController;
+import es.inerttia.ittws.controllers.PedidoSalidaClasificacionController;
+import es.inerttia.ittws.controllers.PedidoSalidaController;
+import es.inerttia.ittws.controllers.TerceroCentroController;
 import es.inerttia.ittws.controllers.TerceroController;
+import es.inerttia.ittws.controllers.TipoPedidoController;
+import es.inerttia.ittws.controllers.entities.Calle;
+import es.inerttia.ittws.controllers.entities.CentroAlmacen;
+import es.inerttia.ittws.controllers.entities.Clasificacion;
 import es.inerttia.ittws.controllers.entities.Familia;
 import es.inerttia.ittws.controllers.entities.Marca;
 import es.inerttia.ittws.controllers.entities.NivelClasificacion;
+import es.inerttia.ittws.controllers.entities.PedidoSalidaClasificacion;
 import es.inerttia.ittws.controllers.entities.Tercero;
+import es.inerttia.ittws.controllers.entities.TipoPedido;
+import es.inerttia.ittws.controllers.entities.custom.PedidoSalida;
+import es.inerttia.ittws.controllers.entities.TerceroCentro;
+import es.inerttia.ittws.controllers.entities.custom.Zona;
 import es.inerttia.ittwscomun.Configuracion;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -23,6 +38,9 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import org.primefaces.PrimeFaces;
+import es.inerttia.ittws.controllers.entities.Articulo;
+
+
 
 @ManagedBean(name = "SelectionDialog")
 @ViewScoped
@@ -38,7 +56,157 @@ public class SelectionDialog {
     private List<NivelClasificacion> listaNiveles;
     private List<NivelClasificacion> listaNivelesSelected;
 
+    private List<CentroAlmacen> listCentrosAlmacenes;
+    private CentroAlmacen centroAlmacenSelected;
+
+    private List<Zona> listaCalles;
+    private List<Zona> listaCallesSelected;
+    private List<PedidoSalidaClasificacion> listaClasif;
+    private List<PedidoSalidaClasificacion> listaClasifSelected;
+
+    private int idCenter = 1;
+    private int idWarehouse = 1;
+    private String idCentroAlmacen;
+
+    private List<Tercero> listaTercerosSingle;
+    private Tercero terceroSelected;
+
+    private List<TerceroCentro> listaCentroTercero;
+    private TerceroCentro centroTerceroSelected;
+    private String idTercero;
+    
+    
+    private List<Articulo> listaArticulos;
+    
+
     // <editor-fold defaultstate="collapsed" desc=" getters y setters "> 
+    public List<Zona> getListaCallesSelected() {
+        return listaCallesSelected;
+    }
+
+    public void setListaCallesSelected(List<Zona> listaCallesSelected) {
+        this.listaCallesSelected = listaCallesSelected;
+    }
+
+    public List<Articulo> getListaArticulos() {
+        return listaArticulos;
+    }
+
+    public void setListaArticulos(List<Articulo> listaArticulos) {
+        this.listaArticulos = listaArticulos;
+    }
+
+    
+    
+
+    public TerceroCentro getCentroTerceroSelected() {
+        return centroTerceroSelected;
+    }
+
+    public void setCentroTerceroSelected(TerceroCentro centroTerceroSelected) {
+        this.centroTerceroSelected = centroTerceroSelected;
+    }
+    
+    
+
+    public List<TerceroCentro> getListaCentroTercero() {
+        return listaCentroTercero;
+    }
+
+    public void setListaCentroTercero(List<TerceroCentro> listaCentroTercero) {
+        this.listaCentroTercero = listaCentroTercero;
+    }
+
+    public String getIdTercero() {
+        return idTercero;
+    }
+
+    public void setIdTercero(String idTercero) {
+        this.idTercero = idTercero;
+    }
+    
+    
+
+    public Tercero getTerceroSelected() {
+        return terceroSelected;
+    }
+
+    public void setTerceroSelected(Tercero terceroSelected) {
+        this.terceroSelected = terceroSelected;
+    }
+
+    public List<Tercero> getListaTercerosSingle() {
+        return listaTercerosSingle;
+    }
+
+    public void setListaTercerosSingle(List<Tercero> listaTercerosSingle) {
+        this.listaTercerosSingle = listaTercerosSingle;
+    }
+
+    public List<CentroAlmacen> getListCentrosAlmacenes() {
+        return listCentrosAlmacenes;
+    }
+
+    public void setListCentrosAlmacenes(List<CentroAlmacen> listCentrosAlmacenes) {
+        this.listCentrosAlmacenes = listCentrosAlmacenes;
+    }
+
+    public CentroAlmacen getCentroAlmacenSelected() {
+        return centroAlmacenSelected;
+    }
+
+    public void setCentroAlmacenSelected(CentroAlmacen centroAlmacenSelected) {
+        this.centroAlmacenSelected = centroAlmacenSelected;
+    }
+
+    public String getIdCentroAlmacen() {
+        return idCentroAlmacen;
+    }
+
+    public void setIdCentroAlmacen(String idCentroAlmacen) {
+        this.idCentroAlmacen = idCentroAlmacen;
+    }
+
+    public int getIdCenter() {
+        return idCenter;
+    }
+
+    public void setIdCenter(int idCenter) {
+        this.idCenter = idCenter;
+    }
+
+    public int getIdWarehouse() {
+        return idWarehouse;
+    }
+
+    public void setIdWarehouse(int idWarehouse) {
+        this.idWarehouse = idWarehouse;
+    }
+
+    public List<PedidoSalidaClasificacion> getListaClasifSelected() {
+        return listaClasifSelected;
+    }
+
+    public void setListaClasifSelected(List<PedidoSalidaClasificacion> listaClasifSelected) {
+        this.listaClasifSelected = listaClasifSelected;
+    }
+
+    public List<Zona> getListaCalles() {
+        return listaCalles;
+    }
+
+    public void setListaCalles(List<Zona> listaCalles) {
+        this.listaCalles = listaCalles;
+    }
+
+    public List<PedidoSalidaClasificacion> getListaClasif() {
+        return listaClasif;
+    }
+
+    public void setListaClasif(List<PedidoSalidaClasificacion> listaClasif) {
+        this.listaClasif = listaClasif;
+    }
+
     public String getTipoTabla() {
         return tipoTabla;
     }
@@ -119,19 +287,22 @@ public class SelectionDialog {
         listaMarcasSelected = new ArrayList();
         listaNivelesSelected = new ArrayList();
         listaTerceroSelected = new ArrayList();
-        List<String> itemParameters;
+        listaTercerosSingle = new ArrayList();
 
-        String paletDetails = FacesContext.getCurrentInstance()
+        listaCalles = new ArrayList();
+        listaClasif = new ArrayList();
+
+        Map<String, String[]> paramMap = FacesContext.getCurrentInstance()
                 .getExternalContext()
-                .getRequestParameterMap()
-                .get("selection");
+                .getRequestParameterValuesMap();
 
-        if (paletDetails != null) {
-            itemParameters = Arrays.asList(paletDetails.split(","));
-            tipoTabla = itemParameters.get(0);
+        if (paramMap.containsKey("articulos")) {
+            String[] paletDetails = paramMap.get("selection");
+            tipoTabla = paletDetails[0];    
+        } else {
+            String[] paletDetails = paramMap.get("selection");
+            tipoTabla = paletDetails[0];
         }
-        
-
         llenarListas();
     }
 
@@ -153,41 +324,41 @@ public class SelectionDialog {
 
     }
 
+    public void addAllCalles() {
+        PrimeFaces.current().dialog().closeDynamic(listaCallesSelected);
+    }
+
+    public void addAllClasif() {
+        PrimeFaces.current().dialog().closeDynamic(listaClasifSelected);
+
+    }
+
+    public void addCentroAlmacen() {
+        PrimeFaces.current().dialog().closeDynamic(centroAlmacenSelected);
+    }
+
+    public void addTerceroSingle() {
+        PrimeFaces.current().dialog().closeDynamic(terceroSelected);
+    }
+
+    public void addCentroTercero() {
+        PrimeFaces.current().dialog().closeDynamic(centroTerceroSelected);
+    }
+
     private void llenarListas() {
         if (null != tipoTabla) {
             switch (tipoTabla) {
-                case "tercero": {
+                case "articulos": {
                     Configuracion conf = new Configuracion();
-                    es.inerttia.ittws.controllers.TerceroController ctl2 = new TerceroController(conf);
-                    listaTercero = ctl2.getTercerosDeposito();
+                    es.inerttia.ittws.controllers.ArticuloController ctl10 = new es.inerttia.ittws.controllers.ArticuloController(conf);
+                    listaArticulos = ctl10.getArticulosConsulta();
                     conf.cerrar();
                     break;
                 }
-                case "familia": {
-                    Configuracion conf = new Configuracion();
-                    es.inerttia.ittws.controllers.FamiliaController ctl11 = new es.inerttia.ittws.controllers.FamiliaController(conf);
-                    listaFamilia = ctl11.getFamiliasSeleccion();
-                    conf.cerrar();
-                    break;
-                }
-                case "marca": {
-                    Configuracion conf = new Configuracion();
-                    es.inerttia.ittws.controllers.MarcaController ctl12 = new es.inerttia.ittws.controllers.MarcaController(conf);
-                    listaMarcas = ctl12.getMarcasSeleccion();
-                    conf.cerrar();
-                    break;
-                }
-                case "nivel": {
-                    Configuracion conf = new Configuracion();
-                    es.inerttia.ittws.controllers.NivelClasificacionController ctl13 = new es.inerttia.ittws.controllers.NivelClasificacionController(conf);
-                    listaNiveles = ctl13.getNivelesClasificacion();
-                    conf.cerrar();
-                    break;
-                }
+                
                 default:
                     break;
             }
         }
     }
-
 }

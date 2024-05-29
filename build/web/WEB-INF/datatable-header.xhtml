@@ -8,7 +8,8 @@
         <h:panelGroup rendered="#{listaRendered}">
 
 
-            <div class="flex align-items-center justify-content-between">
+
+            <div style="display: flex; align-items: center; justify-content: space-between">
                 <div align="left">
                     <span style="color: white"> #{titulo} </span>
                 </div>
@@ -19,29 +20,24 @@
                     </span>
 
                     <p:commandButton styleClass="ui-button-success" icon="pi pi-file-excel" style="margin-left: 20px; align-content: center;"  rendered="#{verExcelDataExporter}">
-                        <p:dataExporter type="xls" target="#{tablaExport}" fileName="#{nombreArchivo}" postProcessor="#{MainItems.onRowExportXLS}"/>
+                        <p:dataExporter type="xls" target="#{tablaExport}" fileName="#{nombreArchivo}" postProcessor="#{actionBean[onRowExportXLS]}"/>
                     </p:commandButton>
 
                     <p:commandButton styleClass="ui-button-success" icon="pi pi-file-excel" style="margin-left: 20px; align-content: center;"  rendered="#{verExcelJava}" action="#{MainItems.exportToExcel(nombreArchivo)}" ajax="false"/>
+
+
+                    <p:commandButton styleClass="ui-button-success" icon="pi pi-file-excel" style="margin-left: 20px; align-content: center;"  rendered="#{verExcelDialog}" 
+                                     actionListener="#{actionBean[methodExport]}"/>
                     <h:outputText id="totalText" value="Total #{listaSize}" style="color: white; padding-left: 20px" rendered="#{verTotal}"/>
                 </div>
             </div>
 
-            <script style="display: none">
-                let typingTimer;
-                const doneTypingInterval = 500;
-                    
-                function delaySearch(id) {
-                    clearTimeout(typingTimer);
-                    typingTimer = setTimeout(function () {
-                        PF(id).filter();
-                    }, doneTypingInterval);
 
-                }
 
-            </script>
+            
         </h:panelGroup>
 
     </f:facet>
+
 
 </ui:composition>

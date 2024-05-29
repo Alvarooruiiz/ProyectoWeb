@@ -174,10 +174,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                          align-content: center;
                          align-items: center;
                          padding: 10px;">
-                        <div style="display: flex;
-                             flex-direction: column;
-                             margin-bottom: 10px;
-                             margin-left: 20px">
+                        <div class="inputsTop">
                             <h:outputLabel value="Con Tercero Depósito"/>
                             <div class="ui-inputgroup" style="width: auto">
                                 <p:commandButton icon="pi pi-check-square" styleClass="ui-button-secondary" />
@@ -391,44 +388,44 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
 
                 <p:column headerText="Altura(cm)" width="100px" style=" text-align: right" filterBy="#{articulos.alto}" sortBy="#{articulos.alto}">
                     <h:outputText value="#{articulos.alto}">
-                        <f:convertNumber pattern="#.#" />
-                    </h:outputText>
+                    <f:convertNumber locale="es-ES" maxFractionDigits="1" type="currency" currencySymbol=""/>
+                </h:outputText>
                 </p:column>
 
                 <p:column headerText="Ancho(cm)" width="100px" style=" text-align: right" filterBy="#{articulos.ancho}" sortBy="#{articulos.ancho}">
                     <h:outputText value="#{articulos.ancho}">
-                        <f:convertNumber pattern="#.#" />
-                    </h:outputText>
+                    <f:convertNumber locale="es-ES" maxFractionDigits="1" type="currency" currencySymbol=""/>
+                </h:outputText>
                 </p:column>
 
                 <p:column headerText="Largo(cm)" width="100px" style=" text-align: right" filterBy="#{articulos.largo}" sortBy="#{articulos.largo}">
                     <h:outputText value="#{articulos.largo}">
-                        <f:convertNumber pattern="#.#" />
-                    </h:outputText>
+                    <f:convertNumber locale="es-ES" maxFractionDigits="1" type="currency" currencySymbol=""/>
+                </h:outputText>
                 </p:column>
 
                 <p:column headerText="Peso Neto(gr)" width="100px" style=" text-align: right" filterBy="#{articulos.pesoNeto}" sortBy="#{articulos.pesoNeto}">
                     <h:outputText value="#{articulos.pesoNeto}">
-                        <f:convertNumber pattern="#.#" />
-                    </h:outputText>
+                    <f:convertNumber locale="es-ES" maxFractionDigits="1" type="currency" currencySymbol=""/>
+                </h:outputText>
                 </p:column>
 
                 <p:column headerText="Volumen Neto(cm3)" width="100px" style=" text-align: right" filterBy="#{articulos.volumenNeto}" sortBy="#{articulos.volumenNeto}">
                     <h:outputText value="#{articulos.volumenNeto}">
-                        <f:convertNumber pattern="#.#" />
-                    </h:outputText>
+                    <f:convertNumber locale="es-ES" maxFractionDigits="1" type="currency" currencySymbol=""/>
+                </h:outputText>
                 </p:column>
 
                 <p:column headerText="Peso Bruto(gr)" width="100px" style=" text-align: right" filterBy="#{articulos.pesoBruto}" sortBy="#{articulos.pesoBruto}">
                     <h:outputText value="#{articulos.pesoBruto}">
-                        <f:convertNumber pattern="#,###.#" />
-                    </h:outputText>
+                    <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                </h:outputText>
                 </p:column>
 
                 <p:column headerText="Volumen Bruto(cm3)" width="100px" style=" text-align: right" filterBy="#{articulos.volumen}" sortBy="#{articulos.volumen}">
                     <h:outputText value="#{articulos.volumen}">
-                        <f:convertNumber pattern="#,###.#" />
-                    </h:outputText>
+                    <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                </h:outputText>
                 </p:column>
 
                 <p:column headerText="Preventa" width="100px" style=" text-align: center" sortBy="#{articulos.preventa}" exportValue="#{articulos.preventa ? 'Sí' : 'No'}">
@@ -651,9 +648,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
 
                     </div>
                 </div>
-
-
-
             </p:dialog>
         </h:form>
     </h:body>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <style>
+        body .ui-paginator .ui-paginator-current, body .ui-paginator .ui-paginator-rpp-options {
+            margin: .5rem;
+            display: inline-block;
+            vertical-align: middle;
+            border-radius: 7px !important;
+            border-block: revert;
+        }
+
+        .ui-datatable .ui-column-filter {
+            display: none;
+            box-sizing: border-box;
+            width: 100%;
+            margin: .5rem auto auto auto;
+
+        }
+        body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon .ui-icon-closethick:before {
+            content: "";
+            color: #ffffff !important;
+        }
+
+        body .ui-datatable .ui-datatable-header {
+            background: #0094d4;
+            border: 1px solid #e9ecef;
+            border-width: 1px 0 1px 0;
+            color: #495057;
+            padding: 1rem 1rem;
+            font-weight: 600;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+body .ui-datatable.ui-datatable-striped .ui-datatable-data>tr.ui-datatable-odd {
+            background: #d7d7d7;
+        }
+
+    </style>
+    <div>
+
+
+        <p:dataTable value="#{listaGeneral}" var="gen" rows="10" paginator="true" paginatorPosition="bottom"
+                     rowsPerPageTemplate="5,10,{ShowAll|'All'}" stripedRows="true">
+            <ui:include src="datatable-header.xhtml">
+                <ui:param name="listaRendered" value="#{not empty listaGeneral}"/>
+                <ui:param name="id" value="dtArtPend"/> 
+                <ui:param name="listaSize" value="#{listaGeneral.size()}"/>
+                <ui:param name="actionBean" value="#{ControlPanel}"/>
+                <ui:param name="tablaExport" value="dtArtPend"/>
+                <ui:param name="nombreArchivo" value=""/>
+                <ui:param name="verBuscador" value="true"/>
+                <ui:param name="verTotal" value="true"/>
+                <ui:param name="verExcelDataExporter" value="false"/>
+                <ui:param name="verExcelJava" value="false"/>
+                <ui:param name="dialogExport" value="#{dialogExport}"/>
+                <ui:param name="verExcelDialog" value="false"/>
+                <ui:param name="formDialogExport" value="#{formDialogExport}"/>
+                <ui:param name="titulo" value="Total"/>
+            </ui:include>
+            <p:column headerText="Id Pedido" width="150px" sortBy="#{gen.pedidoSalida.idPedidoSalida}" filterBy="#{gen.pedidoSalida.idPedidoSalida}">
+                <h:outputText value="#{gen.pedidoSalida.idPedidoSalida}"/>
+            </p:column>
+            <p:column headerText="Pedido" width="150px" sortBy="#{gen.pedidoSalida.pedido}" filterBy="#{gen.pedidoSalida.pedido}" style="text-align: right">
+                <h:outputText value="#{gen.pedidoSalida.pedido}"/>
+            </p:column>
+            <p:column headerText="Su Pedido" width="150px" sortBy="#{gen.pedidoSalida.suPedido}" filterBy="#{gen.pedidoSalida.suPedido}" style="text-align: right">
+                <h:outputText value="#{gen.pedidoSalida.suPedido}"/>
+            </p:column>
+            <p:column headerText="Fecha Pedido" width="150px" sortBy="#{gen.pedidoSalida.fecha}">
+                <h:outputText value="#{gen.pedidoSalida.fecha}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Fecha Servicio" width="150px" rendered="#{indexTab == 1 or indexTab == 2 or indexTab == 3 or indexTab == 4}" sortBy="#{gen.pedidoSalida.fechaServicio}">
+                <h:outputText value="#{gen.pedidoSalida.fechaServicio}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Id Expedición" width="150px" rendered="#{indexTab != 2}" sortBy="#{gen.pedidoSalida.idExpedicion.idExpedicion}" filterBy="#{gen.pedidoSalida.idExpedicion.idExpedicion}" style="text-align: right">
+                <h:outputText value="#{gen.pedidoSalida.idExpedicion.idExpedicion}"/>
+            </p:column>
+            <p:column headerText="Cliente" width="300px" sortBy="#{gen.pedidoSalida.idExpedicion.cliente}" filterBy="#{gen.pedidoSalida.idExpedicion.cliente}">
+                <h:outputText value="#{gen.pedidoSalida.idExpedicion.cliente}"/>
+            </p:column>
+            <p:column headerText="Teléfono" width="200px" sortBy="#{gen.pedidoSalida.idExpedicion.telefono}" filterBy="#{gen.pedidoSalida.idExpedicion.telefono}">
+                <h:outputText value="#{gen.pedidoSalida.idExpedicion.telefono}"/>
+            </p:column>
+            <p:column headerText="Email" width="150px" sortBy="#{gen.pedidoSalida.envioEmail}" filterBy="#{gen.pedidoSalida.envioEmail}">
+                <h:outputText value="#{gen.pedidoSalida.envioEmail}"/>
+            </p:column>
+            <p:column headerText="Fecha cierre" width="150px" rendered="#{indexTab == 5 or indexTab == 6}" sortBy="#{gen.pedidoSalida.fechaCerradoERP}">
+                <h:outputText value="#{gen.pedidoSalida.fechaCerradoERP}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Tracking" width="150px" rendered="#{indexTab == 5 or indexTab == 6}" sortBy="#{gen.pedidoSalida.idExpedicion.tracking}" filterBy="#{gen.pedidoSalida.idExpedicion.tracking}">
+                <h:outputText value="#{gen.pedidoSalida.idExpedicion.tracking}"/>
+            </p:column>
+            <p:column headerText="Situación" width="150px" rendered="#{indexTab == 1}" sortBy="#{gen.pedidoSalida.idExpedicion.estadoTexto}" filterBy="#{gen.pedidoSalida.idExpedicion.estadoTexto}">
+                <h:outputText value="#{gen.pedidoSalida.idExpedicion.estadoTexto}"/>
+            </p:column>
+            <p:column headerText="Fecha colocación" width="150px" rendered="#{indexTab == 3 or indexTab == 4}" sortBy="#{gen.fechaColocacion}">
+                <h:outputText value="#{gen.fechaColocacion}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Agencia de Transporte" width="150px" sortBy="#{gen.pedidoSalida.idAgenciaTransporte.idAgenciaTransporte}" filterBy="#{gen.pedidoSalida.idAgenciaTransporte.idAgenciaTransporte}"
+                       style="text-align: right">
+                <h:outputText value="#{gen.pedidoSalida.idAgenciaTransporte.idAgenciaTransporte}"/>
+            </p:column>
+            <p:column headerText="Forma de Pago" width="150px" sortBy="#{gen.pedidoSalida.idExpedicion.factFormaPago}" filterBy="#{gen.pedidoSalida.idExpedicion.factFormaPago}">
+                <h:outputText value="#{gen.pedidoSalida.idExpedicion.factFormaPago}"/>
+            </p:column>
+            <p:column headerText="Bultos no enviados" width="150px" rendered="#{indexTab == 5}" sortBy="#{gen.pendiente}" filterBy="#{gen.pendiente}">
+                <h:outputText value="#{gen.pendiente}"/>
+            </p:column>
+            <p:column headerText="Bultos enviados" width="150px" rendered="#{indexTab == 5}" sortBy="#{gen.unidad1}" filterBy="#{gen.unidad1}">
+                <h:outputText value="#{gen.unidad1}"/>
+            </p:column>
+            <p:column headerText="Estado agencia" width="150px" rendered="#{indexTab == 5}" sortBy="#{gen.estadoPeticiones}" filterBy="#{gen.estadoPeticiones}">
+                <h:outputText value="#{gen.estadoPeticiones}"/>
+            </p:column>
+            <p:column headerText="Líneas" width="150px" rendered="#{indexTab == 1 or indexTab == 2 or indexTab == 3 or indexTab == 4}" sortBy="#{gen.pedidoSalida.lineas}" filterBy="#{gen.pedidoSalida.lineas}"
+                       style="text-align: right">
+                <h:outputText value="#{gen.pedidoSalida.lineas}"/>
+            </p:column>
+            <p:column headerText="Líneas Pdtes." width="150px" rendered="#{indexTab == 1 or indexTab == 2 or indexTab == 3 or indexTab == 4}" sortBy="#{gen.pedidoSalida.lineasPendientes}" 
+                      filterBy="#{gen.pedidoSalida.lineasPendientes}" style="text-align: right">
+                <h:outputText value="#{gen.pedidoSalida.lineasPendientes}"/>
+            </p:column>
+            <p:column headerText="Nº Bultos" width="150px" rendered="#{indexTab == 1 or indexTab == 3 or indexTab == 4}" sortBy="#{gen.numBultos}" filterBy="#{gen.numBultos}"
+                       style="text-align: right">
+                <h:outputText value="#{gen.numBultos}"/>
+            </p:column>
+            <p:column headerText="Agrupación" width="150px" sortBy="#{gen.pedidoSalida.idExpedicion.agrupacion}" filterBy="#{gen.pedidoSalida.idExpedicion.agrupacion}">
+                <h:outputText value="#{gen.pedidoSalida.idExpedicion.agrupacion}"/>
+            </p:column>
+            <p:column headerText="Prioridad" width="150px" rendered="#{indexTab == 1 or indexTab == 2 or indexTab == 3}" sortBy="#{gen.pickingInverso}" filterBy="#{gen.pickingInverso}"
+                       style="text-align: right">
+                <h:outputText value="#{gen.pedidoSalida.prioridad}"/>
+            </p:column>
+            <p:column headerText="P.Inverso" width="150px" sortBy="#{gen.pickingInverso}" filterBy="#{gen.pickingInverso}">
+                <h:outputText value="#{gen.pickingInverso ? 'Si' : 'No'}"/>
+            </p:column>
+            <p:column headerText="Fecha Reserva Ubic P.I" width="150px" rendered="#{indexTab == 3}" sortBy="#{gen.pedidoSalida.fechaInicioReserva}">
+                <h:outputText value="#{gen.pedidoSalida.fechaInicioReserva}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Clasificación de Pedido" width="150px" rendered="#{indexTab == 1 or indexTab == 2 or indexTab == 3 or indexTab == 4}" sortBy="#{gen.clasificacion}" filterBy="#{gen.clasificacion}">
+                <h:outputText value="#{gen.clasificacion}"/>
+            </p:column>
+            <p:column headerText="Tipo Embalaje" width="150px" rendered="#{indexTab == 1 or indexTab == 2 or indexTab == 3 or indexTab == 4}" sortBy="#{gen.pedidoSalida.textoTipoEmbalaje}" filterBy="#{gen.pedidoSalida.textoTipoEmbalaje}">
+                <h:outputText value="#{gen.pedidoSalida.textoTipoEmbalaje}"/>
+            </p:column>
+            <p:column headerText="Centro" width="150px" sortBy="#{gen.pedidoSalida.centroRecogida}" filterBy="#{gen.pedidoSalida.centroRecogida}">
+                <h:outputText value="#{gen.pedidoSalida.centroRecogida}"/>
+            </p:column>
+            <p:column headerText="Fecha Creación" width="150px" sortBy="#{gen.fechaCreacion}">
+                <h:outputText value="#{gen.fechaCreacion}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Tercero Fiscal" width="150px" sortBy="#{gen.pedidoSalida.idTercero.razonSocial}" filterBy="#{gen.pedidoSalida.idTercero.razonSocial}">
+                <h:outputText value="#{gen.pedidoSalida.idTercero.razonSocial}"/>
+            </p:column>
+
+        </p:dataTable>
+    </div>
+
+</ui:composition>

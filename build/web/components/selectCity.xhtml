@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+    </h:head>
+
+    <style>
+        body .ui-datatable .ui-datatable-header {
+            background: #0094d4;
+            border: 1px solid #e9ecef;
+            border-width: 1px 0 1px 0;
+            color: #495057;
+            padding: 1rem 1rem;
+            font-weight: 600;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+
+        }
+    </style>
+    <h:body>
+        <h:form id="formLugar">
+            <p:growl id="growl" showDetail="true" />
+            <p:growl id="growl-sticky" for="sticky-key" showDetail="true" sticky="true" />
+            <p:dataTable var="lugar" value="#{Main.listaLugares}" selection="#{MainDialog.selectedLugares}" rowKey="#{lugar.id}" rowSelectMode="none">
+                <p:ajax event="rowSelectCheckbox" update="formLugar:btnAdd"/>
+                <p:ajax event="rowUnselectCheckbox" update="formLugar:btnAdd"/>
+                <p:ajax event="toggleSelect" update="formLugar:btnAdd"/>
+
+                <ui:include src="WEB-INF/datatable-header.xhtml">
+                    <ui:param name="listaRendered" value="#{not empty Main.listaLugares}"/>
+                    <ui:param name="id" value="dataTableLugares"/> 
+                    <ui:param name="listaSize" value="#{Main.listaLugares.size()}"/>
+                    <ui:param name="actionBean" value="#{Main}"/>
+                    <ui:param name="excelMethod" value="exportToExcel"/>
+                    <ui:param name="verExcel" value="false"/>
+                    <ui:param name="verBuscador" value="false"/>
+                    <ui:param name="verTotal" value="false"/>
+                    <ui:param name="titulo" value="Añadir ciudad"/>
+                </ui:include>
+
+
+                <p:column selectionMode="multiple">
+                </p:column>
+                <p:column headerText="Code">
+                    <h:outputText value="#{lugar.id}"/>
+                </p:column>
+
+                <p:column headerText="Name">
+                    <h:outputText value="#{lugar.ciudad}"/>
+                </p:column>
+
+                <p:column headerText="Category">
+                    <h:outputText value="#{lugar.pais}"/>
+                </p:column>
+
+
+            </p:dataTable>
+            <p:commandButton value="Add" icon="pi pi-plus" action="#{MainDialog.addAll}" 
+                             disabled="#{empty MainDialog.selectedLugares}" id="btnAdd" widgetVar="btnAdd"/>
+        </h:form>
+    </h:body>
+</html>

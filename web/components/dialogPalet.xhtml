@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <style>
+
+        body .ui-datatable .ui-datatable-header .flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ui-datatable .ui-column-filter {
+            display: none;
+            box-sizing: border-box;
+            width: 100%;
+            margin: .5rem auto auto auto;
+
+        }
+
+        body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-carat-2-n-s:before {
+            content: "";
+        }
+
+        body .ui-inputfield {
+            color: #495057;
+            background: #fff;
+            padding: .5rem .5rem;
+            border: 1px solid #ced4da;
+            outline: 0 none;
+            font-size: 1rem;
+            border-radius: 4px;
+            transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s, opacity .2s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        element.style {
+            border: 0px none;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+
+        body .ui-datatable .ui-datatable-header {
+            background: #0094d4 !important;
+            border: 1px solid #e9ecef;
+            border-width: 1px 0 1px 0;
+            color: #495057;
+            padding: 1rem 1rem;
+            font-weight: 600;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+
+        .ui-datatable .ui-column-filter {
+            display: none !important;
+            box-sizing: border-box;
+            width: 100%;
+            margin: .5rem auto auto auto;
+        }
+
+        body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-carat-2-n-s::before {
+            content: "" !important;
+        }
+
+    </style>
+
+    <h:head>
+        <title>Consulta contenido del palet #{ArticuloPalet.ssccCode}</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:tabView>
+                <p:tab title="Contenido actual">
+                    <p:toolbar>
+                        <p:toolbarGroup>
+                            <p:commandButton icon="pi pi-shopping-cart"/>
+                            <p:commandButton icon="pi pi-save" style="margin-left: 20px"/>
+                        </p:toolbarGroup>
+                        <p:toolbarGroup>
+                            <p:commandButton icon="pi pi-lock"/>
+                            <p:commandButton icon="pi pi-trash" style="margin-left: 20px"/>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+                    <div style="display: flex; align-content: center; align-items: center; padding: 10px;">
+                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-right: 20px">
+                            <h:outputLabel value="SSCC"/>
+                            <p:inputText value="#{ArticuloPalet.ssccCode}" disabled="true"/>
+                        </div>
+                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-right: 20px">
+                            <h:outputLabel value="Referencia Externa"/>
+                            <p:inputText value="" disabled="true"/>
+                        </div>
+                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-right: 20px">
+                            <h:outputLabel value="Ubicación actual"/>
+                            <p:inputText value="#{ArticuloPalet.palet.ubicacion}" disabled="true"/>
+                        </div>
+                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-right: 20px">
+                            <h:outputLabel value="Hueco"/>
+                            <p:inputText value="#{ArticuloPalet.palet.etiquetado}" disabled="true"/>
+                        </div>
+                        <div style="display: flex; flex-direction: column; margin-bottom: 10px; margin-right: 20px">
+                            <h:outputLabel value="Fecha Creación" />
+                            <p:inputText value="" disabled="true"/>
+                        </div>
+                    </div>
+
+
+
+                    <p:dataTable var="linea" value="#{ArticuloPalet.listadoLineasPalet}" id="datatablePalet" widgetVar="datatablePalet">
+                        <ui:include src="WEB-INF/datatable-header.xhtml">
+                            <ui:param name="listaRendered" value="#{ArticuloPalet.listadoLineasPalet ne null}"/>
+                            <ui:param name="id" value="datatablePalet"/> 
+                            <ui:param name="listaSize" value="#{ArticuloPalet.listadoLineasPalet.size()}"/>
+                            <ui:param name="actionBean" value="#{ArticuloPalet}"/>
+                            <ui:param name="verBuscador" value="true"/>
+                            <ui:param name="verTotal" value="true"/>
+                            <ui:param name="verExcel" value="true"/>
+                            <ui:param name="tablaExport" value="datatablePalet"/>
+                            <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                            <ui:param name="titulo" value="Total de artículos"/>
+                        </ui:include>
+
+                        <p:column headerText="Articulo" filterBy="#{linea.articulocompleto.codigo}" sortBy="#{linea.articulocompleto.codigo}">
+                            <h:outputText value="#{linea.articulocompleto.codigo}"/>
+                        </p:column>
+
+                        <p:column headerText="Referencia" filterBy="#{linea.articulocompleto.referencia}" sortBy="#{linea.articulocompleto.referencia}">
+                            <h:outputText value="#{linea.articulocompleto.referencia}"/>
+                        </p:column>
+
+                        <p:column headerText="Descripcion" filterBy="#{linea.articulocompleto.descripcion}" sortBy="#{linea.articulocompleto.descripcion}">
+                            <h:outputText value="#{linea.articulocompleto.descripcion}"/>
+                        </p:column>
+
+                        <p:column headerText="Cdigo de barras" filterBy="#{linea.articulocompleto.codigoBarras}" sortBy="#{linea.articulocompleto.codigoBarras}">
+                            <h:outputText value="#{linea.articulocompleto.codigoBarras}"/>
+                        </p:column>
+
+                        <p:column headerText="Lote" filterBy="#{linea.lote.codigo}" sortBy="#{linea.lote.codigo}">
+                            <h:outputText value="#{linea.lote.codigo}"/>
+                        </p:column>
+
+                        <p:column headerText="Fecha de caducidad" filterBy="#{linea.lote.caducidad}" sortBy="#{linea.lote.caducidad}">
+                            <h:outputText value="#{linea.lote.caducidad}"/>
+                        </p:column>
+                        <p:column headerText="Cantidad" filterBy="#{linea.articulocompleto.unidadesCodigoBarras}" sortBy="#{linea.articulocompleto.unidadesCodigoBarras}">
+                            <h:outputText value="#{linea.articulocompleto.unidadesCodigoBarras}"/>
+                        </p:column>
+
+                        <p:column headerText="Serie Pedido">
+                            <h:outputText value="#{linea.lote.serie}"/>
+                        </p:column>
+
+                        <p:column headerText="Pedido número">
+                            <h:outputText value=""/>
+                        </p:column>
+
+                    </p:dataTable>
+                </p:tab>
+                <p:tab title="Observaciones">
+
+                </p:tab>
+                <p:tab title="Histórico salidas">
+
+                </p:tab>
+                <p:tab title="Histórico altas">
+
+                </p:tab>
+            </p:tabView>
+
+        </h:form>
+    </h:body>
+</html>

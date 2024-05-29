@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+
+    <h:head>
+        <title>Contenedor Logístico #{ContLog.conLogisID}</title>
+    </h:head>
+
+    <style>
+        .inputsTop{
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+            margin-left: 20px;
+            margin-top: 1px !important;
+        }
+
+        body .ui-accordion .ui-accordion-header.ui-state-active {
+            background: #F1FFC3 !important;
+            border-color: #dee2e6;
+            color: #495057;
+        }
+        
+        
+    </style>
+    <h:body>
+        <p:toolbar>
+            <p:toolbarGroup>
+                <p:commandButton icon="pi pi-print"/>
+            </p:toolbarGroup>
+            <p:toolbarGroup>
+                <p:commandButton icon="pi pi-refresh"/>
+            </p:toolbarGroup>
+        </p:toolbar>
+
+        <p:tabView>
+            <p:tab title="Contenedor Logísitco">
+                <p:accordionPanel dynamic="true" cache="true" multiple="true" widgetVar="ondemand" style="height: 300px">
+                    <p:tab title="Detalle Contenedor Logístico">
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Nº Contenedor Logístico"/>
+                                <p:inputText value="#{ContLog.logisticContainer.idContenedorLogistico}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Centro"/>
+                                <p:inputText value="#{ContLog.logisticContainer.centro.nombre}" disabled="true"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Almacén"/>
+                                <p:inputText value="#{ContLog.logisticContainer.almacen.nombre}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Fecha Creación"/>
+                                <p:inputText value="#{ContLog.logisticContainer.fechaCreacion}" disabled="true">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es"/>
+                                </p:inputText>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Usuario Creación"/>
+                                <p:inputText value="#{ContLog.logisticContainer.usuarioCreacion.username}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Fecha Cierre"/>
+                                <p:inputText value="#{ContLog.logisticContainer.fechaCierre}" disabled="true" style="text-align: end"/>
+                            </div>
+                        </div>
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Usuario Creación"/>
+                                <p:inputText value="#{ContLog.logisticContainer.usuarioCreacion.username}" disabled="true" style="text-align: end"/>
+                            </div>
+                        </div>
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Estado"/>
+                                <p:inputText value="#{ContLog.logisticContainer.estadoContenedorLogistico.descripcion}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Tipo de Contenedor Logístico"/>
+                                <p:inputText value="#{ContLog.logisticContainer.tipoContenedorLogistico.descripcion}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Palet Chep"/>
+                                <p:inputText value="#{ContLog.logisticContainer.tipoPalet.codigoChep}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Agencia de Transporte"/>
+                                <p:inputText value="#{ContLog.logisticContainer.agenciaTransporte.nombre}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Mercancía Peligrosa" style="margin-bottom: 10px"/>
+                                <p:selectBooleanCheckbox value="#{ContLog.logisticContainer.mercanciaPeligrosa}"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Nº Bultos"/>
+                                <p:inputText value="#{ContLog.logisticContainer.numBultos}" disabled="true" style="text-align: end"/>
+                            </div>
+                        </div>
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Nº Pedidos"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envio.idEnvio}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Nombre del Tercero"/>
+                                <p:inputText value="#{ContLog.logisticContainer.tercero.nombreComercial}" disabled="true" style="text-align: end"/>
+                            </div>
+                        </div>
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Agencia Tracking"/>
+                                <p:inputText value="#{ContLog.logisticContainer.agenciaTracking}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Tracking"/>
+                                <p:inputText value="#{ContLog.logisticContainer.tracking}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Identificación Envío"/>
+                                <p:inputText value="#{ContLog.logisticContainer.identificacionEnvio}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Código de barras"/>
+                                <p:inputText value="#{ContLog.logisticContainer.codigoBarras}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Ubicación"/>
+                                <p:inputText value="#{ContLog.logisticContainer.ubicacion}" disabled="true"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Código de Bulto en Agencia"/>
+                                <p:inputText value="#{ContLog.logisticContainer.codigoBulto}" disabled="true" style="text-align: end"/>
+                            </div>
+                        </div>
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Tara (Kg)"/>
+                                <p:inputText value="#{ContLog.logisticContainer.tara}" disabled="true" style="text-align: end">
+                                    <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                </p:inputText>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Peso Bruto (Kg)"/>
+                                <p:inputText value="#{ContLog.logisticContainer.pesoBruto}" disabled="true" style="text-align: end">
+                                    <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                </p:inputText>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Ancho (cm)"/>
+                                <p:inputText value="#{ContLog.logisticContainer.ancho}" disabled="true" style="text-align: end">
+                                    <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                </p:inputText>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Largo (cm)"/>
+                                <p:inputText value="#{ContLog.logisticContainer.largo}" disabled="true" style="text-align: end">
+                                    <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                </p:inputText>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Altura (cm)"/>
+                                <p:inputText value="#{ContLog.logisticContainer.altura}" disabled="true" style="text-align: end">
+                                    <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                </p:inputText>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Volumen (m3)"/>
+                                <p:inputText value="#{ContLog.logisticContainer.volumen}" disabled="true" style="text-align: end">
+                                    <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                </p:inputText>
+                            </div>
+                        </div>
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Kg. cobrar (Kg)"/>
+                                <p:inputText value="#{ContLog.logisticContainer.kilosCobrar}" disabled="true" style="text-align: end">
+                                    <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                </p:inputText>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Peso Bruto SSCC (Kg)"/>
+                                <p:inputText value="#{ContLog.logisticContainer.pesoBrutoSscc}" disabled="true" style="text-align: end">
+                                    <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                </p:inputText>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Tara SSCC (Kg)"/>
+                                <p:inputText value="#{ContLog.logisticContainer.taraSscc}" disabled="true" style="text-align: end">
+                                    <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                </p:inputText>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Peso Bruto Art. (Kg)"/>
+                                <p:inputText value="#{ContLog.logisticContainer.pesoBrutoArticulos}" disabled="true" style="text-align: end">
+                                    <f:convertNumber locale="es-ES" maxFractionDigits="3" type="currency" currencySymbol=""/>
+                                </p:inputText>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Detalle Envío">
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Nº Envío"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envio.idEnvio}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Matrícula"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envio.matricula}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Fecha Entrada"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envio.fechaEntrada}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Fecha Salida"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envio.fechaSalida}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="DNI"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envio.DNIConductor}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Nombre Conductor"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envio.nombreConductor}" disabled="true" style="text-align: end"/>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Dirección Envío">
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Destinatario"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envioDestinatario}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Contacto"/>
+                                <p:inputText value="#{ContLog.logisticContainer.enviopersonaContacto}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="DNI"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envioDni}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="País"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envioPais.nombre}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Provincia"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envioProvincia}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Población"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envioPoblacion}" disabled="true" style="text-align: end"/>
+                            </div>
+                        </div>
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Código Postal"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envioCodigoPostal}" disabled="true" style="text-align: end"/>
+                            </div>
+                        </div>
+                        <div style="display: flex;
+                             align-content: center;
+                             align-items: center;
+                             padding: 10px;">
+                            <div class="inputsTop">
+                                <h:outputLabel value="Dirección"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envioDireccion}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Devolución"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envioReembolso}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Teléfono"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envioTelefono}" disabled="true" style="text-align: end"/>
+                            </div>
+                            <div class="inputsTop">
+                                <h:outputLabel value="Email"/>
+                                <p:inputText value="#{ContLog.logisticContainer.envioEmail}" disabled="true" style="text-align: end"/>
+                            </div>
+                        </div>
+                        <div class="inputsTop">
+                            <h:outputLabel value="Observaciones"/>
+                            <p:inputTextarea  
+                                value="#{ContLog.logisticContainer.envioObservaciones}"
+                                class="ui-inputfield ui-inputtextarea ui-widget ui-state-default ui-corner-all ui-state-disabled ui-inputtextarea-resizable" 
+                                disabled="disabled" cols="20" rows="3" maxlength="2147483647" 
+                                style="overflow-x: hidden; overflow-wrap: break-word; height: 61px;"/>
+                        </div>
+                    </p:tab>
+                </p:accordionPanel>
+            </p:tab>
+        </p:tabView>
+    </h:body>
+</html>

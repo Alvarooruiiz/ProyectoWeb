@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <style>
+        body .ui-datatable .ui-datatable-header {
+            background: #0094d4 !important;
+            border: 1px solid #e9ecef;
+            border-width: 1px 0 1px 0;
+            color: #495057;
+            padding: 1rem 1rem;
+            font-weight: 600;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+
+        body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-carat-2-n-s:before {
+            content: "" !important;
+        }
+
+        .ui-datatable .ui-column-filter {
+            display: none !important;
+            box-sizing: border-box;
+            width: 100%;
+            margin: .5rem auto auto auto;
+        }
+
+        .inputsTop{
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+            margin-left: 20px
+        }
+        
+        body .ui-datatable.ui-datatable-striped .ui-datatable-data>tr.ui-datatable-odd {
+            background: #d7d7d7;
+        }
+
+        
+
+    </style>
+    <h:head>
+        <title>Selection</title>
+    </h:head>
+    <h:body>
+        <h:form id="formSelection">
+            <p:dataTable var="tercero" id="dataTableTercero" widgetVar="dataTableTercero" rendered="#{SelectionDialog.listaTercero ne null}" value="#{SelectionDialog.listaTercero}"
+                         selection="#{SelectionDialog.listaTerceroSelected}" rowKey="#{tercero.idTercero}"
+                         rows="6" paginator="true" paginatorPosition="bottom" rowSelectMode="none" stripedRows="true">
+                <p:ajax event="rowSelectCheckbox" update="formSelection:btnAddTercero"/>
+                <p:ajax event="rowUnselectCheckbox" update="formSelection:btnAddTercero"/>
+                <p:ajax event="toggleSelect" update="formSelection:btnAddTercero"/>
+                <ui:include src="../WEB-INF/datatable-header.xhtml">
+                    <ui:param name="listaRendered" value="true"/>
+                    <ui:param name="id" value="dataTableTercero"/> 
+                    <ui:param name="listaSize" value="#{SelectionDialog.listaTercero.size()}"/>
+                    <ui:param name="actionBean" value="#{SelectionDialog}"/>
+                    <ui:param name="verBuscador" value="true"/>
+                    <ui:param name="verTotal" value="true"/>
+                    <ui:param name="verExcel" value="false"/>
+                    <ui:param name="tablaExport" value="dataTableTercero"/>
+                    <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                    <ui:param name="titulo" value="Total de artículos"/>
+                </ui:include>
+
+                <p:column selectionMode="multiple" exportable="false" width="30px"/>
+                <p:column headerText="Identificación" width="130px" filterBy="#{tercero.identificacion}" sortBy="#{tercero.identificacion}">
+                    <h:outputText value="#{tercero.identificacion}"/>
+                </p:column>
+                <p:column headerText="Razón social" width="350px" filterBy="#{tercero.razonSocial}" sortBy="#{tercero.razonSocial}">
+                    <h:outputText value="#{tercero.razonSocial}"/>
+                </p:column>
+                <p:column headerText="Nombre Comercial" width="350px" filterBy="#{tercero.nombreComercial}" sortBy="#{tercero.nombreComercial}">
+                    <h:outputText value="#{tercero.nombreComercial}"/>
+                </p:column>
+                <p:column headerText="Dirección" width="250px" filterBy="#{tercero.direccion}" sortBy="#{tercero.direccion}">
+                    <h:outputText value="#{tercero.direccion}"/>
+                </p:column>
+                <p:column headerText="Población" width="250px" filterBy="#{tercero.poblacion}" sortBy="#{tercero.poblacion}">
+                    <h:outputText value="#{tercero.poblacion}"/>
+                </p:column>
+                <p:column headerText="Provincia" width="250px" filterBy="#{tercero.provincia}" sortBy="#{tercero.provincia}">
+                    <h:outputText value="#{tercero.provincia}"/>
+                </p:column>
+                <p:column headerText="Código" width="250px" filterBy="#{tercero.codCentro}" sortBy="#{tercero.codCentro}">
+                    <h:outputText value="#{tercero.codCentro}"/>
+                </p:column>
+                <p:column headerText="Teléfono" width="250px" filterBy="#{tercero.telefono1}" sortBy="#{tercero.telefono1}">
+                    <h:outputText value="#{tercero.telefono1}"/>
+                </p:column>
+            </p:dataTable>
+            <div style="text-align: right; margin-top: 10px; margin-right: 10px">
+                <p:commandButton value="Añadir" styleClass="ui-button-success" icon="pi pi-check" action="#{SelectionDialog.addAllTercero}" rendered="#{SelectionDialog.listaTercero ne null}"
+                                 disabled="#{empty SelectionDialog.listaTerceroSelected}" id="btnAddTercero" widgetVar="btnAddTercero" update="formSelection"/>
+
+            </div>
+
+            <p:dataTable var="familia" value="#{SelectionDialog.listaFamilia}" selection="#{SelectionDialog.listaFamiliaSelected}"
+                         rowKey="#{familia.idFamilia}" id="dataTableFamilia" widgetVar="dataTableFamilia" rendered="#{SelectionDialog.listaFamilia ne null}"
+                         rows="6" paginator="true" paginatorPosition="bottom" rowSelectMode="none" stripedRows="true">
+                <p:ajax event="rowSelectCheckbox" update="formSelection:btnAddFamilia"/>
+                <p:ajax event="rowUnselectCheckbox" update="formSelection:btnAddFamilia"/>
+                <p:ajax event="toggleSelect" update="formSelection:btnAddFamilia"/>
+                <ui:include src="../WEB-INF/datatable-header.xhtml">
+                    <ui:param name="listaRendered" value="#{SelectionDialog.listaFamilia ne null}"/>
+                    <ui:param name="id" value="dataTableFamilia"/> 
+                    <ui:param name="listaSize" value="#{SelectionDialog.listaFamilia.size()}"/>
+                    <ui:param name="actionBean" value="#{SelectionDialog}"/>
+                    <ui:param name="verBuscador" value="true"/>
+                    <ui:param name="verTotal" value="true"/>
+                    <ui:param name="verExcel" value="false"/>
+                    <ui:param name="tablaExport" value="dataTableFamilia"/>
+                    <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                    <ui:param name="titulo" value="Total de familias"/>
+                </ui:include>
+
+                <p:column selectionMode="multiple" exportable="false"  width="30px"/>
+                <p:column headerText="Familia" filterBy="#{familia.idFamilia}" sortBy="#{familia.idFamilia}">
+                    <h:outputText value="#{familia.idFamilia}"/>
+                </p:column>
+                <p:column headerText="Nombre" filterBy="#{familia.nombre}" sortBy="#{familia.nombre}">
+                    <h:outputText value="#{familia.nombre}"/>
+                </p:column>
+            </p:dataTable>
+            <div style="text-align: right; margin-top: 10px; margin-right: 10px">
+                <p:commandButton value="Añadir" styleClass="ui-button-success" icon="pi pi-check" action="#{SelectionDialog.addAllFamilia()}" rendered="#{SelectionDialog.listaFamilia ne null}"
+                                 disabled="#{empty SelectionDialog.listaFamiliaSelected}" id="btnAddFamilia" widgetVar="btnAddFamilia"
+
+                                 />
+            </div>
+
+            <p:dataTable var="marca" value="#{SelectionDialog.listaMarcas}" selection="#{SelectionDialog.listaMarcasSelected}"
+                         rowKey="#{marca.idMarca}" id="dataTableMarca" widgetVar="dataTableMarca" rendered="#{SelectionDialog.listaMarcas ne null}"
+                         rows="6" paginator="true" paginatorPosition="bottom" rowSelectMode="none" stripedRows="true">
+                <p:ajax event="rowSelectCheckbox" update="formSelection:btnAddMarcas"/>
+                <p:ajax event="rowUnselectCheckbox" update="formSelection:btnAddMarcas"/>
+                <p:ajax event="toggleSelect" update="formSelection:btnAddMarcas"/>
+                <ui:include src="../WEB-INF/datatable-header.xhtml">
+                    <ui:param name="listaRendered" value="#{SelectionDialog.listaMarcas ne null}"/>
+                    <ui:param name="id" value="dataTableMarca"/> 
+                    <ui:param name="listaSize" value="#{SelectionDialog.listaMarcas.size()}"/>
+                    <ui:param name="actionBean" value="#{SelectionDialog}"/>
+                    <ui:param name="verBuscador" value="true"/>
+                    <ui:param name="verTotal" value="true"/>
+                    <ui:param name="verExcel" value="false"/>
+                    <ui:param name="tablaExport" value="dataTableMarca"/>
+                    <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                    <ui:param name="titulo" value="Total de marcas"/>
+                </ui:include>
+
+                <p:column selectionMode="multiple" exportable="false" width="30px"/>
+                <p:column headerText="Marca" filterBy="#{marca.idMarca}" sortBy="#{marca.idMarca}">
+                    <h:outputText value="#{marca.idMarca}"/>
+                </p:column>
+                <p:column headerText="Nombre" filterBy="#{marca.nombre}" sortBy="#{marca.nombre}">
+                    <h:outputText value="#{marca.nombre}"/>
+                </p:column>
+            </p:dataTable>
+            <div style="text-align: right; margin-top: 10px; margin-right: 10px">
+                <p:commandButton value="Añadir" styleClass="ui-button-success" icon="pi pi-check" action="#{SelectionDialog.addAllMarcas()}" rendered="#{SelectionDialog.listaMarcas ne null}"
+                                 disabled="#{empty SelectionDialog.listaMarcasSelected}" id="btnAddMarcas" widgetVar="btnAddMarcas"/>
+            </div>
+            <p:dataTable var="nivel" value="#{SelectionDialog.listaNiveles}" selection="#{SelectionDialog.listaNivelesSelected}"
+                         rowKey="#{nivel.idNivelClasificacion}" id="dataTableNiveles" widgetVar="dataTableNiveles" rendered="#{SelectionDialog.listaNiveles ne null}"
+                         rows="6" paginator="true" paginatorPosition="bottom" rowSelectMode="none" stripedRows="true">
+                <p:ajax event="rowSelectCheckbox" update="formSelection:btnAddNiveles"/>
+                <p:ajax event="rowUnselectCheckbox" update="formSelection:btnAddNiveles"/>
+                <p:ajax event="toggleSelect" update="formSelection:btnAddNiveles"/>
+                <ui:include src="../WEB-INF/datatable-header.xhtml">
+                    <ui:param name="listaRendered" value="#{SelectionDialog.listaNiveles ne null}"/>
+                    <ui:param name="id" value="dataTableNiveles"/> 
+                    <ui:param name="listaSize" value="#{SelectionDialog.listaNiveles.size()}"/>
+                    <ui:param name="actionBean" value="#{SelectionDialog}"/>
+                    <ui:param name="verBuscador" value="true"/>
+                    <ui:param name="verTotal" value="true"/>
+                    <ui:param name="verExcel" value="false"/>
+                    <ui:param name="tablaExport" value="dataTableNiveles"/>
+                    <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                    <ui:param name="titulo" value="Total de niveles"/>
+                </ui:include>
+
+                <p:column selectionMode="multiple" exportable="false" width="30px"/>
+                <p:column headerText="Nivel 1" width="40px" filterBy="#{nivel.nivel1}" sortBy="#{nivel.nivel1}">
+                    <h:outputText value="#{nivel.nivel1}"/>
+                </p:column>
+                <p:column headerText="Nivel 2" width="40px" filterBy="#{nivel.nivel2}" sortBy="#{nivel.nivel2}">
+                    <h:outputText value="#{nivel.nivel2}"/>
+                </p:column>
+                <p:column headerText="Nivel 3" width="40px" filterBy="#{nivel.nivel3}" sortBy="#{nivel.nivel3}">
+                    <h:outputText value="#{nivel.nivel3}"/>
+                </p:column>
+                <p:column headerText="Nivel 4" width="40px" filterBy="#{nivel.nivel4}" sortBy="#{nivel.nivel4}">
+                    <h:outputText value="#{nivel.nivel4}"/>
+                </p:column>
+                <p:column headerText="Nivel 5" width="40px" filterBy="#{nivel.nivel5}" sortBy="#{nivel.nivel5}">
+                    <h:outputText value="#{nivel.nivel5}"/>
+                </p:column>
+                <p:column headerText="Descripción" width="150px" filterBy="#{nivel.descripcion}" sortBy="#{nivel.descripcion}">
+                    <h:outputText value="#{nivel.descripcion}"/>
+                </p:column>
+
+
+            </p:dataTable>
+            <div style="text-align: right; margin-top: 10px; margin-right: 10px">
+                <p:commandButton value="Añadir" icon="pi pi-check" action="#{SelectionDialog.addAllNiveles()}" rendered="#{SelectionDialog.listaNiveles ne null}"
+                                 disabled="#{empty SelectionDialog.listaNivelesSelected}" id="btnAddNiveles" widgetVar="btnAddNiveles"
+                                 styleClass="ui-button-success"/>
+            </div>
+
+
+
+            <p:dataTable var="calles" value="#{SelectionDialog.listaCalles}" selection="#{SelectionDialog.listaCallesSelected}"
+                         rowKey="#{calles.idCalle}" id="dataTableCalles" widgetVar="dataTableCalles" rendered="#{ not empty SelectionDialog.listaCalles}"
+                         rows="6" paginator="true" paginatorPosition="bottom" rowSelectMode="none" stripedRows="true">
+                <p:ajax event="rowSelectCheckbox" update="formSelection:btnAddCalles"/>
+                <p:ajax event="rowUnselectCheckbox" update="formSelection:btnAddCalles"/>
+                <p:ajax event="toggleSelect" update="formSelection:btnAddCalles"/>
+                <ui:include src="../WEB-INF/datatable-header.xhtml">
+                    <ui:param name="listaRendered" value="#{SelectionDialog.listaCalles ne null}"/>
+                    <ui:param name="id" value="dataTableCalles"/> 
+                    <ui:param name="listaSize" value="#{SelectionDialog.listaCalles.size()}"/>
+                    <ui:param name="actionBean" value="#{SelectionDialog}"/>
+                    <ui:param name="verBuscador" value="true"/>
+                    <ui:param name="verTotal" value="true"/>
+                    <ui:param name="verExcel" value="false"/>
+                    <ui:param name="tablaExport" value="dataTableCalles"/>
+                    <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                    <ui:param name="titulo" value="Total de niveles"/>
+                </ui:include>
+
+                <p:column selectionMode="multiple" exportable="false" width="30px"/>
+                <p:column headerText="Almacén" width="40px" filterBy="#{calles.centroAlmacen.idCentroAlmacenTipo}" sortBy="#{calles.centroAlmacen.idCentroAlmacenTipo}">
+                    <h:outputText value="#{calles.zonaPK.idAlmacen}"/>
+                </p:column>
+                <p:column headerText="Nombre Almacén" width="40px" filterBy="#{calles.centroAlmacen.nombre}" sortBy="#{calles.centroAlmacen.nombre}">
+                    <h:outputText value="#{calles.centroAlmacen.nombre}"/>
+                </p:column>
+                <p:column headerText="Zona" width="40px" filterBy="#{calles.zonaPK}" sortBy="#{calles.zonaPK}">
+                    <h:outputText value="#{calles.zonaPK.idZona}"/>
+                </p:column>
+                <p:column headerText="Nombre Zona" width="40px" filterBy="#{calles.identidadZona}" sortBy="#{calles.identidadZona}">
+                    <h:outputText value="#{calles.nombre}"/>
+                </p:column>
+                <p:column headerText="Calle" width="40px" filterBy="#{calles.idCalle}" sortBy="#{calles.idCalle}">
+                    <h:outputText value="#{calles.idCalle}"/>
+                </p:column>
+                <p:column headerText="Nombre Calle" width="150px" filterBy="#{calles.nombreCalle}" sortBy="#{calles.nombreCalle}">
+                    <h:outputText value="#{calles.nombreCalle}"/>
+                </p:column>
+            </p:dataTable>
+
+            <div style="text-align: right; margin-top: 10px; margin-right: 10px">
+                <p:commandButton value="Añadir" icon="pi pi-check" action="#{SelectionDialog.addAllCalles()}" rendered="#{not empty SelectionDialog.listaCalles }"
+                                 disabled="#{empty SelectionDialog.listaCallesSelected}" id="btnAddCalles" widgetVar="btnAddCalles"
+                                 styleClass="ui-button-success"/>
+            </div>
+
+
+
+            <p:dataTable var="clasif" value="#{SelectionDialog.listaClasif}" selection="#{SelectionDialog.listaClasifSelected}"
+                         rowKey="#{clasif.idPedidoSalidaClasificacion}" id="dataTableClasif" widgetVar="dataTableClasif" rendered="#{not empty SelectionDialog.listaClasif}"
+                         rows="10" paginator="true" paginatorPosition="bottom" rowSelectMode="none" stripedRows="true">
+                <p:ajax event="rowSelectCheckbox" update="formSelection:btnAddClasif"/>
+                <p:ajax event="rowUnselectCheckbox" update="formSelection:btnAddClasif"/>
+                <p:ajax event="toggleSelect" update="formSelection:btnAddClasif"/>
+                <ui:include src="../WEB-INF/datatable-header.xhtml">
+                    <ui:param name="listaRendered" value="#{SelectionDialog.listaClasif ne null}"/>
+                    <ui:param name="id" value="dataTableClasif"/> 
+                    <ui:param name="listaSize" value="#{SelectionDialog.listaClasif.size()}"/>
+                    <ui:param name="actionBean" value="#{SelectionDialog}"/>
+                    <ui:param name="verBuscador" value="true"/>
+                    <ui:param name="verTotal" value="true"/>
+                    <ui:param name="verExcel" value="false"/>
+                    <ui:param name="tablaExport" value="dataTableClasif"/>
+                    <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                    <ui:param name="titulo" value="Total de niveles"/>
+                </ui:include>
+
+                <p:column selectionMode="multiple" exportable="false" width="30px"/>
+                <p:column headerText="Id" width="40px" filterBy="#{clasif.idPedidoSalidaClasificacion}" sortBy="#{clasif.idPedidoSalidaClasificacion}">
+                    <h:outputText value="#{clasif.idPedidoSalidaClasificacion}"/>
+                </p:column>
+                <p:column headerText="Descripción" width="40px" filterBy="#{clasif.descripcion}" sortBy="#{clasif.descripcion}">
+                    <h:outputText value="#{clasif.descripcion}"/>
+                </p:column>
+            </p:dataTable>
+            <div style="text-align: right; margin-top: 10px; margin-right: 10px">
+                <p:commandButton value="Añadir" icon="pi pi-check" action="#{SelectionDialog.addAllClasif()}" rendered="#{not empty SelectionDialog.listaClasif}"
+                                 disabled="#{empty SelectionDialog.listaClasifSelected}" id="btnAddClasif" widgetVar="btnAddClasif"
+                                 styleClass="ui-button-success"/>
+            </div>
+
+
+            <p:dataTable var="centroalmacen" value="#{SelectionDialog.listCentrosAlmacenes}" selection="#{SelectionDialog.centroAlmacenSelected }"
+                         rowKey="#{centroalmacen.centroAlmacenPK.idAlmacen}" id="dataTableCentroAlmacen" widgetVar="dataTableCentroAlmacen" rendered="#{not empty SelectionDialog.listCentrosAlmacenes}"
+                         rows="6" paginator="true" paginatorPosition="bottom" stripedRows="true">
+                <p:ajax event="rowSelectRadio" update="formSelection:btnAddCentroAlmacen"/>
+                <p:ajax event="toggleSelect" update="formSelection:btnAddCentroAlmacen"/>
+                <ui:include src="../WEB-INF/datatable-header.xhtml">
+                    <ui:param name="listaRendered" value="#{SelectionDialog.listCentrosAlmacenes ne null}"/>
+                    <ui:param name="id" value="dataTableCentroAlmacen"/> 
+                    <ui:param name="listaSize" value="#{SelectionDialog.listCentrosAlmacenes.size()}"/>
+                    <ui:param name="actionBean" value="#{SelectionDialog}"/>
+                    <ui:param name="verBuscador" value="true"/>
+                    <ui:param name="verTotal" value="true"/>
+                    <ui:param name="verExcel" value="false"/>
+                    <ui:param name="tablaExport" value="dataTableCentroAlmacen"/>
+                    <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                    <ui:param name="titulo" value="Total de Centro/Almacen"/>
+                </ui:include>
+
+                <p:column selectionMode="single" exportable="false" width="30px"/>
+                <p:column headerText="Centro" width="40px" filterBy="#{centroalmacen.centroAlmacenPK.idCentro}" sortBy="#{centroalmacen.centroAlmacenPK.idCentro}">
+                    <h:outputText value="#{centroalmacen.nombreCentro}"/>
+                </p:column>
+                <p:column headerText="Almacén" width="40px" filterBy="#{centroalmacen.centroAlmacenPK.idAlmacen}" sortBy="#{centroalmacen.centroAlmacenPK.idAlmacen}">
+                    <h:outputText value="#{centroalmacen.nombre}"/>
+                </p:column>
+                <p:column headerText="P.I" width="40px" >
+                    <p:selectBooleanCheckbox disabled="true"/>
+
+                </p:column>
+            </p:dataTable>
+            <div style="text-align: right; margin-top: 10px; margin-right: 10px">
+                <p:commandButton value="Añadir" icon="pi pi-check" actionListener="#{SelectionDialog.addCentroAlmacen()}"
+                                  id="btnAddCentroAlmacen" widgetVar                                                                                                                                                                                                                                     ="btnAddCentroAlmacen"
+                                 styleClass="ui-button-success"/>
+            </div>
+
+
+            <p:dataTable var="terceroSingle" id="dataTableTerceroSingle" widgetVar="dataTableTerceroSingle" rendered="#{not empty SelectionDialog.listaTercerosSingle}" 
+                         value="#{SelectionDialog.listaTercerosSingle}"
+                         selection="#{SelectionDialog.terceroSelected}" rowKey="#{terceroSingle.idTercero}"
+                         rows="6" paginator="true" paginatorPosition="bottom" stripedRows="true">
+                <p:ajax event="rowSelectCheckbox" update="formSelection:btnAddTerceroSingle"/>
+                <p:ajax event="rowUnselectCheckbox" update="formSelection:btnAddTerceroSingle"/>
+                <p:ajax event="toggleSelect" update="formSelection:btnAddTerceroSingle"/>
+                <ui:include src="../WEB-INF/datatable-header.xhtml">
+                    <ui:param name="listaRendered" value="true"/>
+                    <ui:param name="id" value="dataTableTerceroSingle"/> 
+                    <ui:param name="listaSize" value="#{SelectionDialog.listaTercerosSingle.size()}"/>
+                    <ui:param name="actionBean" value="#{SelectionDialog}"/>
+                    <ui:param name="verBuscador" value="true"/>
+                    <ui:param name="verTotal" value="true"/>
+                    <ui:param name="verExcel" value="false"/>
+                    <ui:param name="tablaExport" value="dataTableTerceroSingle"/>
+                    <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                    <ui:param name="titulo" value="Total de Terceros"/>
+                </ui:include>
+
+                <p:column selectionMode="single" exportable="false" width="30px"/>
+                <p:column headerText="Identificación" width="130px" filterBy="#{terceroSingle.identificacion}" sortBy="#{terceroSingle.identificacion}">
+                    <h:outputText value="#{terceroSingle.identificacion}"/>
+                </p:column>
+                <p:column headerText="Razón social" width="350px" filterBy="#{terceroSingle.razonSocial}" sortBy="#{terceroSingle.razonSocial}">
+                    <h:outputText value="#{terceroSingle.razonSocial}"/>
+                </p:column>
+                <p:column headerText="Nombre Comercial" width="350px" filterBy="#{terceroSingle.nombreComercial}" sortBy="#{terceroSingle.nombreComercial}">
+                    <h:outputText value="#{terceroSingle.nombreComercial}"/>
+                </p:column>
+                <p:column headerText="Dirección" width="250px" filterBy="#{terceroSingle.direccion}" sortBy="#{terceroSingle.direccion}">
+                    <h:outputText value="#{terceroSingle.direccion}"/>
+                </p:column>
+                <p:column headerText="Población" width="250px" filterBy="#{terceroSingle.poblacion}" sortBy="#{terceroSingle.poblacion}">
+                    <h:outputText value="#{terceroSingle.poblacion}"/>
+                </p:column>
+                <p:column headerText="Provincia" width="250px" filterBy="#{terceroSingle.provincia}" sortBy="#{terceroSingle.provincia}">
+                    <h:outputText value="#{terceroSingle.provincia}"/>
+                </p:column>
+                <p:column headerText="Código" width="250px" filterBy="#{terceroSingle.codCentro}" sortBy="#{terceroSingle.codCentro}">
+                    <h:outputText value="#{terceroSingle.codCentro}"/>
+                </p:column>
+                <p:column headerText="Teléfono" width="250px" filterBy="#{terceroSingle.telefono1}" sortBy="#{terceroSingle.telefono1}">
+                    <h:outputText value="#{terceroSingle.telefono1}"/>
+                </p:column>
+            </p:dataTable>
+            <div style="text-align: right; margin-top: 10px; margin-right: 10px">
+                <p:commandButton value="Añadir" styleClass="ui-button-success" icon="pi pi-check" action="#{SelectionDialog.addTerceroSingle}" rendered="#{not empty SelectionDialog.listaTercerosSingle}"
+                                  id="btnAddTerceroSingle" widgetVar="btnAddTerceroSingle" update="formSelection"/>
+
+            </div>
+
+
+            <p:dataTable var="centroTercero" id="dataTableCentroTercero" widgetVar="dataTableCentroTercero" rendered="#{SelectionDialog.listaCentroTercero ne null}"
+                         value="#{SelectionDialog.listaCentroTercero}"
+                         selection="#{SelectionDialog.centroTerceroSelected}" rowKey="#{centroTercero.idTerceroCentro}"
+                         rows="6" paginator="true" paginatorPosition="bottom" stripedRows="true">
+                <p:ajax event="rowSelectCheckbox" update="formSelection:btnAddTerceroCentro"/>
+                <p:ajax event="rowUnselectCheckbox" update="formSelection:btnAddTerceroCentro"/>
+                <p:ajax event="toggleSelect" update="formSelection:btnAddTerceroCentro"/>
+                <ui:include src="../WEB-INF/datatable-header.xhtml">
+                    <ui:param name="listaRendered" value="true"/>
+                    <ui:param name="id" value="dataTableCentroTercero"/> 
+                    <ui:param name="listaSize" value="#{SelectionDialog.listaCentroTercero.size()}"/>
+                    <ui:param name="actionBean" value="#{SelectionDialog}"/>
+                    <ui:param name="verBuscador" value="true"/>
+                    <ui:param name="verTotal" value="true"/>
+                    <ui:param name="verExcel" value="false"/>
+                    <ui:param name="tablaExport" value="dataTableCentroTercero"/>
+                    <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                    <ui:param name="titulo" value="Total de Centros"/>
+                </ui:include>
+
+                <p:column selectionMode="single" exportable="false" width="30px"/>
+                <p:column headerText="Identificación" width="130px" filterBy="#{centroTercero.idTerceroCentro}" sortBy="#{centroTercero.idTerceroCentro}">
+                    <h:outputText value="#{centroTercero.idTerceroCentro}"/>
+                </p:column>
+                <p:column headerText="Razón social" width="350px" filterBy="#{centroTercero.nombre}" sortBy="#{centroTercero.nombre}">
+                    <h:outputText value="#{centroTercero.nombre}"/>
+                </p:column>
+                <p:column headerText="Telefono" width="350px" filterBy="#{centroTercero.telefono1}" sortBy="#{centroTercero.telefono1}">
+                    <h:outputText value="#{centroTercero.telefono1}"/>
+                </p:column>
+                <p:column headerText="Email" width="250px" filterBy="#{centroTercero.email1}" sortBy="#{centroTercero.email1}">
+                    <h:outputText value="#{centroTercero.email1}"/>
+                </p:column>
+                <p:column headerText="Población" width="250px" filterBy="#{centroTercero.poblacion}" sortBy="#{centroTercero.poblacion}">
+                    <h:outputText value="#{centroTercero.poblacion}"/>
+                </p:column>
+                
+            </p:dataTable>
+            <div style="text-align: right; margin-top: 10px; margin-right: 10px">
+                <p:commandButton value="Añadir" styleClass="ui-button-success" icon="pi pi-check" action="#{SelectionDialog.addCentroTercero}"
+                                 rendered="#{not empty SelectionDialog.listaCentroTercero}"
+                                  id="btnAddTerceroCentro" widgetVar="btnAddTerceroCentro" update="formSelection"/>
+
+            </div>
+            
+            
+            <p:dataTable var="articulo" id="dataTableArticulos" widgetVar="dataTableArticulos" rendered="#{SelectionDialog.listaCentroTercero ne null}"
+                         value="#{SelectionDialog.listaArticulos}"
+                         selection="#{SelectionDialog.listaArticulosSelected}" rowKey="#{articulo.idTerceroCentro}"
+                         rows="6" paginator="true" paginatorPosition="bottom" stripedRows="true">
+                <p:ajax event="rowSelectCheckbox" update="formSelection:btnAddArtiuclos"/>
+                <p:ajax event="rowUnselectCheckbox" update="formSelection:btnAddArtiuclos"/>
+                <p:ajax event="toggleSelect" update="formSelection:btnAddArtiuclos"/>
+                <ui:include src="../WEB-INF/datatable-header.xhtml">
+                    <ui:param name="listaRendered" value="true"/>
+                    <ui:param name="id" value="dataTableArticulos"/> 
+                    <ui:param name="listaSize" value="#{SelectionDialog.listaArticulos.size()}"/>
+                    <ui:param name="actionBean" value="#{SelectionDialog}"/>
+                    <ui:param name="verBuscador" value="true"/>
+                    <ui:param name="verTotal" value="true"/>
+                    <ui:param name="verExcel" value="false"/>
+                    <ui:param name="tablaExport" value="dataTableArticulos"/>
+                    <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                    <ui:param name="titulo" value="Total de Centros"/>
+                </ui:include>
+
+                <p:column selectionMode="multiple" exportable="false" width="30px"/>
+                <p:column headerText="Artículo" width="130px" filterBy="#{articulo.idTerceroCentro}" sortBy="#{articulo.idTerceroCentro}">
+                    <h:outputText value="#{articulo.idTerceroCentro}"/>
+                </p:column>
+                <p:column headerText="Referencia" width="350px" filterBy="#{articulo.nombre}" sortBy="#{articulo.nombre}">
+                    <h:outputText value="#{articulo.nombre}"/>
+                </p:column>
+                <p:column headerText="Descripción" width="350px" filterBy="#{articulo.telefono1}" sortBy="#{articulo.telefono1}">
+                    <h:outputText value="#{articulo.telefono1}"/>
+                </p:column>
+                <p:column headerText="Código de Barras" width="250px" filterBy="#{articulo.email1}" sortBy="#{articulo.email1}">
+                    <h:outputText value="#{articulo.email1}"/>
+                </p:column>
+                
+            </p:dataTable>
+            <div style="text-align: right; margin-top: 10px; margin-right: 10px">
+                <p:commandButton value="Añadir" styleClass="ui-button-success" icon="pi pi-check" action="#{SelectionDialog.addArtiuclos}"
+                                 rendered="#{not empty SelectionDialog.listaArticulos}"
+                                  id="btnAddArtiuclos" widgetVar="btnAddArtiuclos" update="formSelection"/>
+
+            </div>
+        </h:form>
+
+        
+    </h:body>
+</html>

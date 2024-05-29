@@ -532,6 +532,7 @@ public class MainItems {
         marcaString = "";
         nivelString = "";
         idTercero = "";
+        
         idFamilia = "";
         idMarca = "";
         idNivelClasif = "";

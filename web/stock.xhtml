@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:head>
+        <title>Stock</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+
+    <style>
+        .inputsTop{
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+            margin-left: 20px
+        }
+    </style>
+
+    <h:body>
+        <h:form id="stockForm">
+            <p:toolbar>
+                <p:toolbarGroup>
+                    <div style="display: flex;
+                         align-content: center;
+                         align-items: center;
+                         padding: 10px;">
+                        <div class="inputsTop">
+                            <h:outputLabel value="Centros"/>
+                            <p:selectOneMenu id="comboSearchCentro" widgetVar="comboSearchCentro"
+                                             styleClass="custom-filter" 
+                                             filter="true" filterMatchMode="startsWith" value="#{Stock.centerId}">
+                                <p:ajax event="change" process="@this" listener="#{Stock.actualizarAlmacenCombo}" update="comboSearchAlmacen"/>
+                                <f:selectItems value="#{Stock.listaCentros}" var="centros" itemLabel="#{centros.idCentro} - #{centros.nombre}" itemValue="#{centros.idCentro}"/>
+                            </p:selectOneMenu>       
+                        </div>
+
+                        <div class="inputsTop">
+                            <h:outputLabel value="Almacén"/>
+                            <p:selectCheckboxMenu id="comboSearchAlmacen"
+                                                  filter="true" filterMatchMode="startsWith"
+                                                  label="almacen" multiple="true" emptyLabel="Todos" updateLabel="true"
+                                                  style="min-width: 15rem" scrollHeight="250" 
+                                                  value="#{Stock.listaAlmacenes}">
+                                <p:ajax event="change" />
+                                <f:selectItems value="#{Stock.listaAlmacenes}" var="almacen" itemLabel="#{almacen.centroAlmacenPK.idAlmacen} - #{almacen.nombre}" itemValue="#{almacen.centroAlmacenPK.idAlmacen}" />
+                            </p:selectCheckboxMenu>
+                        </div>        
+                        <div class="inputsTop">
+                            <h:outputLabel value="Artículos"/>
+                            <div class="ui-inputgroup" style="width: auto">
+                                <p:inputText value="#{Stock.articuloString}" disabled="true" id="txtArticulos" widgetVar="txtArticulos"/>
+                                <p:commandButton icon="pi pi-search" actionListener="#{Stock.selectionDialog('articulos')}">
+                                    <p:ajax event="dialogReturn"/>
+                                </p:commandButton>
+                                <p:commandButton id="clearArti" widgetVar="clearArti" icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{ControlPanel.limpiarClasif}"
+                                                 update="txtArticulos" disabled="#{empty Stock.articuloString}"/>
+                            </div>
+                        </div>        
+                        <div class="inputsTop">
+                            <h:outputLabel value="Referencia"/>
+                            <p:inputText value="" style="text-align: end"/>
+                        </div>        
+                        <div class="inputsTop">
+                            <h:outputLabel value="Descripción"/>
+                            <p:inputText value="" style="text-align: end"/>
+                        </div>        
+                        <div class="inputsTop">
+                            <h:outputLabel value="Lote/Serie"/>
+                            <p:inputText value="" style="text-align: end"/>
+                        </div>        
+                        <div class="inputsTop">
+                            <h:outputLabel value="Código de Barras"/>
+                            <p:inputText value="" style="text-align: end"/>
+                        </div>        
+                        <div class="inputsTop">
+                            <h:outputLabel value="Estado"/>
+                            <p:selectOneMenu id="page" value="#{Stock.estado}" style="margin-top: 10px; padding: 10px" styleClass="asd">
+                                <f:selectItem itemLabel="Todos" itemValue="-1" />
+                                <f:selectItem itemLabel="Activo" itemValue="0" />
+                                <f:selectItem itemLabel="Baja" itemValue="1"/>
+                                <f:selectItem itemLabel="Baja Transitoria" itemValue="2"/>
+                                <p:ajax event="change" />
+
+                            </p:selectOneMenu>
+                        </div>        
+                    </div>
+                    <div style="display: flex;
+                         align-content: center;
+                         align-items: center;
+                         margin-left: 20px;
+                         padding: 10px;">
+                        <p:selectBooleanCheckbox itemLabel="Agrupar por lote" value="#{Stock.agruparLote}"/>
+                        <p:selectBooleanCheckbox itemLabel="Quitar Artículos Sin Stock" value="#{Stock.agruparLote}"/>
+
+                        <p:commandButton icon="pi pi-filter" style="margin-right: 10px"/>
+                        <p:commandButton icon="pi pi-search" styleClass="ui-button-success"/>
+                    </div>
+
+                </p:toolbarGroup>
+            </p:toolbar>
+        </h:form>
+    </h:body>
+</html>
