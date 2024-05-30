@@ -5,7 +5,9 @@
 package Items;
 
 import Tabla.PeticionJSON;
+import es.inerttia.ittws.controllers.ArticuloClasificacionController;
 import es.inerttia.ittws.controllers.CentroAlmacenController;
+import es.inerttia.ittws.controllers.HuecoController;
 import es.inerttia.ittws.controllers.PedidoSalidaClasificacionController;
 import es.inerttia.ittws.controllers.PedidoSalidaController;
 import es.inerttia.ittws.controllers.TerceroCentroController;
@@ -39,16 +41,15 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import org.primefaces.PrimeFaces;
 import es.inerttia.ittws.controllers.entities.Articulo;
-
-
+import es.inerttia.ittws.controllers.entities.ArticuloClasificacion;
+import es.inerttia.ittws.controllers.entities.TipoHueco;
 
 @ManagedBean(name = "SelectionDialog")
 @ViewScoped
 public class SelectionDialog {
 
     private String tipoTabla;
-    private List<Tercero> listaTercero;
-    private List<Tercero> listaTerceroSelected;
+    
     private List<Familia> listaFamilia;
     private List<Familia> listaFamiliaSelected;
     private List<Marca> listaMarcas;
@@ -74,18 +75,101 @@ public class SelectionDialog {
     private List<TerceroCentro> listaCentroTercero;
     private TerceroCentro centroTerceroSelected;
     private String idTercero;
-    
-    
+
     private List<Articulo> listaArticulos;
-    
+    private List<Articulo> listaArticulosSelected;
+    private List<TipoHueco> listaUbi;
+    private List<TipoHueco> listaUbiSelected;
+    private List<ArticuloClasificacion> listaArticClas;
+    private List<ArticuloClasificacion> listaArticClasSelected;
+    private List<Tercero> listaTercero;
+    private List<Tercero> listaTerceroSelected;
+    private List<Tercero> listaTercerDepo;
+    private List<Tercero> listaTercerDepoSelected;
+    private List<Tercero> listaTercerSecun;
+    private List<Tercero> listaTercerSecunSelected;
 
     // <editor-fold defaultstate="collapsed" desc=" getters y setters "> 
     public List<Zona> getListaCallesSelected() {
         return listaCallesSelected;
     }
 
+    public List<TipoHueco> getListaUbi() {
+        return listaUbi;
+    }
+
+    public List<Tercero> getListaTercerDepo() {
+        return listaTercerDepo;
+    }
+
+    public void setListaTercerDepo(List<Tercero> listaTercerDepo) {
+        this.listaTercerDepo = listaTercerDepo;
+    }
+
+    public List<Tercero> getListaTercerDepoSelected() {
+        return listaTercerDepoSelected;
+    }
+
+    public void setListaTercerDepoSelected(List<Tercero> listaTercerDepoSelected) {
+        this.listaTercerDepoSelected = listaTercerDepoSelected;
+    }
+
+    public List<Tercero> getListaTercerSecun() {
+        return listaTercerSecun;
+    }
+
+    public void setListaTercerSecun(List<Tercero> listaTercerSecun) {
+        this.listaTercerSecun = listaTercerSecun;
+    }
+
+    public List<Tercero> getListaTercerSecunSelected() {
+        return listaTercerSecunSelected;
+    }
+
+    public void setListaTercerSecunSelected(List<Tercero> listaTercerSecunSelected) {
+        this.listaTercerSecunSelected = listaTercerSecunSelected;
+    }
+    
+    
+
+    public List<ArticuloClasificacion> getListaArticClas() {
+        return listaArticClas;
+    }
+
+    public void setListaArticClas(List<ArticuloClasificacion> listaArticClas) {
+        this.listaArticClas = listaArticClas;
+    }
+
+    public List<ArticuloClasificacion> getListaArticClasSelected() {
+        return listaArticClasSelected;
+    }
+
+    public void setListaArticClasSelected(List<ArticuloClasificacion> listaArticClasSelected) {
+        this.listaArticClasSelected = listaArticClasSelected;
+    }
+
+    public void setListaUbi(List<TipoHueco> listaUbi) {
+        this.listaUbi = listaUbi;
+    }
+
+    public List<TipoHueco> getListaUbiSelected() {
+        return listaUbiSelected;
+    }
+
+    public void setListaUbiSelected(List<TipoHueco> listaUbiSelected) {
+        this.listaUbiSelected = listaUbiSelected;
+    }
+
     public void setListaCallesSelected(List<Zona> listaCallesSelected) {
         this.listaCallesSelected = listaCallesSelected;
+    }
+
+    public List<Articulo> getListaArticulosSelected() {
+        return listaArticulosSelected;
+    }
+
+    public void setListaArticulosSelected(List<Articulo> listaArticulosSelected) {
+        this.listaArticulosSelected = listaArticulosSelected;
     }
 
     public List<Articulo> getListaArticulos() {
@@ -96,9 +180,6 @@ public class SelectionDialog {
         this.listaArticulos = listaArticulos;
     }
 
-    
-    
-
     public TerceroCentro getCentroTerceroSelected() {
         return centroTerceroSelected;
     }
@@ -106,8 +187,6 @@ public class SelectionDialog {
     public void setCentroTerceroSelected(TerceroCentro centroTerceroSelected) {
         this.centroTerceroSelected = centroTerceroSelected;
     }
-    
-    
 
     public List<TerceroCentro> getListaCentroTercero() {
         return listaCentroTercero;
@@ -124,8 +203,6 @@ public class SelectionDialog {
     public void setIdTercero(String idTercero) {
         this.idTercero = idTercero;
     }
-    
-    
 
     public Tercero getTerceroSelected() {
         return terceroSelected;
@@ -298,7 +375,13 @@ public class SelectionDialog {
 
         if (paramMap.containsKey("articulos")) {
             String[] paletDetails = paramMap.get("selection");
-            tipoTabla = paletDetails[0];    
+            tipoTabla = paletDetails[0];
+        } else if (paramMap.containsKey("clasif")) {
+            String[] paletDetails = paramMap.get("selection");
+            tipoTabla = paletDetails[0];
+        } else if (paramMap.containsKey("tercero")) {
+            String[] paletDetails = paramMap.get("selection");
+            tipoTabla = paletDetails[0];
         } else {
             String[] paletDetails = paramMap.get("selection");
             tipoTabla = paletDetails[0];
@@ -312,7 +395,7 @@ public class SelectionDialog {
 
     public void addAllFamilia() {
         PrimeFaces.current().dialog().closeDynamic(listaFamiliaSelected);
-
+        
     }
 
     public void addAllNiveles() {
@@ -345,6 +428,27 @@ public class SelectionDialog {
         PrimeFaces.current().dialog().closeDynamic(centroTerceroSelected);
     }
 
+    public void addArticulos() {
+        PrimeFaces.current().dialog().closeDynamic(listaArticulosSelected);
+        System.out.println("ads");
+    }
+
+    public void addUbic() {
+        PrimeFaces.current().dialog().closeDynamic(listaUbiSelected);
+    }
+
+    public void addArtClasif() {
+        PrimeFaces.current().dialog().closeDynamic(listaArticClasSelected);
+    }
+    
+    public void addTercerDepo() {
+        PrimeFaces.current().dialog().closeDynamic(listaTercerDepoSelected);
+    }
+    
+    public void addTercerSecun() {
+        PrimeFaces.current().dialog().closeDynamic(listaTercerSecunSelected);
+    }
+
     private void llenarListas() {
         if (null != tipoTabla) {
             switch (tipoTabla) {
@@ -355,7 +459,56 @@ public class SelectionDialog {
                     conf.cerrar();
                     break;
                 }
-                
+                case "familias": {
+                    Configuracion conf = new Configuracion();
+                    es.inerttia.ittws.controllers.FamiliaController ctl11 = new es.inerttia.ittws.controllers.FamiliaController(conf);
+                    listaFamilia = ctl11.getFamiliasSeleccion();
+                    conf.cerrar();
+                    break;
+                }
+                case "marcas": {
+                    Configuracion conf = new Configuracion();
+                    es.inerttia.ittws.controllers.MarcaController ctl12 = new es.inerttia.ittws.controllers.MarcaController(conf);
+                    listaMarcas = ctl12.getMarcasSeleccion();
+                    conf.cerrar();
+                    break;
+                }
+                case "ubicacion": {
+                    Configuracion conf = new Configuracion();
+                    HuecoController chc = new HuecoController(conf);
+                    listaUbi = chc.getTiposHuecos();
+                    conf.cerrar();
+                    break;
+                }
+                case "clasif": {
+                    Configuracion conf = new Configuracion();
+                    ArticuloClasificacionController cacc = new ArticuloClasificacionController(conf);
+                    listaArticClas = cacc.getArticuloClasificacions();
+                    conf.cerrar();
+                    break;
+                }
+                case "tercero": {
+                    Configuracion conf = new Configuracion();
+                    es.inerttia.ittws.controllers.TerceroController ctl2 = new TerceroController(conf);
+                    listaTercero = ctl2.getTercerosConCentros("", "", "", "", "", "", "", -1);
+                    conf.cerrar();
+                    break;
+                }
+                case "tercerDepo": {
+                    Configuracion conf = new Configuracion();
+                    es.inerttia.ittws.controllers.TerceroController ctl2 = new TerceroController(conf);
+                    listaTercerDepo = ctl2.getTercerosDeposito();
+                    conf.cerrar();
+                    break;
+                }
+                case "tercerSecun": {
+                    Configuracion conf = new Configuracion();
+                    es.inerttia.ittws.controllers.TerceroController ctl2 = new TerceroController(conf);
+                    listaTercerSecun = ctl2.getTercerosConCentros("", "", "", "", "", "", "", -1);
+                    conf.cerrar();
+                    break;
+                }
+
                 default:
                     break;
             }

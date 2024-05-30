@@ -22,6 +22,110 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
             margin-bottom: 10px;
             margin-left: 20px
         }
+
+        .grid-container {
+            display: block;
+            grid-gap: 10px;
+            margin-left: 10px;
+        }
+
+        .grid-container-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 10px;
+            margin-left: 10px;
+        }
+
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+
+
+        body .ui-datatable .ui-datatable-header {
+            background: #0094d4 !important;
+            border: 1px solid #e9ecef;
+            border-width: 1px 0 1px 0;
+            color: #495057;
+            padding: 1rem 1rem;
+            font-weight: 600;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        body .ui-dialog .ui-dialog-titlebar {
+            background: #0094d4 !important;
+            color: #ffffff;
+            font-weight: 700;
+            border-bottom: 0 none;
+            padding: 1.5rem;
+        }
+
+        body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon .ui-icon-closethick:before {
+            content: "";
+            color: white;
+        }
+
+        body .ui-datatable.ui-datatable-striped .ui-datatable-data>tr.ui-datatable-odd {
+            background: #d7d7d7;
+        }
+
+        .asdd{
+            element.style {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        ui-datatable .ui-column-filter {
+            display: none;
+        }
+        .ui-datatable-header {
+            background: #0094d4 !important;
+            color: white !important;
+        }
+        .ui-datatable-tablewrapper * {
+            font-size: small !important;
+            padding: 0.7em !important;
+        }
+        .ui-datatable .ui-datatable-data > tr > td {
+            padding: 0.3em !important;
+        }
+        .ui-datatable .ui-datatable-header > tr > td {
+            padding: 0.3em !important;
+        }
+        .ui-datatable .ui-datatable-header {
+            padding: 0.3em !important;
+        }
+        .ui-datatable .ui-paginator {
+            padding: 0.3em !important;
+        }
+        .ui-datatable .ui-datatable-odd {
+            background: #e9ecef;
+        }
+
+        body .ui-datatable .ui-datatable-data>tr.ui-state-highlight {
+            background: #9fa9b1;
+            color: #495057;
+        }
+
+        body .ui-paginator .ui-paginator-current, body .ui-paginator .ui-paginator-rpp-options {
+
+            border-radius: 7px !important;
+        }
+
+        body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-carat-2-n-s:before {
+            content: "" !important;
+        }
+
+        .ui-datatable .ui-column-filter {
+            display: none !important;
+            box-sizing: border-box;
+            width: 100%;
+            margin: .5rem auto auto auto;
+        }
+
     </style>
 
     <h:body>
@@ -31,7 +135,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                     <div style="display: flex;
                          align-content: center;
                          align-items: center;
-                         padding: 10px;">
+                         ">
                         <div class="inputsTop">
                             <h:outputLabel value="Centros"/>
                             <p:selectOneMenu id="comboSearchCentro" widgetVar="comboSearchCentro"
@@ -48,7 +152,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                                                   filter="true" filterMatchMode="startsWith"
                                                   label="almacen" multiple="true" emptyLabel="Todos" updateLabel="true"
                                                   style="min-width: 15rem" scrollHeight="250" 
-                                                  value="#{Stock.listaAlmacenes}">
+                                                  value="#{Stock.listaAlmacenesSelected}">
                                 <p:ajax event="change" />
                                 <f:selectItems value="#{Stock.listaAlmacenes}" var="almacen" itemLabel="#{almacen.centroAlmacenPK.idAlmacen} - #{almacen.nombre}" itemValue="#{almacen.centroAlmacenPK.idAlmacen}" />
                             </p:selectCheckboxMenu>
@@ -58,31 +162,31 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                             <div class="ui-inputgroup" style="width: auto">
                                 <p:inputText value="#{Stock.articuloString}" disabled="true" id="txtArticulos" widgetVar="txtArticulos"/>
                                 <p:commandButton icon="pi pi-search" actionListener="#{Stock.selectionDialog('articulos')}">
-                                    <p:ajax event="dialogReturn"/>
+                                    <p:ajax event="dialogReturn" listener="#{Stock.dialogReturn}" update="txtArticulos clearArti"/>
                                 </p:commandButton>
-                                <p:commandButton id="clearArti" widgetVar="clearArti" icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{ControlPanel.limpiarClasif}"
+                                <p:commandButton id="clearArti" widgetVar="clearArti" icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{Stock.limpiarArticulo}"
                                                  update="txtArticulos" disabled="#{empty Stock.articuloString}"/>
                             </div>
                         </div>        
                         <div class="inputsTop">
                             <h:outputLabel value="Referencia"/>
-                            <p:inputText value="" style="text-align: end"/>
+                            <p:inputText value="#{Stock.stockFilter.referencia}" style="text-align: end"/>
                         </div>        
                         <div class="inputsTop">
                             <h:outputLabel value="Descripción"/>
-                            <p:inputText value="" style="text-align: end"/>
+                            <p:inputText value="#{Stock.stockFilter.descripcion}" style="text-align: end; width: 200px"/>
                         </div>        
                         <div class="inputsTop">
                             <h:outputLabel value="Lote/Serie"/>
-                            <p:inputText value="" style="text-align: end"/>
+                            <p:inputText value="#{Stock.stockFilter.lote}" style="text-align: end; width: 100px"/>
                         </div>        
                         <div class="inputsTop">
                             <h:outputLabel value="Código de Barras"/>
-                            <p:inputText value="" style="text-align: end"/>
+                            <p:inputText value="#{Stock.stockFilter.codigoBarras}" style="text-align: end; width: 150px"/>
                         </div>        
                         <div class="inputsTop">
                             <h:outputLabel value="Estado"/>
-                            <p:selectOneMenu id="page" value="#{Stock.estado}" style="margin-top: 10px; padding: 10px" styleClass="asd">
+                            <p:selectOneMenu id="page" value="#{Stock.stockFilter.estado}" styleClass="asd">
                                 <f:selectItem itemLabel="Todos" itemValue="-1" />
                                 <f:selectItem itemLabel="Activo" itemValue="0" />
                                 <f:selectItem itemLabel="Baja" itemValue="1"/>
@@ -97,15 +201,322 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                          align-items: center;
                          margin-left: 20px;
                          padding: 10px;">
-                        <p:selectBooleanCheckbox itemLabel="Agrupar por lote" value="#{Stock.agruparLote}"/>
-                        <p:selectBooleanCheckbox itemLabel="Quitar Artículos Sin Stock" value="#{Stock.agruparLote}"/>
+                        <p:selectBooleanCheckbox itemLabel="Agrupar por lote" value="#{Stock.stockFilter.agrupadoLote}"/>
+                        <p:selectBooleanCheckbox itemLabel="Quitar Artículos Sin Stock" value="#{Stock.stockFilter.quitarArticulosSinStock}" />
 
-                        <p:commandButton icon="pi pi-filter" style="margin-right: 10px"/>
-                        <p:commandButton icon="pi pi-search" styleClass="ui-button-success"/>
+                        <p:commandButton id="btnFilter" widgetVar="btnFilter" icon="pi pi-filter" style="margin-right: 10px" 
+                                         oncomplete="PF('dialogFilter').show()"/>
+                        <p:commandButton icon="pi pi-search" styleClass="ui-button-success" actionListener="#{Stock.buscar()}" update="stockForm dataTableLineas"/>
                     </div>
 
                 </p:toolbarGroup>
             </p:toolbar>
+
+            <div>
+                <p:dataTable var="linea" value="#{Stock.items}" selection="#{Stock.itemsSelected}" filteredValue="#{Stock.itemsFiltered}"
+                             rowKey="#{linea.articulo.idArticulo}" id="dataTableLineas" widgetVar="dataTableLineas" scrollable="true"
+                             rows="10" paginator="true" paginatorPosition="bottom" selectionMode="single"
+                             stripedRows="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records" 
+                             rowsPerPageTemplate="5,10,{ShowAll|'All'}" >
+                    <p:ajax event="rowSelect" listener="#{Stock.buscar()}"/>
+                    <p:ajax event="rowUnselect"/>
+                    <ui:include src="WEB-INF/datatable-header.xhtml">
+                        <ui:param name="listaRendered" value="#{Stock.items ne null}"/>
+                        <ui:param name="id" value="dataTableLineas"/> 
+                        <ui:param name="listaSize" value="#{Stock.items.size()}"/>
+                        <ui:param name="actionBean" value="#{Stock}"/>
+                        <ui:param name="verBuscador" value="true"/>
+                        <ui:param name="verTotal" value="true"/>
+                        <ui:param name="verExcel" value="true"/>
+                        <ui:param name="tablaExport" value="dataTableLineas"/>
+                        <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                        <ui:param name="titulo" value="Total Tipos de Lineas"/>
+                    </ui:include>
+
+                    <p:column headerText="Artículo" filterBy="#{linea.articulo.idArticulo}" sortBy="#{linea.articulo.idArticulo}">
+                        <p:commandLink value="#{linea.articulo.idArticulo}"/>
+                    </p:column>
+                    <p:column headerText="Referencia" width="100px"  filterBy="#{linea.articulo.referencia}" sortBy="#{linea.articulo.referencia}">
+                        <h:outputText value="#{linea.articulo.referencia}"/>
+                    </p:column>
+                    <p:column headerText="Descripción" width="400px"  filterBy="#{linea.articulo.descripcion}" sortBy="#{linea.articulo.descripcion}">
+                        <h:outputText value="#{linea.articulo.descripcion}"/>
+                    </p:column>
+                    <p:column headerText="Código de Barras" width="120px" filterBy="#{linea.articulo.codigoBarras}" sortBy="#{linea.articulo.codigoBarras}">
+                        <h:outputText value="#{linea.articulo.codigoBarras}"/>
+                    </p:column>
+                    <p:column headerText="Stock" width="50px" style="text-align: right"  filterBy="#{linea.stock}" sortBy="#{linea.stock}">
+                        <h:outputText value="#{linea.stock}">
+                            <f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Pendiente Recibir" style="text-align: right"  filterBy="#{linea.previstoRecibir}" sortBy="#{linea.previstoRecibir}">
+                        <h:outputText value="#{linea.previstoRecibir}">
+                            <f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Pendiente Servir" style="text-align: right"  filterBy="#{linea.previstoServir}" sortBy="#{linea.previstoServir}">
+                        <h:outputText value="#{linea.previstoServir}">
+                            <f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Caducado" style="text-align: right"  filterBy="#{linea.caducado}" sortBy="#{linea.caducado}">
+                        <h:outputText value="#{linea.caducado}">
+                            <f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Averías" width="65px" style="text-align: right"  filterBy="#{linea.averiado}" sortBy="#{linea.averiado}">
+                        <h:outputText value="#{linea.averiado}">
+                            <f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Exceso" width="60px" style="text-align: right"  filterBy="#{linea.exceso}" sortBy="#{linea.exceso}">
+                        <h:outputText value="#{linea.exceso}">
+                            <f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="No Colocado" style="text-align: right"  filterBy="#{linea.noColocado}" sortBy="#{linea.noColocado}">
+                        <h:outputText value="#{linea.noColocado}">
+                            <f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Disponible" style="text-align: right"  filterBy="#{linea.disponible}" sortBy="#{linea.disponible}">
+                        <h:outputText value="#{linea.disponible}">
+                            <f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+            </div>
+            
+            
+            <div style="display: flex">
+                <div>
+                    <p:dataTable var="lotes" value="#{Stock.listaLotes}" selection="#{Stock.loteSelected}"
+                                 rowKey="#{lotes.lote}" id="dataTableLotes" widgetVar="dataTableLotes" scrollable="true"
+                                 rows="6" paginator="true" paginatorPosition="bottom" rowSelectMode="none" style="width: 350px"
+                                 stripedRows="true">
+                        <ui:include src="WEB-INF/datatable-header.xhtml">
+                            <ui:param name="listaRendered" value="true"/>
+                            <ui:param name="id" value="dataTableLotes"/> 
+                            <ui:param name="listaSize" value="#{Stock.listaLotes.size()}"/>
+                            <ui:param name="actionBean" value="#{Stock}"/>
+                            <ui:param name="verBuscador" value="true"/>
+                            <ui:param name="verTotal" value="true"/>
+                            <ui:param name="verExcel" value="false"/>
+                            <ui:param name="tablaExport" value="dataTableLotes"/>
+                            <ui:param name="nombreArchivo" value="TablaSSCC"/>
+                            <ui:param name="titulo" value="Lotes"/>
+                        </ui:include>
+                        <p:column headerText="Lote">
+                            <h:outputText value="#{lotes.lote}"/>
+                        </p:column>
+                        <p:column headerText="Fec. Caducidad">
+                            <h:outputText value="#{lotes.fechaCaducidad}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Stock">
+                            <h:outputText value="#{lotes.unidad1}"/>
+                        </p:column>
+                        <p:column headerText="B.V.">
+                            <h:outputText value="#{lotes.bloqueo_venta}"/>
+                        </p:column>
+                        <p:column headerText="Fec. Caducidad SGA">
+                            <h:outputText value="#{lotes.fechaConsideraCaducado}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Fec. Aviso Caducidad">
+                            <h:outputText value="#{lotes.fechaAvisoCaducidad}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es"/>
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+
+                </div>
+            </div>
+
+
+        </h:form>
+
+        <h:form id="filterDialogStock">
+            <p:dialog header="Seleccione Filtros" id="dialogFilter" widgetVar="dialogFilter" width="1200" draggable="true" modal="true">
+                <div class="grid-container-2">
+                    <div class="grid-item">
+                        <div class="grid-container">
+                            <div class="grid-item">
+                                <div style="display: flex; flex-direction: column;">
+                                    <p:selectBooleanCheckbox itemLabel="Con Control de Lote " value="#{Stock.stockFilter.controlLotes}" />
+                                    <p:selectBooleanCheckbox itemLabel="Con control de caducidad" value="#{Stock.stockFilter.controlCaducidad}" style="margin-top: 5px"/>
+                                    <p:selectBooleanCheckbox itemLabel="Previsto Servir solo en Cola de Trabajo" value="#{Stock.stockFilter.previstoServirSoloColaTrabajo}" style="margin-top: 5px"/>
+                                    <p:selectBooleanCheckbox itemLabel="Previsto Recibir solo en Admisión" value="#{Stock.stockFilter.previstoRecibirSoloAdmision}" style="margin-top: 5px"/>
+                                    <p:selectBooleanCheckbox itemLabel="No colocado considera disponible" value="#{Stock.stockFilter.noColocadoConsideraDisponible}" style="margin-top: 5px"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p:card style="width: 35rem; margin-bottom: 2em">
+                            <p:selectBooleanCheckbox itemLabel="Filtrar por Conversión"/>
+
+                            <div style="display: flex;
+                                 align-content: center;
+                                 align-items: center;
+                                 padding: 10px;">
+
+                                <div class="inputsTop">
+                                    <h:outputLabel value="Unidad"/>
+                                    <p:selectOneMenu id="comboSearchUnidad" widgetVar="comboSearchUnidad"
+                                                     styleClass="custom-filter" 
+                                                     filter="true" filterMatchMode="startsWith" value="#{Stock.stockFilter.idUnidad}">
+                                        <p:ajax event="change" process="@this"/>
+                                        <f:selectItem itemLabel="Seleccione una opción" />
+                                        <f:selectItems value="#{Stock.listaUnidad}" var="unidad" itemLabel="#{unidad.texto}" itemValue="#{unidad.idUnidad}"/>
+                                    </p:selectOneMenu>  
+                                </div>
+
+                                <div class="inputsTop">
+                                    <h:outputLabel value="Estado"/>
+                                    <p:selectOneMenu id="comboSearchEstado" widgetVar="comboSearchEstado"
+                                                     styleClass="custom-filter" 
+                                                     filter="true" filterMatchMode="startsWith" value="#{Stock.stockFilter.condicionUnidad }">
+                                        <p:ajax event="change" process="@this"/>
+                                        <f:selectItem itemLabel="Es mayor que" itemValue="0" />
+                                        <f:selectItem itemLabel="Es menor que" itemValue="1" />   
+                                    </p:selectOneMenu>  
+                                </div>
+
+
+                                <div class="inputsTop">
+                                    <h:outputLabel value="Cantidad"/>
+                                    <p:inputText value="#{Stock.stockFilter.cantidadUnidad}" style="width: 100px">
+                                        <f:convertNumber pattern="##,##0.0000" />
+                                    </p:inputText>
+                                </div>
+
+                            </div>
+
+                        </p:card>
+
+                    </div>
+
+                    <div class="grid-item">
+                        <div class="grid-container-2">
+                            <div class="grid-item">
+                                <h:outputLabel value="Control Series"/>
+                                <p:selectOneMenu id="comboSearchCtrlSeries" value="#{Stock.stockFilter.controlSeries}" style="min-width: 15rem">
+                                    <f:selectItem itemLabel="Todos" itemValue="-1" />
+                                    <f:selectItem itemLabel="No" itemValue="0" />
+                                    <f:selectItem itemLabel="Solo en ventas" itemValue="1"/>
+                                    <f:selectItem itemLabel="Compras y ventas" itemValue="2"/>
+                                    <p:ajax event="change" />
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="grid-item">
+                                <h:outputLabel value="Tipo Hueco"/>
+                                <p:selectCheckboxMenu id="comboSearchTipoHueco"
+                                                      filter="true" filterMatchMode="startsWith"
+                                                      label="almacen" multiple="true" emptyLabel="Todos" updateLabel="true"
+                                                      style="min-width: 15rem" scrollHeight="250" 
+                                                      value="#{Stock.listaTipoHuecos}">
+                                    <p:ajax event="change" />
+                                    <f:selectItems value="#{Stock.listaTipoHuecos}" var="tipoHueco" itemLabel="#{tipoHueco.descripcion}" itemValue="#{tipoHueco.descripcion}" />
+                                </p:selectCheckboxMenu>
+                            </div>
+                        </div>
+                        <div class="grid-container-2">
+                            <div class="grid-item">
+                                <h:outputLabel value="Familias"/>
+                                <div class="ui-inputgroup" style="width: auto">
+                                    <p:inputText value="#{Stock.familiasString}" disabled="true" id="txtFamilias" widgetVar="txtFamilias"/>
+                                    <p:commandButton icon="pi pi-search" actionListener="#{Stock.selectionDialog('familias')}">
+                                        <p:ajax event="dialogReturn" listener="#{Stock.dialogReturn}" update="txtFamilias btnClearFam"/>
+                                    </p:commandButton>
+                                    <p:commandButton id="btnClearFam" widgetVar="btnClearFam" icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{Stock.limpiarFamilia}"
+                                                     update="txtFamilias" disabled="#{empty Stock.familiasString}"/>
+                                </div>
+                            </div>
+                            <div class="grid-item">
+                                <h:outputLabel value="Marcas"/>
+                                <div class="ui-inputgroup" style="width: auto">
+                                    <p:inputText value="#{Stock.marcaString}" disabled="true" id="txtMarcas" widgetVar="txtMarcas"/>
+                                    <p:commandButton icon="pi pi-search" actionListener="#{Stock.selectionDialog('marcas')}" id="btnMarcas" widgetVar="btnMarcas">
+                                        <p:ajax event="dialogReturn" listener="#{Stock.dialogReturn}" update="txtMarcas btnClearMar"/>
+                                    </p:commandButton>
+                                    <p:commandButton id="btnClearMar" widgetVar="btnClearMar" icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{Stock.limpiarMarca}"
+                                                     update="txtMarcas" disabled="#{empty Stock.marcaString}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid-container-2">
+                            <div class="grid-item">
+                                <h:outputLabel value="Ubicación"/>
+                                <div class="ui-inputgroup" style="width: auto">
+                                    <p:inputText value="#{Stock.ubiString}" disabled="true" id="txtUbicacion" widgetVar="txtUbicacion"/>
+                                    <p:commandButton icon="pi pi-search" actionListener="#{Stock.selectionDialog('ubicacion')}" id="btnUbi" widgetVar="btnUbi">
+                                        <p:ajax event="dialogReturn" listener="#{Stock.dialogReturn}" update="txtUbicacion btnClearUbi"/>
+                                    </p:commandButton>
+                                    <p:commandButton id="btnClearUbi" widgetVar="btnClearUbi" icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{Stock.limpiarUbicacion}"
+                                                     update="txtUbicacion" disabled="#{empty Stock.ubiString}"/>
+                                </div>
+                            </div>
+                            <div class="grid-item">
+                                <h:outputLabel value="Clasificación"/>
+                                <div class="ui-inputgroup" style="width: auto">
+                                    <p:inputText value="#{Stock.clasifString}" disabled="true" id="txtClasif" widgetVar="txtClasif"/>
+                                    <p:commandButton icon="pi pi-search" actionListener="#{Stock.selectionDialog('clasif')}">
+                                        <p:ajax event="dialogReturn" listener="#{Stock.dialogReturn}" update="txtClasif btnClearClasif"/>
+                                    </p:commandButton>
+                                    <p:commandButton id="btnClearClasif" widgetVar="btnClearClasif" icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{Stock.limpiarClasif}"
+                                                     update="txtClasif" disabled="#{empty Stock.clasifString}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid-container-2">
+                            <div class="grid-item">
+                                <h:outputLabel value="Tercero"/>
+                                <div class="ui-inputgroup" style="width: auto">
+                                    <p:inputText value="#{Stock.terceroString}" disabled="true" id="txtTercero" widgetVar="txtTercero"/>
+                                    <p:commandButton icon="pi pi-search" actionListener="#{Stock.selectionDialog('tercero')}">
+                                        <p:ajax event="dialogReturn" listener="#{Stock.dialogReturn}" update="txtTercero btnClearTercero"/>
+                                    </p:commandButton>
+                                    <p:commandButton id="btnClearTercero" widgetVar="btnClearTercero" icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{Stock.limpiarTercero}"
+                                                     update="txtTercero" disabled="#{empty Stock.terceroString}"/>
+                                </div>
+                            </div>
+                            <div class="grid-item">
+                                <h:outputLabel value="Tercero Depósito"/>
+                                <div class="ui-inputgroup" style="width: auto">
+                                    <p:inputText value="#{Stock.tercerDepoString}" disabled="true" id="txtTercerDepo" widgetVar="txtTercerDepo"/>
+                                    <p:commandButton icon="pi pi-search" actionListener="#{Stock.selectionDialog('tercerDepo')}">
+                                        <p:ajax event="dialogReturn" listener="#{Stock.dialogReturn}" update="txtTercerDepo btnClearTercerDepo"/>
+                                    </p:commandButton>
+                                    <p:commandButton id="btnClearTercerDepo" widgetVar="btnClearTercerDepo" icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{Stock.limpiarTercerDepo}"
+                                                     update="txtTercerDepo" disabled="#{empty Stock.tercerDepoString}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid-container-2">
+                            <div class="grid-item">
+                                <h:outputLabel value="Tercero Secundario"/>
+                                <div class="ui-inputgroup" style="width: auto">
+                                    <p:inputText value="#{Stock.tercerSecunString}" disabled="true" id="txtTercerSecun" widgetVar="txtTercerSecun"/>
+                                    <p:commandButton icon="pi pi-search" actionListener="#{Stock.selectionDialog('tercerSecun')}">
+                                        <p:ajax event="dialogReturn" listener="#{Stock.dialogReturn}" update="txtTercerSecun btnClearTercerSecun"/>
+                                    </p:commandButton>
+                                    <p:commandButton id="btnClearTercerSecun" widgetVar="btnClearTercerSecun" icon="pi pi-times" styleClass="ui-button-danger" actionListener="#{Stock.limpiarTercerSecun}"
+                                                     update="txtTercerSecun" disabled="#{empty Stock.tercerSecunString}"/>
+                                </div>
+                            </div>
+                            <div class="grid-item">
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </p:dialog>
         </h:form>
     </h:body>
 </html>
